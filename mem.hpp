@@ -34,7 +34,7 @@ Memory :: Memory (){
 
 // Initialisation
 void Memory :: initMem(){
-    for (int i=0; i < 1024; i++){
+    for (int i=0; i < 64; i++){
         mem.insert ( pair <ll,ll> (i,i/2 + 1));
     }
 }

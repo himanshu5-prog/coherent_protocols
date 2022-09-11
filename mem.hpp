@@ -9,16 +9,17 @@ class Memory {
     mem_to_bus_tr out;
     bool debugMode;
 
-    Memory ();
-    void initMem();
-    void readMem(bus_to_mem_tr in);
-    void writeMem ( bus_to_mem_tr in);
-    void printMem ();
-    void set_debug_mode (bool b){
-        debugMode = b;
-    }
-    mem_to_bus_tr get_mem_tr ();
-    void print_out_tr ();
+    public: 
+        Memory ();
+        void initMem();
+        void readMem(bus_to_mem_tr in);
+        void writeMem ( bus_to_mem_tr in);
+        void printMem ();
+        void set_debug_mode (bool b){
+            debugMode = b;
+        }
+        mem_to_bus_tr get_mem_tr ();
+        void print_out_tr ();
 };
 
 Memory :: Memory (){

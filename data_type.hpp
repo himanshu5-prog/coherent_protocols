@@ -3,6 +3,7 @@
 
 #include<iostream>
 #include<cstring>
+#include<set>
 using namespace std;
 
 typedef long long int ll;
@@ -43,6 +44,13 @@ struct bus_to_core_tr {
     ll data;
     int coreID;
     bool valid;
+};
+
+// Bus DS
+struct Bus_ds {
+    bool valid;
+    set<int> coreID;
+    string state;
 };
 
 struct cacheLine {

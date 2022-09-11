@@ -10,9 +10,11 @@ typedef long long int ll;
 // Input to memory from bus
 struct bus_to_mem_tr {
     ll addr;
+    ll data;
     string op;
     int coreID;
     ll trID;
+    bool valid;
 };
 
 //Output from memory to bus
@@ -22,6 +24,7 @@ struct mem_to_bus_tr {
     string op;
     int coreID;
     ll trID;
+    bool valid;
 };
 
 // Input from cores to bus
@@ -30,6 +33,7 @@ struct core_to_bus_tr {
     string op;
     ll data;
     int coreID;
+    bool valid;
 };
 
 // Output from bus to core
@@ -38,6 +42,7 @@ struct bus_to_core_tr {
     string op;
     ll data;
     int coreID;
+    bool valid;
 };
 
 struct cacheLine {

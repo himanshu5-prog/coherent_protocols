@@ -44,6 +44,7 @@ struct bus_to_core_tr {
     ll data;
     int coreID;
     bool valid;
+    string source;
 };
 
 // Bus DS

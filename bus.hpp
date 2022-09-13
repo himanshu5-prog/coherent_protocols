@@ -25,6 +25,9 @@ class Bus {
     map <ll, Bus_ds> busInfo;
 
     public:
+        // Run function
+        void run_function();
+
         //Functions to push items to queue
         void push_bus_to_core_q( bus_to_core_tr tr);
         void push_core_to_bus_q( core_to_bus_tr tr);
@@ -71,7 +74,6 @@ void Bus :: push_mem_to_bus_q ( mem_to_bus_tr tr){
 }
 
 //Pop functions
-
 void Bus :: pop_bus_to_core_q(){
     bus_to_core_q.pop();
 }
@@ -127,5 +129,26 @@ Bus_ds Bus :: getInfo( ll addr){
 void Bus :: remove_address ( ll addr){
     assert( check_address (addr));
     busInfo.erase(addr);
+}
+
+void Bus :: run_function(){
+    // Search through core_to_bus queue
+    /*
+        Possible transactions:
+        1) Read
+        2) MemWriteBack
+        3) Write
+    */
+   if ( core_to_bus_q.size() > 0){
+        if ( get_front_core_to_bus_q().op == "Read"){
+        /*
+        About Read operation: This instruction comes from core when there is read instruction (cahce miss) in CPU
+
+        What to do when there is read operation:
+            i) Check if there is anything for that address in busInfo data structure.
+                -> Exist in busInfo : The data is present in other core in E/S state. Get 
+        */
+    }
+   }
 }
 #endif

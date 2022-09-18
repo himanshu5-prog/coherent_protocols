@@ -52,6 +52,7 @@ struct Bus_ds {
     bool valid;
     set<int> coreID;
     string state;
+    map<int, string> cacheState;
 };
 
 struct cacheLine {

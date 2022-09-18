@@ -24,9 +24,19 @@ class Bus {
     //Bus data structure
     map <ll, Bus_ds> busInfo;
 
+    ll trID;
+
     public:
+        Bus (){
+            trID = (ll) 0;
+        }
         // Run function
         void run_function();
+
+        void run_read_req(core_to_bus_tr reqTr);
+        void run_mem_write_back(core_to_bus_tr reqTr);
+        void run_write_req( core_to_bus_tr reqTr);
+        void run_inv_req( core_to_bus_tr reqTr);
 
         //Functions to push items to queue
         void push_bus_to_core_q( bus_to_core_tr tr);
@@ -119,6 +129,7 @@ bool Bus :: check_address (ll addr){
     } else if ( busInfo.find(addr) != busInfo.end()){
         return true;
     }
+    return false;
 }
 
 Bus_ds Bus :: getInfo( ll addr){
@@ -139,16 +150,41 @@ void Bus :: run_function(){
         2) MemWriteBack
         3) Write
     */
-   if ( core_to_bus_q.size() > 0){
-        if ( get_front_core_to_bus_q().op == "Read"){
-        /*
-        About Read operation: This instruction comes from core when there is read instruction (cahce miss) in CPU
+    if ( core_to_bus_q.size() > 0){
+        
+        core_to_bus_tr frontTr;
+        bus_to_mem_tr memResp;
 
-        What to do when there is read operation:
-            i) Check if there is anything for that address in busInfo data structure.
-                -> Exist in busInfo : The data is present in other core in E/S state. Get 
-        */
+        ll address;
+        int coreID;
+        string respOp;
+        ll data;
+        string source;
+        int sourceCore;
+
+        //Response transaction
+        bus_to_core_tr respTr;
+
+        //get the transaction from core_to_bus_q (inputQueue)
+        frontTr = get_front_core_to_bus_q();
+
+        if ( frontTr.op == "Read"){
+            /*
+            About Read operation: This instruction comes from core when there is read instruction (cahce miss) in CPU
+
+            What to do when there is read operation:
+                i) Check if there is anything for that address in busInfo data structure.
+                    -> Exist in busInfo : The data is present in other core in E/S state. Send 'busRead' request to core (O state) having the data.
+            */
+
+            run_read_req (frontTr);
+            //////////////////////
+        /// //
+        }
+        else if ( frontTr.op == "Write"){
+            // There is store instruction in one of core. There is cache miss
+
+        }
     }
-   }
 }
 #endif

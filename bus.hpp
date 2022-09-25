@@ -169,21 +169,10 @@ void Bus :: run_function(){
         frontTr = get_front_core_to_bus_q();
 
         if ( frontTr.op == "Read"){
-            /*
-            About Read operation: This instruction comes from core when there is read instruction (cahce miss) in CPU
-
-            What to do when there is read operation:
-                i) Check if there is anything for that address in busInfo data structure.
-                    -> Exist in busInfo : The data is present in other core in E/S state. Send 'busRead' request to core (O state) having the data.
-            */
-
             run_read_req (frontTr);
-            //////////////////////
-        /// //
         }
         else if ( frontTr.op == "Write"){
-            // There is store instruction in one of core. There is cache miss
-
+            run_write_req(frontTr);
         }
     }
 }

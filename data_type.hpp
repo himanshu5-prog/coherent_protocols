@@ -53,6 +53,9 @@ struct Bus_ds {
     set<int> coreID;
     string state;
     map<int, string> cacheState;
+    ll data;
+    bool invRequest[8];
+    bool invAck[8];
 };
 
 struct cacheLine {

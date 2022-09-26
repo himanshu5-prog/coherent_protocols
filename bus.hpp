@@ -37,6 +37,8 @@ class Bus {
         void run_mem_write_back(core_to_bus_tr reqTr);
         void run_write_req( core_to_bus_tr reqTr);
         void run_inv_req( core_to_bus_tr reqTr);
+        void run_data_response (core_to_bus_tr reqTr);
+        void run_invalid_ack (core_to_bus_tr reqTr);
 
         //Functions to push items to queue
         void push_bus_to_core_q( bus_to_core_tr tr);
@@ -170,10 +172,17 @@ void Bus :: run_function(){
 
         if ( frontTr.op == "Read"){
             run_read_req (frontTr);
-        }
-        else if ( frontTr.op == "Write"){
+
+        } else if ( frontTr.op == "Write"){
             run_write_req(frontTr);
-        }
+
+        } else if ( frontTr.op == "memWriteBack"){
+            run_mem_write_back (frontTr);
+
+        } else if ( frontTr.op == "invalidateReq"){
+            run_data_response (frontTr);
+
+        } 
     }
 }
 #endif

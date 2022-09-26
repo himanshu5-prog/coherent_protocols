@@ -239,3 +239,42 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
 
     pop_core_to_bus_q();
 }
+
+void Bus :: run_data_response ( core_to_bus_tr reqTr){
+    // Bus made request to core in owned state
+    ll address;
+
+    int coreID;
+    string respOp;
+    ll data;
+    string source;
+    int sourceCore;
+    int dest;
+    address = reqTr.addr;
+    sourceCore = reqTr.coreID;
+    dest = reqTr.dest;
+
+    bus_to_core_tr respTr;
+
+    // the address must be in busInfo
+    assert ( busInfo.find(address) != busInfo.end());
+
+    busInfo[address].coreID.insert (dest);
+    busInfo[address].cacheState.insert ( pair <int, string>(dest, "Shared"));
+
+    respTr.addr = address;
+    respTr.coreID = dest;
+    respTr.data = reqTr.data;
+    respTr.op = "busDataResponse";
+    respTr.source = to_string(sourceCore);
+    respTr.valid = true;
+
+    push_bus_to_core_q(respTr);
+    pop_core_to_bus_q();
+}
+
+void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
+    // The core sent inv ack. The bus info should collect these ack and when all cores have sent
+    //acks, then sourceCore should get ack so that it can make its cache line modified.
+
+}

@@ -35,6 +35,7 @@ struct core_to_bus_tr {
     ll data;
     int coreID;
     bool valid;
+    int dest;
 };
 
 // Output from bus to core

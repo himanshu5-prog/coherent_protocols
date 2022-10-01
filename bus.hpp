@@ -21,6 +21,9 @@ class Bus {
     //memory to bus buffer
     queue<mem_to_bus_tr> mem_to_bus_q;
 
+    // core_to_bus buffer for invAck
+    queue < core_to_bus_tr > core_to_bus_resp_q;
+
     //Bus data structure
     map <ll, Bus_ds> busInfo;
 
@@ -32,6 +35,7 @@ class Bus {
         }
         // Run function
         void run_function();
+        void remove_core_busInfo(ll address, int targetCore);
 
         void run_read_req(core_to_bus_tr reqTr);
         void run_mem_write_back(core_to_bus_tr reqTr);
@@ -40,15 +44,20 @@ class Bus {
         void run_data_response (core_to_bus_tr reqTr);
         void run_invalid_ack (core_to_bus_tr reqTr);
 
+        void run_mem_ack (mem_to_bus_tr reqTr);
+        void run_mem_data (mem_to_bus_tr reqTr);
+
         //Functions to push items to queue
         void push_bus_to_core_q( bus_to_core_tr tr);
         void push_core_to_bus_q( core_to_bus_tr tr);
+        void push_core_to_bus_resp_q( core_to_bus_tr tr);
         
         void push_bus_to_mem_q(bus_to_mem_tr tr);
         void push_mem_to_bus_q(mem_to_bus_tr tr);
 
         //Functions to pop items from queue
         void pop_bus_to_core_q();
+        void pop_core_to_bus_resp_q();
         void pop_core_to_bus_q();
 
         void pop_bus_to_mem_q();
@@ -77,6 +86,10 @@ void Bus :: push_core_to_bus_q( core_to_bus_tr tr){
     core_to_bus_q.push(tr);
 }
 
+void Bus :: push_core_to_bus_resp_q( core_to_bus_tr tr){
+    core_to_bus_resp_q.push(tr);
+}
+
 void Bus :: push_bus_to_mem_q ( bus_to_mem_tr tr){
     bus_to_mem_q.push(tr);
 }
@@ -92,6 +105,10 @@ void Bus :: pop_bus_to_core_q(){
 
 void Bus :: pop_core_to_bus_q(){
     core_to_bus_q.pop();
+}
+
+void Bus :: pop_core_to_bus_resp_q(){
+    core_to_bus_resp_q.pop();
 }
 
 void Bus :: pop_bus_to_mem_q(){
@@ -152,9 +169,29 @@ void Bus :: run_function(){
         2) MemWriteBack
         3) Write
     */
+    core_to_bus_tr frontTr_resp;
+    mem_to_bus_tr frontTr_mem;
+
+    if ( mem_to_bus_q.size() > 0){
+        frontTr_mem = get_front_mem_to_bus_q();
+
+    }
+
+    if ( core_to_bus_resp_q.size() > 0){
+        frontTr_resp = core_to_bus_resp_q.front();
+
+        if ( frontTr_resp.op == "InvalidateAck"){
+            run_invalid_ack ( frontTr_resp);
+
+        } else if ( frontTr_resp.op == "DataResponse"){
+            run_data_response ( frontTr_resp);
+        }
+    }
+
     if ( core_to_bus_q.size() > 0){
         
         core_to_bus_tr frontTr;
+
         bus_to_mem_tr memResp;
 
         ll address;
@@ -176,10 +213,10 @@ void Bus :: run_function(){
         } else if ( frontTr.op == "Write"){
             run_write_req(frontTr);
 
-        } else if ( frontTr.op == "memWriteBack"){
+        } else if ( frontTr.op == "MemWriteBack"){
             run_mem_write_back (frontTr);
 
-        } else if ( frontTr.op == "invalidateReq"){
+        } else if ( frontTr.op == "InvalidateReq"){
             run_data_response (frontTr);
 
         } 

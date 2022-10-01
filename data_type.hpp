@@ -57,6 +57,9 @@ struct Bus_ds {
     ll data;
     bool invRequest[8];
     bool invAck[8];
+    int invSource;
+    core_to_bus_tr core_bus_tr;
+    mem_to_bus_tr mem_bus_tr;
 };
 
 struct cacheLine {

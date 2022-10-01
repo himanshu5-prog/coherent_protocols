@@ -20,6 +20,7 @@ class Memory {
         }
         mem_to_bus_tr get_mem_tr ();
         void print_out_tr ();
+        void run_function (bus_to_mem_tr reqTr);
 };
 
 Memory :: Memory (){
@@ -67,7 +68,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         out.addr = address;
         out.data = mem[address];
         out.coreID = in.coreID;
-        out.op = in.op;
+        out.op = "MemData";
         out.trID = in.trID;
     } else {
         // address is not present in memory
@@ -75,7 +76,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         out.addr = address;
         out.data = mem[address];
         out.coreID = in.coreID;
-        out.op = in.op;
+        out.op = "MemData";
         out.trID = in.trID;
     }
     out.valid = true;
@@ -104,5 +105,14 @@ void Memory :: print_out_tr(){
     cout << " coreID: " << out.coreID << "\n";
     cout << " transaction ID: " << out.trID << "\n";
     cout << "-----------------------------------------\n";
+}
+
+void Memory :: run_function ( bus_to_mem_tr reqTr){
+    if ( reqTr.op == "memRead"){
+        readMem (reqTr);
+
+    } else if ( reqTr.op == "MemWriteBack"){
+        writeMem (reqTr);
+    }
 }
 #endif

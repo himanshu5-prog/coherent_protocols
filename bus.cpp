@@ -68,7 +68,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
             //assert(flag);
             if (flag){
                 // cache line with exclusive or owned state is found in one of the core
-                respOp = "BusRead";
+                respOp = "DataResponse";
                 source = "Bus";
 
                 respTr.addr = address;
@@ -329,7 +329,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     respTr.addr = address;
     respTr.coreID = dest;
     respTr.data = reqTr.data;
-    respTr.op = "BusDataResponse";
+    respTr.op = "DataResponse";
     respTr.source = to_string(sourceCore);
     respTr.valid = true;
 
@@ -417,9 +417,65 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
 }
 
 void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
-    
+    ll address;
+
+    int coreID;
+    string respOp;
+    ll data;
+    string source;
+    int sourceCore;
+    int dest;
+
+    address = reqTr.addr;
+
+    bus_to_core_tr respTr;
+
+    // there must be an entry for address in busInfo
+    assert (busInfo.find(address) != busInfo.end());
+    assert ( busInfo[address].core_bus_tr.op == "MemWriteBack");
+    assert ( busInfo[address].valid == false);
+
+    respTr.addr = address;
+    respTr.coreID = reqTr.coreID;
+    respTr.op = "MemWriteAck";
+    respTr.data = 0;
+    respTr.source = "Memory";
+    respTr.valid = true;
+
+    push_bus_to_core_q(respTr);
+    busInfo[address].valid = true;
+
+    pop_mem_to_bus_q();
+
 }
 
 void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
+     ll address;
+
+    int coreID;
+    string respOp;
+    ll data;
+    string source;
+    int sourceCore;
+    int dest;
+
+    address = reqTr.addr;
+
+    bus_to_core_tr respTr;
+
+    assert (busInfo.find(address) != busInfo.end());
+    assert ( busInfo[address].valid == false);
+    assert ( busInfo[address].core_bus_tr.op == "MemRead");
+
+    respTr.addr = address;
+    respTr.coreID = reqTr.coreID;
+    respTr.data = reqTr.data;
+    respTr.op = "DataResponse";
+    respTr.source = "Memory";
+
+    push_bus_to_core_q(respTr);
+    busInfo[address].valid = true;
+
+    pop_mem_to_bus_q();
 
 }

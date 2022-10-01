@@ -66,6 +66,7 @@ class Bus {
         //Function to get front item of the queue
         bus_to_core_tr get_front_bus_to_core_q();
         core_to_bus_tr get_front_core_to_bus_q();
+        core_to_bus_tr get_front_core_to_bus_resp_q();
 
         bus_to_mem_tr get_front_bus_to_mem_q();
         mem_to_bus_tr get_front_mem_to_bus_q();   
@@ -75,6 +76,16 @@ class Bus {
         bool check_address ( ll addr);
         void remove_address (ll addr);
         Bus_ds getInfo( ll addr);
+
+        //function to get size of queue
+
+        int get_size_bus_to_core_q ();
+        
+        int get_size_core_to_bus_q ();
+        int get_size_core_to_bus_resp_q ();
+        
+        int get_size_bus_to_mem_q ();
+        int get_size_mem_to_bus_q (); 
 };
 
 //Push function
@@ -128,12 +139,38 @@ core_to_bus_tr Bus :: get_front_core_to_bus_q(){
     return core_to_bus_q.front();
 }
 
+core_to_bus_tr Bus :: get_front_core_to_bus_resp_q(){
+    return core_to_bus_resp_q.front();
+}
+
 bus_to_mem_tr Bus :: get_front_bus_to_mem_q(){
     return bus_to_mem_q.front();
 }
 
 mem_to_bus_tr Bus :: get_front_mem_to_bus_q(){
     return mem_to_bus_q.front();
+}
+
+// function to get size of the queue
+
+int Bus :: get_size_bus_to_core_q (){
+    return bus_to_core_q.size();
+}
+
+int Bus :: get_size_bus_to_mem_q () {
+    return bus_to_mem_q.size();
+}
+
+int Bus :: get_size_core_to_bus_q (){
+    return core_to_bus_q.size();
+}
+
+int Bus :: get_size_core_to_bus_resp_q (){
+    return core_to_bus_resp_q.size();
+}
+
+int Bus :: get_size_mem_to_bus_q () {
+    return mem_to_bus_q.size();
 }
 
 //Functions for bus info
@@ -175,6 +212,12 @@ void Bus :: run_function(){
     if ( mem_to_bus_q.size() > 0){
         frontTr_mem = get_front_mem_to_bus_q();
 
+        if ( frontTr_mem.op == "MemWriteAck"){
+            run_mem_ack (frontTr_mem);
+
+        } else if ( frontTr_mem.op == "MemData"){
+            run_mem_data ( frontTr_mem);
+        }
     }
 
     if ( core_to_bus_resp_q.size() > 0){

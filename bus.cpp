@@ -78,6 +78,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 respTr.valid = true;
 
                 push_bus_to_core_q(respTr);
+                busInfo[address].coreID.insert(sourceCore);
+                busInfo[address].cacheState.insert ( pair <int, string> (sourceCore, "TR_SHARED"));
                 busInfo[address].valid = false;
                 //pop_core_to_bus_q();
             } else {
@@ -91,6 +93,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 memResp.valid = true;
 
                 push_bus_to_mem_q(memResp);
+                busInfo[address].coreID.insert(sourceCore);
+                busInfo[address].cacheState.insert ( pair <int, string> (sourceCore, "TR_SHARED"));
                 busInfo[address].valid = false;
 
                 trID += 1;
@@ -112,6 +116,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         b.valid = false;
         b.state = "Waiting for mem response";
         b.coreID.insert(reqTr.coreID);
+        
         b.cacheState.insert (pair<int, string> ( reqTr.coreID, "TR_EXCLUSIVE"));
         b.data = 0;
         b.core_bus_tr = reqTr;
@@ -323,8 +328,13 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     assert ( busInfo[address].valid == false);
     dest = busInfo[address].core_bus_tr.coreID;
 
-    busInfo[address].coreID.insert (dest);
-    busInfo[address].cacheState.insert ( pair <int, string>(dest, "SHARED"));
+    //busInfo[address].coreID.insert (dest);
+    //the source id should be in coreID set and cachestate map data structure
+    assert ( busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end());
+    assert (busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
+
+    //busInfo[address].cacheState.insert ( pair <int, string>(dest, "SHARED"));
+    busInfo[address].cacheState[sourceCore] = "SHARED";
 
     respTr.addr = address;
     respTr.coreID = dest;
@@ -361,7 +371,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
 
     // Need to send invalidate message to all cores except sourceCore
     // remove the cores from cacheState and coreID set
-    assert ( sourceCore < 7);    
+    assert ( sourceCore < 8);    
     busInfo[address].invAck[sourceCore] = true;
 
     //remove_core_busInfo ( address, sourceCore);
@@ -427,13 +437,20 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
     int dest;
 
     address = reqTr.addr;
-
+    sourceCore = reqTr.coreID;
     bus_to_core_tr respTr;
 
     // there must be an entry for address in busInfo
     assert (busInfo.find(address) != busInfo.end());
     assert ( busInfo[address].core_bus_tr.op == "MemWriteBack");
     assert ( busInfo[address].valid == false);
+
+    assert ( busInfo[address].coreID.find( sourceCore) != busInfo[address].coreID.end());
+    assert ( busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
+
+    assert ( busInfo[address].cacheState[sourceCore] == "TR_INVALID");
+    busInfo[address].cacheState.erase(sourceCore);
+    busInfo[address].coreID.erase (sourceCore);
 
     respTr.addr = address;
     respTr.coreID = reqTr.coreID;
@@ -460,12 +477,24 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     int dest;
 
     address = reqTr.addr;
+    sourceCore = reqTr.coreID;
 
     bus_to_core_tr respTr;
 
     assert (busInfo.find(address) != busInfo.end());
     assert ( busInfo[address].valid == false);
     assert ( busInfo[address].core_bus_tr.op == "MemRead");
+
+    assert ( busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end());
+    assert ( busInfo[address].cacheState.find( sourceCore) != busInfo[address].cacheState.end());
+
+    if ( busInfo[address].cacheState[sourceCore] == "TR_SHARED"){
+        busInfo[address].cacheState[sourceCore] = "SHARED";
+
+    } else if (busInfo[address].cacheState[sourceCore] == "TR_EXCLUSIVE") {
+        busInfo[address].cacheState[sourceCore] == "EXCLUSIVE";
+
+    }
 
     respTr.addr = address;
     respTr.coreID = reqTr.coreID;

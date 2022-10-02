@@ -46,6 +46,7 @@ struct bus_to_core_tr {
     int coreID;
     bool valid;
     string source;
+    string state;
 };
 
 // Bus DS
@@ -65,10 +66,17 @@ struct Bus_ds {
 struct cacheLine {
     bool valid;
     bool shared;
+    bool dirty;
     ll addr;
     ll data;
     string cacheState;
 };
 
+struct Instruction {
+    int address;
+    string op;
+    int coreID;
+    bool valid;
+};
 
 #endif

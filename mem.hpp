@@ -108,11 +108,14 @@ void Memory :: print_out_tr(){
 }
 
 void Memory :: run_function ( bus_to_mem_tr reqTr){
-    if ( reqTr.op == "memRead"){
+    if ( reqTr.op == "MemRead" & reqTr.valid){
         readMem (reqTr);
 
-    } else if ( reqTr.op == "MemWriteBack"){
+    } else if ( reqTr.op == "MemWriteBack" & reqTr.valid){
         writeMem (reqTr);
+
+    } else if ( reqTr.valid == false){
+        out.valid = false;
     }
 }
 #endif

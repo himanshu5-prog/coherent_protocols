@@ -29,7 +29,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
     ll data;
     string source;
     int sourceCore;
-
+    string state;
     //Response transaction
     bus_to_core_tr respTr;
     bus_to_mem_tr memResp;
@@ -58,9 +58,17 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
             for (auto& id: busInfo[address].coreID){
                 assert(busInfo[address].cacheState.find(id) != busInfo[address].cacheState.end());
 
-                if ( busInfo[address].cacheState[id] == "Exclusive" || busInfo[address].cacheState[id] == "Owner"){
+                if ( busInfo[address].cacheState[id] == "EXCLUSIVE" || busInfo[address].cacheState[id] == "OWNED" || busInfo[address].cacheState[id] == "MODIFIED"){
                     sourceCore = id;
                     flag = true;
+
+                    if (busInfo[address].cacheState[id] == "EXCLUSIVE") {
+                        state = "SHARED";
+                    } else if (busInfo[address].cacheState[id] == "OWNED"){
+                        state = "OWNED";
+                    } else if ( busInfo[address].cacheState[id] == "MODIFIED"){
+                        state = "OWNED";
+                    }
                     break;
                 }
             }
@@ -76,6 +84,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 respTr.data = 0;
                 respTr.source = source;
                 respTr.valid = true;
+                respTr.state = state;
 
                 push_bus_to_core_q(respTr);
                 busInfo[address].coreID.insert(sourceCore);
@@ -295,6 +304,7 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
             respTr.op = "CacheInvalidate";
             respTr.source = to_string(sourceCore);
             respTr.valid = true;
+            respTr.state = "INVALIDATE";
 
             push_bus_to_core_q(respTr);
 
@@ -342,6 +352,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     respTr.op = "DataResponse";
     respTr.source = to_string(sourceCore);
     respTr.valid = true;
+    respTr.state = "SHARED";
 
     busInfo[address].valid = true;
     push_bus_to_core_q(respTr);
@@ -405,6 +416,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
         respTr.op = "InvalidAck";
         respTr.source = "Bus";
         respTr.valid = true;
+        respTr.state = "MODIFIED";
 
         for ( int i = 0; i< 8; i++){
             if ( busInfo[address].invAck[i] & busInfo[address].invRequest[i]){
@@ -415,7 +427,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
         }
         busInfo[address].coreID.insert ( busInfo[address].core_bus_tr.coreID);
         busInfo[address].cacheState.insert ( pair <ll, string> (busInfo[address].core_bus_tr.coreID, "MODIFIED" ));
-
+        
         assert (busInfo[address].valid == false);
         busInfo[address].valid = true;
 
@@ -458,6 +470,7 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
     respTr.data = 0;
     respTr.source = "Memory";
     respTr.valid = true;
+    respTr.state = "INVALID";
 
     push_bus_to_core_q(respTr);
     busInfo[address].valid = true;
@@ -501,6 +514,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     respTr.data = reqTr.data;
     respTr.op = "DataResponse";
     respTr.source = "Memory";
+    respTr.state = busInfo[address].cacheState[sourceCore];
 
     push_bus_to_core_q(respTr);
     busInfo[address].valid = true;

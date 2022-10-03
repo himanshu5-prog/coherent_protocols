@@ -76,7 +76,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
             //assert(flag);
             if (flag){
                 // cache line with exclusive or owned state is found in one of the core
-                respOp = "DataResponse";
+                respOp = "ReadReq";
                 source = "Bus";
 
                 respTr.addr = address;

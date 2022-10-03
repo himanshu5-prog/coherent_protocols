@@ -70,6 +70,7 @@ struct cacheLine {
     ll addr;
     ll data;
     string cacheState;
+    bool transactionCompleted;
 };
 
 struct Instruction {

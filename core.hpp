@@ -5,13 +5,14 @@
 #include <map>
 #include <queue>
 #include "data_type.hpp"
-
+#include <cassert>
 using namespace std;
 
 class Core {
     map <int, cacheLine> cache;
     int id;
     queue <core_to_bus_tr> q_core_bus;
+    queue <core_to_bus_tr> q_core2bus_resp;
     queue <Instruction> instr_q;
     bus_to_core_tr bus_core_transaction;
 
@@ -48,20 +49,37 @@ class Core {
         int getIndex ( ll address);
 
         void push_core_to_bus_q ( core_to_bus_tr tr);
+        void push_core_to_bus_resp_q ( core_to_bus_tr tr);
+        
         void pop_core_to_bus_q ();
+        void pop_core_to_bus_resp_q ();
+        
         int get_size_core_to_bus_q ();
+        int get_size_core_to_bus_resp_q ();
 };
 
 void Core :: push_core_to_bus_q (core_to_bus_tr tr){
     q_core_bus.push(tr);
 }
 
+void Core :: push_core_to_bus_resp_q (core_to_bus_tr tr){
+    q_core2bus_resp.push(tr);
+}
+
 void Core :: pop_core_to_bus_q (){
     q_core_bus.pop();
 }
 
+void Core :: pop_core_to_bus_resp_q (){
+    q_core2bus_resp.pop();
+}
+
 int Core :: get_size_core_to_bus_q (){
     return q_core_bus.size();
+}
+
+int Core :: get_size_core_to_bus_resp_q (){
+    return q_core2bus_resp.size();
 }
 
 void Core :: reset_bus_to_core_tr (){

@@ -78,6 +78,7 @@ struct Instruction {
     string op;
     int coreID;
     bool valid;
+    int data;
 };
 
 #endif

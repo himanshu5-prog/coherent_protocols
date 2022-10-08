@@ -1,0 +1,28 @@
+Description of core to bus transactions
+
+1) CoreRead
+
+    This transaction is used to get data from bus.
+    
+    Pending response from Bus : BusDataResponse
+
+2) MemWriteBack
+
+    This transaction is used for evicting cache line.
+
+    Pending response from bus : MemWriteAck
+
+3) InvalidateReq
+
+    This transaction is sent to bus when there is write request in a core.
+
+    Pending response from bus : BusInvalidateAck
+
+4) CoreDataResponse
+
+    This is sent in response to BusReadReq from Bus
+
+5) CoreInvalidateAck
+
+    This is sent in response to CacheInvalidate
+

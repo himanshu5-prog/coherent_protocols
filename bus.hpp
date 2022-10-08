@@ -223,10 +223,10 @@ void Bus :: run_function(){
     if ( core_to_bus_resp_q.size() > 0){
         frontTr_resp = core_to_bus_resp_q.front();
 
-        if ( frontTr_resp.op == "InvalidateAck"){
+        if ( frontTr_resp.op == "CoreInvalidateAck"){
             run_invalid_ack ( frontTr_resp);
 
-        } else if ( frontTr_resp.op == "DataResponse"){
+        } else if ( frontTr_resp.op == "CoreDataResponse"){
             run_data_response ( frontTr_resp);
         }
     }
@@ -250,17 +250,14 @@ void Bus :: run_function(){
         //get the transaction from core_to_bus_q (inputQueue)
         frontTr = get_front_core_to_bus_q();
 
-        if ( frontTr.op == "Read"){
+        if ( frontTr.op == "CoreRead"){
             run_read_req (frontTr);
-
-        } else if ( frontTr.op == "Write"){
-            run_write_req(frontTr);
 
         } else if ( frontTr.op == "MemWriteBack"){
             run_mem_write_back (frontTr);
 
         } else if ( frontTr.op == "InvalidateReq"){
-            run_data_response (frontTr);
+            run_inv_req (frontTr);
 
         } 
     }

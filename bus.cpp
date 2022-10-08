@@ -76,7 +76,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
             //assert(flag);
             if (flag){
                 // cache line with exclusive or owned state is found in one of the core
-                respOp = "ReadReq";
+                respOp = "BusReadReq";
                 source = "Bus";
 
                 respTr.addr = address;
@@ -149,90 +149,6 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         trID += (ll) 1;
     }
 
-}
-
-void Bus :: run_write_req ( core_to_bus_tr reqTr){
-    ll address;
-
-    int coreID;
-    string respOp;
-    ll data;
-    string source;
-    int sourceCore;
-    
-    //Response transaction
-    bus_to_core_tr respTr;
-    bus_to_mem_tr memResp;
-
-    // Write request is sent to bus and there is cache miss.
-    // If the address exist in busInfo table, then other cores have the data.
-    //Things to do:
-    // send invalidate to cores having the address. Wait for invAck from all those cores. Once all invAcks are received, send data to requestor core
-    address = reqTr.addr;
-    sourceCore = reqTr.coreID;
-    
-    if ( busInfo.find(address) != busInfo.end() ){
-        
-        if ( busInfo[address].valid){
-
-            busInfo[address].core_bus_tr = reqTr;
-            
-            assert( busInfo[address].coreID.size() > 0);
-
-            busInfo[address].valid = false;
-            busInfo[address].cacheState.insert(pair<int, string> (sourceCore, "TR_MODIFIED"));
-
-            for (auto& id: busInfo[address].coreID){
-                assert (id < 7);
-                busInfo[address].invRequest[id] = true;
-
-                // send inv request to cores
-                respTr.addr = address;
-                respTr.coreID = id;
-                respTr.data = 0;
-                respTr.op = "Invalidate";
-                respTr.source = "Bus";
-                respTr.valid = true;
-
-                push_bus_to_core_q(respTr);
-                
-            }
-
-            // removing request from core_to_bus queue
-            //pop_core_to_bus_q();
-        }
-    } else {
-        // the address is not present in busInfo table. Need to get from memory :-/
-        memResp.addr = address;
-        memResp.coreID = sourceCore;
-        memResp.data = 0;
-        memResp.op = "MemRead";
-        memResp.trID = trID;
-        memResp.valid = true;
-
-        trID += (ll) 1;
-
-        // Create the entry in busInfo with valid 0
-        Bus_ds b;
-        b.valid = false;
-        b.cacheState.insert( pair <ll, string> ( sourceCore, "TR_MODIFIED"));
-        b.data = 0;
-        b.state = "TR_MODIFIED_MEM"; // state of busInfo entry
-        b.coreID.insert(sourceCore);
-        b.core_bus_tr = reqTr;
-        b.mem_bus_tr.valid = false;
-
-        for ( int i=0; i<8; i++)
-        {
-            b.invAck[i] = false;
-            b.invRequest[i] = false;
-        }
-
-        busInfo.insert (pair <ll, Bus_ds> (address,b));
-        //pushing the request to bus_to_mem_q
-        push_bus_to_mem_q(memResp);
-
-    }
 }
 
 void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
@@ -349,7 +265,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     respTr.addr = address;
     respTr.coreID = dest;
     respTr.data = reqTr.data;
-    respTr.op = "DataResponse";
+    respTr.op = "BusDataResponse";
     respTr.source = to_string(sourceCore);
     respTr.valid = true;
     respTr.state = "SHARED";
@@ -413,7 +329,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
         respTr.addr = address;
         respTr.coreID = busInfo[address].core_bus_tr.coreID;
         respTr.data = 0;
-        respTr.op = "InvalidAck";
+        respTr.op = "BusInvalidateAck";
         respTr.source = "Bus";
         respTr.valid = true;
         respTr.state = "MODIFIED";

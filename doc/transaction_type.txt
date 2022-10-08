@@ -1,0 +1,32 @@
+List of instructions executed by Core:
+
+1) Read
+2) Write
+--------------------------------------------
+Valid core_to_bus transactions:
+
+1) CoreRead
+2) MemWriteBack
+3) InvalidateReq
+4) CoreDataResponse
+5) CoreInvalidateAck
+--------------------------------------------
+valid bus to core transactions:
+
+1) MemWriteAck
+2) CacheInvalidate
+3) BusInvalidateAck
+4) BusDataResponse
+5) BusReadReq
+--------------------------------------------
+Valid mem to bus transactions:
+
+1) MemAck
+2) MemData
+
+--------------------------------------------
+Valid bus to mem transactions:
+
+1) MemRead
+2) MemWrite
+--------------------------------------------

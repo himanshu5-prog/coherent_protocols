@@ -37,7 +37,7 @@ void Core :: run_read (Instruction inst ){
             respTr.coreID = id;
             respTr.data = 0;
             respTr.dest = 0;
-            respTr.op = "Read";
+            respTr.op = "CoreRead";
             respTr.valid = true;
 
             cache[index].transactionCompleted = false;
@@ -50,7 +50,7 @@ void Core :: run_read (Instruction inst ){
         respTr.coreID = id;
         respTr.data = 0;
         respTr.dest = 0;
-        respTr.op = "Read";
+        respTr.op = "CoreRead";
         respTr.valid = true;
 
         cache[index].valid = true;
@@ -85,7 +85,7 @@ void Core :: run_write ( Instruction inst){
                 respTr.coreID = id;
                 respTr.data = cache[index].data;
                 respTr.dest = 0;
-                respTr.op = "Invalidate";
+                respTr.op = "InvalidateReq";
                 respTr.valid = true;
 
                 cache[index].cacheState = "WR_TR_MODIFIED";
@@ -114,7 +114,7 @@ void Core :: run_write ( Instruction inst){
             respTr.coreID = id;
             respTr.data = 0;
             respTr.dest = 0;
-            respTr.op = "Read";
+            respTr.op = "CoreRead";
             respTr.valid = true;
             cache[index].transactionCompleted = false;
             push_core_to_bus_q ( respTr);
@@ -124,7 +124,7 @@ void Core :: run_write ( Instruction inst){
             respTr.coreID = id;
             respTr.data = 0;
             respTr.dest = 0;
-            respTr.op = "Invalidate";
+            respTr.op = "InvalidateReq";
             respTr.valid = true;
             push_core_to_bus_q ( respTr);
 
@@ -145,7 +145,7 @@ void Core :: run_write ( Instruction inst){
         respTr.coreID = id;
         respTr.data = 0;
         respTr.dest = 0;
-        respTr.op = "Read";
+        respTr.op = "CoreRead";
         respTr.valid = true;
 
         push_core_to_bus_q (respTr);
@@ -155,7 +155,7 @@ void Core :: run_write ( Instruction inst){
         respTr.coreID = id;
         respTr.data = 0;
         respTr.dest = 0;
-        respTr.op = "Invalidate";
+        respTr.op = "InvalidateReq";
         respTr.valid = true;
         push_core_to_bus_q ( respTr);
 
@@ -164,6 +164,7 @@ void Core :: run_write ( Instruction inst){
 
 void Core :: run_data_response (bus_to_core_tr reqTr){
     // Some core sent read instruction and got data response
+
 }
 void Core :: run_function (){
     int index;
@@ -191,10 +192,10 @@ void Core :: run_function (){
         } else if ( bus_core_transaction.op == "InvalidAck"){
             run_inv_ack ( bus_core_transaction);
 
-        } else if ( bus_core_transaction.op == "DataResponse"){
+        } else if ( bus_core_transaction.op == "BusDataResponse"){
             run_data_response (bus_core_transaction);
 
-        } else if ( bus_core_transaction.op == "ReadReq"){
+        } else if ( bus_core_transaction.op == "BusReadReq"){
             run_bus_read_req ( bus_core_transaction);
 
         }

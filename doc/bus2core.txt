@@ -1,0 +1,21 @@
+Description of bus to core transactions:
+
+1) MemWriteAck
+
+   Core has sent MemWriteBack to Bus.
+
+2) CacheInvalidate
+
+   Bus is going to invalidate the cache.
+
+3) BusInvalidateAck
+
+   Core has sent invalidate message to bus. Now bus is sending acknowledgement that invalidation is complete.
+
+4) BusDataResponse
+
+    Core has sent CoreRead and now bus has responded by sending data response.
+
+5) BusReadReq
+
+    Bus need to get data from core. Core need to respond by sending data response.

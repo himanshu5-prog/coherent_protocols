@@ -79,7 +79,9 @@ void CPU :: load_inst_q (string fileName){
             inst.coreID = stoi(v[3]);
             inst.valid = true;
 
-            inst_q.push (inst);
+            assert (inst.coreID < 8);
+            core[inst.coreID].push_inst_q(inst);
+            //inst_q.push (inst);
             
             v.clear();
         }
@@ -98,8 +100,16 @@ void CPU :: load_inst_q (string fileName){
 void CPU :: run_function (){
     cout << "CPU :: run_function - input file: " << inputFile << "\n";
     load_inst_q (inputFile);
+
+    for (int i=0; i<8; i++){
+        cout << " CPU:: inst_q size of core id: " << i << " is " << core[i].get_size_inst_q() << "\n";
+    }
+
+
 }
 
+/*
 int CPU :: get_size_inst_q (){
     return inst_q.size();
 }
+*/

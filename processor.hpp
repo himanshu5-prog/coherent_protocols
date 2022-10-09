@@ -12,7 +12,7 @@ class Processor {
 
     public:
         void set_cpu_input_file ( string str);
-        int get_size_cpu_inst_q();
+        //int get_size_cpu_inst_q();
         void run_function();
         void printInfo();
 };

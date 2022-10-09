@@ -4,13 +4,14 @@
 #include "core.hpp"
 #include <fstream>
 #include <vector>
+#include <cassert>
 
 class CPU {
     Core core[8];
     queue <core_to_bus_tr> core2bus_q;
     queue <core_to_bus_tr> core2bus_resp_q;
     queue <bus_to_core_tr> bus2core_q;
-    queue <Instruction> inst_q;
+    //queue <Instruction> inst_q;
 
     bus_to_core_tr bus2core_tr;
     string inputFile;
@@ -34,7 +35,7 @@ class CPU {
         void pop_core_to_bus_resp_q ();
         void pop_bus_to_core_q ();
 
-        int get_size_inst_q();
+        //int get_size_inst_q();
 
         void run_function();
 

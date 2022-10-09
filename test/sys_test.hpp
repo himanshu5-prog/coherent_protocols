@@ -10,8 +10,5 @@ void sys_test(){
    //proc.printInfo();
    proc.run_function();
 
-   cout << "cpu inst_q size: " << proc.get_size_cpu_inst_q() << "\n";
-   
-   
 }
 #endif

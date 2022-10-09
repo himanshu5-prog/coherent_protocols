@@ -13,6 +13,8 @@ void Processor :: run_function(){
     cpu.run_function();
 }
 
+/*
 int Processor :: get_size_cpu_inst_q(){
     return cpu.get_size_inst_q();
 }
+*/

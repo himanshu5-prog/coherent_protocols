@@ -4,6 +4,181 @@
 
 using namespace std;
 
+//Push function
+void Bus :: push_bus_to_core_q( bus_to_core_tr tr){
+    bus_to_core_q.push(tr);
+}
+
+void Bus :: push_core_to_bus_q( core_to_bus_tr tr){
+    core_to_bus_q.push(tr);
+}
+
+void Bus :: push_core_to_bus_resp_q( core_to_bus_tr tr){
+    core_to_bus_resp_q.push(tr);
+}
+
+void Bus :: push_bus_to_mem_q ( bus_to_mem_tr tr){
+    bus_to_mem_q.push(tr);
+}
+
+void Bus :: push_mem_to_bus_q ( mem_to_bus_tr tr){
+    mem_to_bus_q.push(tr);
+}
+
+//Pop functions
+void Bus :: pop_bus_to_core_q(){
+    bus_to_core_q.pop();
+}
+
+void Bus :: pop_core_to_bus_q(){
+    core_to_bus_q.pop();
+}
+
+void Bus :: pop_core_to_bus_resp_q(){
+    core_to_bus_resp_q.pop();
+}
+
+void Bus :: pop_bus_to_mem_q(){
+    bus_to_mem_q.pop();
+}
+
+void Bus :: pop_mem_to_bus_q(){
+    mem_to_bus_q.pop();
+}
+
+//Accessing front item in queue
+bus_to_core_tr Bus :: get_front_bus_to_core_q(){
+    return bus_to_core_q.front();
+}
+
+core_to_bus_tr Bus :: get_front_core_to_bus_q(){
+    return core_to_bus_q.front();
+}
+
+core_to_bus_tr Bus :: get_front_core_to_bus_resp_q(){
+    return core_to_bus_resp_q.front();
+}
+
+bus_to_mem_tr Bus :: get_front_bus_to_mem_q(){
+    return bus_to_mem_q.front();
+}
+
+mem_to_bus_tr Bus :: get_front_mem_to_bus_q(){
+    return mem_to_bus_q.front();
+}
+
+// function to get size of the queue
+
+int Bus :: get_size_bus_to_core_q (){
+    return bus_to_core_q.size();
+}
+
+int Bus :: get_size_bus_to_mem_q () {
+    return bus_to_mem_q.size();
+}
+
+int Bus :: get_size_core_to_bus_q (){
+    return core_to_bus_q.size();
+}
+
+int Bus :: get_size_core_to_bus_resp_q (){
+    return core_to_bus_resp_q.size();
+}
+
+int Bus :: get_size_mem_to_bus_q () {
+    return mem_to_bus_q.size();
+}
+
+//Functions for bus info
+void Bus :: add_bus_info(ll addr, Bus_ds b){
+    busInfo.insert( pair <ll,Bus_ds>(addr,b));
+}
+
+bool Bus :: check_address (ll addr){
+    if ( busInfo.find(addr) == busInfo.end()) {
+        //address not present in the bus info
+        return false;
+    } else if ( busInfo.find(addr) != busInfo.end()){
+        return true;
+    }
+    return false;
+}
+
+Bus_ds Bus :: getInfo( ll addr){
+    assert ( check_address (addr));
+    return busInfo[addr];
+}
+
+void Bus :: remove_address ( ll addr){
+    assert( check_address (addr));
+    busInfo.erase(addr);
+}
+
+void Bus :: run_function(){
+    // Search through core_to_bus queue
+    /*
+        Possible transactions:
+        1) Read
+        2) MemWriteBack
+        3) Write
+    */
+    core_to_bus_tr frontTr_resp;
+    mem_to_bus_tr frontTr_mem;
+
+    if ( mem_to_bus_q.size() > 0){
+        frontTr_mem = get_front_mem_to_bus_q();
+
+        if ( frontTr_mem.op == "MemWriteAck"){
+            run_mem_ack (frontTr_mem);
+
+        } else if ( frontTr_mem.op == "MemData"){
+            run_mem_data ( frontTr_mem);
+        }
+    }
+
+    if ( core_to_bus_resp_q.size() > 0){
+        frontTr_resp = core_to_bus_resp_q.front();
+
+        if ( frontTr_resp.op == "CoreInvalidateAck"){
+            run_invalid_ack ( frontTr_resp);
+
+        } else if ( frontTr_resp.op == "CoreDataResponse"){
+            run_data_response ( frontTr_resp);
+        }
+    }
+
+    if ( core_to_bus_q.size() > 0){
+        
+        core_to_bus_tr frontTr;
+
+        bus_to_mem_tr memResp;
+
+        ll address;
+        int coreID;
+        string respOp;
+        ll data;
+        string source;
+        int sourceCore;
+
+        //Response transaction
+        bus_to_core_tr respTr;
+
+        //get the transaction from core_to_bus_q (inputQueue)
+        frontTr = get_front_core_to_bus_q();
+
+        if ( frontTr.op == "CoreRead"){
+            run_read_req (frontTr);
+
+        } else if ( frontTr.op == "MemWriteBack"){
+            run_mem_write_back (frontTr);
+
+        } else if ( frontTr.op == "InvalidateReq"){
+            run_inv_req (frontTr);
+
+        } 
+    }
+}
+
 void Bus :: remove_core_busInfo (ll address, int targetCoreID){
     set <int> :: iterator itr;
 

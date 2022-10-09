@@ -1,7 +1,53 @@
 #include "core.hpp"
 
+
+void Core :: push_core_to_bus_q (core_to_bus_tr tr){
+    q_core_bus.push(tr);
+}
+
+void Core :: push_core_to_bus_resp_q (core_to_bus_tr tr){
+    q_core2bus_resp.push(tr);
+}
+
+void Core :: pop_core_to_bus_q (){
+    q_core_bus.pop();
+}
+
+void Core :: pop_core_to_bus_resp_q (){
+    q_core2bus_resp.pop();
+}
+
+int Core :: get_size_core_to_bus_q (){
+    return q_core_bus.size();
+}
+
+int Core :: get_size_core_to_bus_resp_q (){
+    return q_core2bus_resp.size();
+}
+
+void Core :: reset_bus_to_core_tr (){
+    bus_core_transaction.valid = false;
+}
+
+void Core :: set_bus_to_core_tr ( bus_to_core_tr tr){
+    bus_core_transaction = tr;
+}
+
 int Core :: getIndex (ll address){
     return (address & 7);
+}
+
+void printCacheline ( cacheLine c){
+    cout << " address: " << c.addr << " valid: " << c.valid << " shared: " << c.shared << " dirty: " << c.dirty << " data: " << c.data << " state: " << c.cacheState
+    << " transactionCompleted: " << c.transactionCompleted << "\n";    
+}
+
+void Core :: printInfo (){
+    cout << " Core id : " << id << "\n";
+
+    for (int i=0; i<8; i++){
+        printCacheline (cache[i]);
+    }
 }
 
 void Core :: run_read (Instruction inst ){

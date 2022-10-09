@@ -2,7 +2,7 @@
 #define MEM_TEST_H
 
 #include "../mem.hpp"
-#include "../data_type.hpp"
+//#include "../data_type.hpp"
 
 void memTest (){
     Memory m;

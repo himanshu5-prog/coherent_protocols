@@ -18,6 +18,7 @@ class Core {
 
     public:
         Core (){
+            id = -1;
             cacheLine c;
             c.addr = 0;
             c.cacheState = "INVALID";
@@ -31,6 +32,7 @@ class Core {
             }               
         }
         void set_id (int x) { id = x;}
+        int get_id() {return id;}
         void run_function ();
         void reset_bus_to_core_tr ();
         void set_bus_to_core_tr(  bus_to_core_tr tr);
@@ -56,38 +58,8 @@ class Core {
         
         int get_size_core_to_bus_q ();
         int get_size_core_to_bus_resp_q ();
+        void printInfo ();
 };
 
-void Core :: push_core_to_bus_q (core_to_bus_tr tr){
-    q_core_bus.push(tr);
-}
-
-void Core :: push_core_to_bus_resp_q (core_to_bus_tr tr){
-    q_core2bus_resp.push(tr);
-}
-
-void Core :: pop_core_to_bus_q (){
-    q_core_bus.pop();
-}
-
-void Core :: pop_core_to_bus_resp_q (){
-    q_core2bus_resp.pop();
-}
-
-int Core :: get_size_core_to_bus_q (){
-    return q_core_bus.size();
-}
-
-int Core :: get_size_core_to_bus_resp_q (){
-    return q_core2bus_resp.size();
-}
-
-void Core :: reset_bus_to_core_tr (){
-    bus_core_transaction.valid = false;
-}
-
-void Core :: set_bus_to_core_tr ( bus_to_core_tr tr){
-    bus_core_transaction = tr;
-}
-
+void printCacheline ( cacheLine c);
 #endif

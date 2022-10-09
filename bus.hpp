@@ -21,7 +21,7 @@ class Bus {
     //memory to bus buffer
     queue<mem_to_bus_tr> mem_to_bus_q;
 
-    // core_to_bus buffer for invAck
+    // core_to_bus buffer for invAck/coreDataResponse
     queue < core_to_bus_tr > core_to_bus_resp_q;
 
     //Bus data structure

@@ -15,6 +15,7 @@ class Core {
     queue <core_to_bus_tr> q_core2bus_resp;
     queue <Instruction> instr_q;
     bus_to_core_tr bus_core_transaction;
+    queue <bus_to_core_tr> q_bus2core;
 
     public:
         Core (){
@@ -52,12 +53,19 @@ class Core {
 
         void push_core_to_bus_q ( core_to_bus_tr tr);
         void push_core_to_bus_resp_q ( core_to_bus_tr tr);
-        
+        void push_bus_to_core_q ( bus_to_core_tr tr);
+        void push_inst_q (Instruction inst);
+
         void pop_core_to_bus_q ();
         void pop_core_to_bus_resp_q ();
-        
+        void pop_bus_to_core_q();
+        void pop_inst_q();
+
         int get_size_core_to_bus_q ();
         int get_size_core_to_bus_resp_q ();
+        int get_size_bus_to_core_q();
+        int get_size_inst_q();
+
         void printInfo ();
 };
 

@@ -1,12 +1,19 @@
 #include "core.hpp"
 
-
 void Core :: push_core_to_bus_q (core_to_bus_tr tr){
     q_core_bus.push(tr);
 }
 
 void Core :: push_core_to_bus_resp_q (core_to_bus_tr tr){
     q_core2bus_resp.push(tr);
+}
+
+void Core :: push_bus_to_core_q (bus_to_core_tr tr){
+    q_bus2core.push(tr);
+}
+
+void Core :: push_inst_q (Instruction inst){
+    instr_q.push(inst);
 }
 
 void Core :: pop_core_to_bus_q (){
@@ -17,12 +24,28 @@ void Core :: pop_core_to_bus_resp_q (){
     q_core2bus_resp.pop();
 }
 
+void Core :: pop_bus_to_core_q (){
+    q_bus2core.pop();
+}
+
+void Core :: pop_inst_q (){
+    instr_q.pop();
+}
+
 int Core :: get_size_core_to_bus_q (){
     return q_core_bus.size();
 }
 
 int Core :: get_size_core_to_bus_resp_q (){
     return q_core2bus_resp.size();
+}
+
+int Core :: get_size_bus_to_core_q (){
+    return q_bus2core.size();
+}
+
+int Core :: get_size_inst_q(){
+    return instr_q.size();
 }
 
 void Core :: reset_bus_to_core_tr (){
@@ -235,6 +258,7 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
         instr_q.pop(); 
     }
 
+    pop_bus_to_core_q();
     //cache[index].data = reqTr.data;
     cache[index].cacheState = reqTr.state;
     cache[index].dirty = false;
@@ -265,7 +289,7 @@ void Core :: run_mem_write_ack ( bus_to_core_tr reqTr){
     cache[index].valid = false;
     
     //transactionComplete will remain false since there is read/write pending for that cache line    
-
+    pop_bus_to_core_q();
 }
 
 void Core :: run_cache_inv (bus_to_core_tr reqTr ) {
@@ -295,7 +319,7 @@ void Core :: run_cache_inv (bus_to_core_tr reqTr ) {
     respTr.valid = true;
 
     push_core_to_bus_resp_q (respTr);
-
+    pop_bus_to_core_q();
 }
 
 void Core :: run_inv_ack (bus_to_core_tr reqTr){
@@ -314,6 +338,8 @@ void Core :: run_inv_ack (bus_to_core_tr reqTr){
     cache[index].shared = false;
     cache[index].transactionCompleted = true;
     cache[index].valid = true;
+
+    pop_bus_to_core_q();
 }
 
 void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
@@ -340,6 +366,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     respTr.valid = true;
 
     push_core_to_bus_resp_q (respTr);
+    pop_bus_to_core_q();
     
 
 }
@@ -358,23 +385,24 @@ void Core :: run_function (){
 
         }
     }
-
-    if ( bus_core_transaction.valid){
+    bus_to_core_tr reqTr;
+    reqTr = q_bus2core.front();
+    if ( get_size_bus_to_core_q() > 0){
         if (bus_core_transaction.op == "MemWriteAck"){
             // someone must have sent memWriteBack
-            run_mem_write_ack ( bus_core_transaction);
+            run_mem_write_ack (reqTr);
 
         } else if ( bus_core_transaction.op == "CacheInvalidate"){
-            run_cache_inv (bus_core_transaction);
+            run_cache_inv (reqTr);
 
         } else if ( bus_core_transaction.op == "BusInvalidateAck"){
-            run_inv_ack ( bus_core_transaction);
+            run_inv_ack ( reqTr);
 
         } else if ( bus_core_transaction.op == "BusDataResponse"){
-            run_data_response (bus_core_transaction);
+            run_data_response (reqTr);
 
         } else if ( bus_core_transaction.op == "BusReadReq"){
-            run_bus_read_req ( bus_core_transaction);
+            run_bus_read_req (reqTr);
 
         }
     }

@@ -61,6 +61,10 @@ class Core {
         void pop_bus_to_core_q();
         void pop_inst_q();
 
+        core_to_bus_tr get_front_core_to_bus_q ();
+        core_to_bus_tr get_front_core_to_bus_resp_q ();
+        bus_to_core_tr get_front_bus_to_core_q();
+
         int get_size_core_to_bus_q ();
         int get_size_core_to_bus_resp_q ();
         int get_size_bus_to_core_q();

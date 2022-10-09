@@ -13,8 +13,134 @@ void Processor :: run_function(){
     cpu.run_function();
 }
 
-/*
-int Processor :: get_size_cpu_inst_q(){
-    return cpu.get_size_inst_q();
+void Processor :: load_cpu_inst_q(string fileName){
+    cpu.load_inst_q(fileName);
 }
-*/
+
+void Processor :: tr_flow_bus_to_core(){
+    //need to transfer all transactions from bus2core_q in bus to bus2core_q in core
+
+    bus_to_core_tr bus_tr;
+    int coreID;
+    
+    // bus_to_core_q (Bus) => bus_to_core_q (Core)
+    while(bus.get_size_bus_to_core_q() > 0){
+        bus_tr = bus.get_front_bus_to_core_q();
+
+        coreID = bus_tr.coreID;
+
+        cpu.push_bus_to_core_q(bus_tr, coreID);
+
+        bus.pop_bus_to_core_q();
+    }
+}
+
+void Processor :: tr_flow_core_to_bus(){
+
+    core_to_bus_tr tr;
+
+    for (int i=0; i < 8; i++){
+
+        // core_to_bus_q (Core) to core_to_bus (Bus)
+        while(cpu.get_size_core_to_bus_q(i) > 0){
+
+            tr = cpu.get_front_core_to_bus_q(i);
+            bus.push_core_to_bus_q(tr);
+
+            cpu.pop_core_to_bus_q(i);
+        }
+        //core_to_bus_resp (Core) to core_to_bus (Bus)
+        while ( cpu.get_size_core_to_bus_resp_q(i) > 0){
+
+            tr = cpu.get_front_core_to_bus_resp_q(i);
+            bus.push_core_to_bus_resp_q(tr);
+
+            cpu.pop_core_to_bus_resp_q(i);
+
+        }
+    }
+
+
+}
+
+void Processor :: tr_flow_bus_to_mem(){
+    bus_to_mem_tr tr;
+
+    // bus_to_mem_q (Bus) to bus_to_mem_q (memory)
+
+    while( bus.get_size_bus_to_mem_q() > 0){
+        
+        tr = bus.get_front_bus_to_mem_q();
+        mem.push_bus_to_mem_q(tr);
+
+        bus.pop_bus_to_mem_q();
+    }
+}
+
+void Processor :: tr_flow_mem_to_bus(){
+    mem_to_bus_tr tr;
+
+    // mem_to_bus_q (memory) to mem_to_bus_q (bus)
+
+    while( mem.get_size_mem_to_bus_q() > 0){
+
+        tr = mem.get_front_mem_to_bus_q();
+        bus.push_mem_to_bus_q(tr);
+
+        mem.pop_mem_to_bus_q();
+    }
+
+}
+
+bool Processor :: stop_simulation (){
+
+
+    for (int i=0; i<8; i++){
+        if ( cpu.get_size_core_inst_q(i) > 0){
+            return false;
+        }
+
+        if ( cpu.get_size_bus_to_core_q(i) > 0){
+        return false;
+        }
+
+        if (cpu.get_size_core_to_bus_q(i) > 0){
+            return false;
+        }
+
+        if ( cpu.get_size_core_to_bus_resp_q(i) > 0){
+            return false;
+        }
+    }
+
+    if ( bus.get_size_core_to_bus_q() > 0){
+        return false;
+    }
+
+    if ( bus.get_size_core_to_bus_resp_q() > 0){
+        return false;
+    }
+
+    if ( bus.get_size_bus_to_core_q() > 0){
+        return false;
+    }
+
+    if ( bus.get_size_bus_to_mem_q() > 0){
+        return false;
+    }
+
+    if ( bus.get_size_mem_to_bus_q() > 0){
+        return false;
+    }
+
+    if ( mem.get_size_bus_to_mem_q() > 0){
+        return false;
+    }
+
+    if ( mem.get_size_mem_to_bus_q() > 0){
+        return false;
+    }
+
+    return true;
+   
+}

@@ -11,28 +11,56 @@ void CPU :: set_input_file (string str){
     inputFile = str;
 }
 
-void CPU :: push_core_to_bus_q ( core_to_bus_tr reqTr){
-    core2bus_q.push (reqTr);
+void CPU :: push_core_to_bus_q ( core_to_bus_tr reqTr, int id){
+    core[id].push_core_to_bus_q(reqTr);
 }
 
-void CPU :: push_core_to_bus_resp_q ( core_to_bus_tr reqTr){
-    core2bus_resp_q.push (reqTr);
+void CPU :: push_core_to_bus_resp_q ( core_to_bus_tr reqTr, int id){
+    core[id].push_core_to_bus_resp_q(reqTr);
 }
 
-void CPU :: push_bus_to_core_q (bus_to_core_tr reqTr){
-    bus2core_q.push ( reqTr );
+void CPU :: push_bus_to_core_q (bus_to_core_tr reqTr, int id){
+    core[id].push_bus_to_core_q(reqTr);
 }
 
-void CPU :: pop_core_to_bus_q (){
-    core2bus_q.pop();
+void CPU :: pop_core_to_bus_q (int id){
+    core[id].pop_core_to_bus_q();
 }
 
-void CPU :: pop_core_to_bus_resp_q (){
-    core2bus_resp_q.pop();
+void CPU :: pop_core_to_bus_resp_q (int id){
+    core[id].pop_core_to_bus_resp_q();
 }
 
-void CPU :: pop_bus_to_core_q(){
-    bus2core_q.pop();
+void CPU :: pop_bus_to_core_q(int id){
+    core[id].pop_bus_to_core_q();
+}
+
+core_to_bus_tr CPU :: get_front_core_to_bus_q(int id){
+    return core[id].get_front_core_to_bus_q();
+}
+
+core_to_bus_tr CPU :: get_front_core_to_bus_resp_q(int id){
+    return core[id].get_front_core_to_bus_resp_q();
+}
+
+bus_to_core_tr CPU :: get_front_bus_to_core_q(int id){
+    return core[id].get_front_bus_to_core_q();
+}
+
+int CPU :: get_size_bus_to_core_q(int id){
+    return core[id].get_size_bus_to_core_q();
+}
+
+int CPU :: get_size_core_to_bus_q(int id){
+    return core[id].get_size_core_to_bus_q();
+}
+
+int CPU :: get_size_core_to_bus_resp_q (int id){
+    return core[id].get_size_core_to_bus_resp_q();
+}
+
+int CPU :: get_size_core_inst_q (int id){
+    return core[id].get_size_inst_q();
 }
 
 void print_vector (vector <string> v){
@@ -98,18 +126,12 @@ void CPU :: load_inst_q (string fileName){
 }
 
 void CPU :: run_function (){
-    cout << "CPU :: run_function - input file: " << inputFile << "\n";
-    load_inst_q (inputFile);
+    //load_inst_q (inputFile);
 
     for (int i=0; i<8; i++){
         cout << " CPU:: inst_q size of core id: " << i << " is " << core[i].get_size_inst_q() << "\n";
+        //core[i].run_function();
     }
 
 
 }
-
-/*
-int CPU :: get_size_inst_q (){
-    return inst_q.size();
-}
-*/

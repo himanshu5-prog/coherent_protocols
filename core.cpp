@@ -32,6 +32,18 @@ void Core :: pop_inst_q (){
     instr_q.pop();
 }
 
+core_to_bus_tr Core :: get_front_core_to_bus_q(){
+    return q_core_bus.front();
+}
+
+core_to_bus_tr Core :: get_front_core_to_bus_resp_q(){
+    return q_core2bus_resp.front();
+}
+
+bus_to_core_tr Core :: get_front_bus_to_core_q(){
+    return q_bus2core.front();
+}
+
 int Core :: get_size_core_to_bus_q (){
     return q_core_bus.size();
 }

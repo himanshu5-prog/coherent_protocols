@@ -6,7 +6,8 @@
 void sys_test(){
    Processor proc;
 
-   proc.set_cpu_input_file("input/inputFile1.txt");
+   //proc.set_cpu_input_file("input/inputFile1.txt");
+   proc.load_cpu_inst_q("input/inputFile1.txt");
    //proc.printInfo();
    proc.run_function();
 

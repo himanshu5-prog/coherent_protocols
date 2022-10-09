@@ -33,6 +33,9 @@ class Memory {
         int get_size_bus_to_mem_q();
         int get_size_mem_to_bus_q();
 
+        bus_to_mem_tr get_front_bus_to_mem_q();
+        mem_to_bus_tr get_front_mem_to_bus_q();
+
         mem_to_bus_tr get_mem_tr ();
         void print_out_tr ();
         void run_function ();

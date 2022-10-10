@@ -596,7 +596,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
 
     assert (busInfo.find(address) != busInfo.end());
     assert ( busInfo[address].valid == false);
-    assert ( busInfo[address].core_bus_tr.op == "MemRead");
+    assert ( busInfo[address].core_bus_tr.op == "CoreRead");
 
     assert ( busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end());
     assert ( busInfo[address].cacheState.find( sourceCore) != busInfo[address].cacheState.end());

@@ -129,8 +129,8 @@ void CPU :: run_function (){
     //load_inst_q (inputFile);
 
     for (int i=0; i<8; i++){
-        cout << " CPU:: inst_q size of core id: " << i << " is " << core[i].get_size_inst_q() << "\n";
-        //core[i].run_function();
+        //cout << " CPU:: inst_q size of core id: " << i << " is " << core[i].get_size_inst_q() << "\n";
+        core[i].run_function();
     }
 
 

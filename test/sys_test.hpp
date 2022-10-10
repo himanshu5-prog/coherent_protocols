@@ -10,6 +10,8 @@ void sys_test(){
    proc.load_cpu_inst_q("input/inputFile1.txt");
    //proc.printInfo();
    proc.run_function();
+   cout << "Processor information:\n";
+   proc.printInfo();
 
 }
 #endif

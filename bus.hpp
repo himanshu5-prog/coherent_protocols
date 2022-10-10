@@ -85,7 +85,9 @@ class Bus {
         int get_size_core_to_bus_resp_q ();
         
         int get_size_bus_to_mem_q ();
-        int get_size_mem_to_bus_q (); 
+        int get_size_mem_to_bus_q ();
+
+        void printInfo();
 };
 
 

@@ -39,6 +39,8 @@ class Memory {
         mem_to_bus_tr get_mem_tr ();
         void print_out_tr ();
         void run_function ();
+
+        void printInfo();
 };
 
 

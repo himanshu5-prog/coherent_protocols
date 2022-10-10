@@ -89,6 +89,15 @@ int Bus :: get_size_mem_to_bus_q () {
     return mem_to_bus_q.size();
 }
 
+void Bus :: printInfo(){
+    cout << "Bus information:\n";
+
+    cout << "core_to_bus_q size: " << get_size_core_to_bus_q() << "\n";
+    cout << "core_to_bus_resp_q size: " << get_size_core_to_bus_resp_q() << "\n";
+    cout << "bus_to_core_q size: " << get_size_bus_to_core_q() << "\n";
+    cout << "bus_to_mem_q size: " << get_size_bus_to_mem_q() << "\n";
+    cout << "mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
+}
 //Functions for bus info
 void Bus :: add_bus_info(ll addr, Bus_ds b){
     busInfo.insert( pair <ll,Bus_ds>(addr,b));

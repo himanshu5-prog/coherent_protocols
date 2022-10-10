@@ -2,7 +2,9 @@
 
 void Processor :: printInfo(){
     cpu.printInfo();
-    mem.printMem();
+    bus.printInfo();
+    mem.printInfo();
+    //mem.printMem();
 }
 
 void Processor :: set_cpu_input_file (string str){
@@ -10,7 +12,24 @@ void Processor :: set_cpu_input_file (string str){
 }
 
 void Processor :: run_function(){
-    cpu.run_function();
+    int clk_cycle;
+
+    for(clk_cycle = 0; clk_cycle < 50; clk_cycle++){
+        tr_flow_bus_to_mem();
+        mem.run_function();
+        
+        tr_flow_bus_to_core();
+        bus.run_function();
+        tr_flow_mem_to_bus();
+
+        cpu.run_function();
+        tr_flow_core_to_bus();
+        
+        if (stop_simulation()){
+            cout << "All queues are empty. stopping the simulation.\n";
+            break;
+        }
+    }
 }
 
 void Processor :: load_cpu_inst_q(string fileName){

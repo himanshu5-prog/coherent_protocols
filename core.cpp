@@ -78,11 +78,15 @@ void printCacheline ( cacheLine c){
 }
 
 void Core :: printInfo (){
-    cout << " Core id : " << id << "\n";
+    cout << "\nInformation for Core id : " << id << "\n";
 
     for (int i=0; i<8; i++){
         printCacheline (cache[i]);
     }
+    cout << " inst_q size: " << get_size_inst_q() << "\n";
+    cout << "core_to_bus_q size: " << get_size_core_to_bus_q() << "\n";
+    cout << " core_to_bus_resp_q size: " << get_size_core_to_bus_resp_q() << "\n";
+    cout << " bus_to_core_q size: " << get_size_bus_to_core_q() << "\n";
 }
 
 void Core :: run_read (Instruction inst ){
@@ -390,9 +394,9 @@ void Core :: run_function (){
     if (instr_q.size() > 0){
         inst = instr_q.front();
 
-        if (inst.op == "Read"){
+        if (inst.op == "RD"){
             run_read (inst);
-        } else if ( inst.op == "Write"){
+        } else if ( inst.op == "WR"){
             run_write (inst);
 
         }

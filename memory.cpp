@@ -46,6 +46,13 @@ mem_to_bus_tr Memory :: get_front_mem_to_bus_q(){
     return mem2bus_q.front();
 }
 
+void Memory:: printInfo(){
+
+    cout << "\nInformation for Memory:\n";
+
+    cout << "bus_to_mem_q size: " << get_size_bus_to_mem_q() << "\n";
+    cout << " mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
+}
 // Initialisation
 void Memory :: initMem(){
     for (int i=0; i < 64; i++){

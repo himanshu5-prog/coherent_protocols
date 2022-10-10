@@ -13,7 +13,7 @@ void Processor :: set_cpu_input_file (string str){
 
 void Processor :: run_function(){
     int clk_cycle;
-
+    cout << "running the processor\n";
     for(clk_cycle = 0; clk_cycle < 50; clk_cycle++){
         tr_flow_bus_to_mem();
         mem.run_function();
@@ -47,7 +47,7 @@ void Processor :: tr_flow_bus_to_core(){
         bus_tr = bus.get_front_bus_to_core_q();
 
         coreID = bus_tr.coreID;
-
+        //assert(coreID < 8 && coreID >= 0);
         cpu.push_bus_to_core_q(bus_tr, coreID);
 
         bus.pop_bus_to_core_q();

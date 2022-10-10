@@ -279,7 +279,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 // All cache line are in shared state
                 respOp = "MemRead";
                 memResp.addr = address;
-                memResp.coreID = sourceCore;
+                memResp.coreID = reqTr.coreID;
                 memResp.data = 0;
                 memResp.op = respOp;
                 memResp.trID = trID;
@@ -612,7 +612,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     respTr.addr = address;
     respTr.coreID = reqTr.coreID;
     respTr.data = reqTr.data;
-    respTr.op = "DataResponse";
+    respTr.op = "BusDataResponse";
     respTr.source = "Memory";
     respTr.state = busInfo[address].cacheState[sourceCore];
 

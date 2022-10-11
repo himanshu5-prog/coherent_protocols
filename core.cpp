@@ -1,5 +1,8 @@
 #include "core.hpp"
 
+void Core :: set_debug_mode (bool b){
+    debugMode = b;
+}
 void Core :: push_core_to_bus_q (core_to_bus_tr tr){
     q_core_bus.push(tr);
 }
@@ -98,7 +101,7 @@ void Core :: run_read (Instruction inst ){
     index = getIndex (address);
 
     if ( cache[index].valid & cache[index].transactionCompleted){
-        
+        // cache slot is occupied 
         if ( cache[index].addr == address){
             //cache hit. Nothing to do
         } else {
@@ -131,7 +134,7 @@ void Core :: run_read (Instruction inst ){
             push_core_to_bus_q ( respTr );
         }
 
-    } else if ( !cache[index].valid & cache[index].transactionCompleted){
+    } else if ( !cache[index].valid){
         // cache miss and the slot is available. Just send read message
         respTr.addr = address;
         respTr.coreID = id;
@@ -398,28 +401,31 @@ void Core :: run_function (){
             run_read (inst);
         } else if ( inst.op == "WR"){
             run_write (inst);
-
+        } else {
+            cout << "Core id: " << id << " unknown instruction found\n";
         }
     }
     bus_to_core_tr reqTr;
     reqTr = q_bus2core.front();
     if ( get_size_bus_to_core_q() > 0){
-        if (bus_core_transaction.op == "MemWriteAck"){
+        if (reqTr.op == "MemWriteAck"){
             // someone must have sent memWriteBack
             run_mem_write_ack (reqTr);
 
-        } else if ( bus_core_transaction.op == "CacheInvalidate"){
+        } else if ( reqTr.op == "CacheInvalidate"){
             run_cache_inv (reqTr);
 
-        } else if ( bus_core_transaction.op == "BusInvalidateAck"){
+        } else if ( reqTr.op == "BusInvalidateAck"){
             run_inv_ack ( reqTr);
 
-        } else if ( bus_core_transaction.op == "BusDataResponse"){
+        } else if ( reqTr.op == "BusDataResponse"){
             run_data_response (reqTr);
 
-        } else if ( bus_core_transaction.op == "BusReadReq"){
+        } else if ( reqTr.op == "BusReadReq"){
             run_bus_read_req (reqTr);
 
+        } else {
+            cout << "Core id: " << id << " unknown Op in bus_to_core tr\n";
         }
     }
 }

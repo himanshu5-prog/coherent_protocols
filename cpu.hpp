@@ -14,7 +14,7 @@ class CPU {
     //queue <Instruction> inst_q;
 
     bus_to_core_tr bus2core_tr;
-    string inputFile;
+    //string inputFile;
     public:
         CPU (){
             for (int i=0; i<8; i++){
@@ -23,10 +23,11 @@ class CPU {
             }
         }
 
-        void set_input_file (string str);
+        //void set_input_file (string str);
         void printInfo();
         void load_inst_q(string fileName);
-        
+        void set_debug_mode (bool b);
+
         void push_core_to_bus_q ( core_to_bus_tr reqTr, int coreID);
         void push_core_to_bus_resp_q ( core_to_bus_tr reqTr, int coreID);
         void push_bus_to_core_q (bus_to_core_tr reqTr, int coreID);

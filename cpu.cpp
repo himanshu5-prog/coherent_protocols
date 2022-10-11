@@ -7,8 +7,16 @@ void CPU :: printInfo (){
     }
 }
 
+/*
 void CPU :: set_input_file (string str){
     inputFile = str;
+}
+*/
+
+void CPU :: set_debug_mode (bool b){
+    for (int i=0; i<8; i++){
+        core[i].set_debug_mode(b);
+    }
 }
 
 void CPU :: push_core_to_bus_q ( core_to_bus_tr reqTr, int id){

@@ -9,10 +9,12 @@ class Processor {
     CPU cpu;
     Bus bus;
     Memory mem;
+    bool debugMode;
 
     public:
-        void set_cpu_input_file ( string str);
+        //void set_cpu_input_file ( string str);
         void load_cpu_inst_q(string str);
+        void set_debug_mode ( bool b);
         //int get_size_cpu_inst_q();
         void run_function();
         void printInfo();

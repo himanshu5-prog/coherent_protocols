@@ -145,6 +145,8 @@ void Memory :: run_function (){
 
         } else if ( reqTr.op == "MemWriteBack"){
             writeMem (reqTr);
+        } else {
+            cout << "Memory: run_function - unknown bus_to_mem_tr found\n";
         }
     }
 }    

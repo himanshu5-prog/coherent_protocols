@@ -11,6 +11,7 @@ using namespace std;
 class Core {
     map <int, cacheLine> cache;
     int id;
+    bool debugMode;
     queue <core_to_bus_tr> q_core_bus;
     queue <core_to_bus_tr> q_core2bus_resp;
     queue <Instruction> instr_q;
@@ -30,9 +31,11 @@ class Core {
 
             for (int i=0; i<8; i++) {
                 cache.insert ( pair <int, cacheLine> (i, c));
-            }               
+            }
+            debugMode = false;            
         }
         void set_id (int x) { id = x;}
+        void set_debug_mode( bool b);
         int get_id() {return id;}
         void run_function ();
         void reset_bus_to_core_tr ();

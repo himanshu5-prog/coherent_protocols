@@ -7,14 +7,20 @@ void Processor :: printInfo(){
     //mem.printMem();
 }
 
-void Processor :: set_cpu_input_file (string str){
-    cpu.set_input_file (str);
+void Processor :: set_debug_mode (bool b){
+    cpu.set_debug_mode(b);
+    bus.set_debug_mode(b);
+    mem.set_debug_mode(b);
 }
+//void Processor :: set_cpu_input_file (string str){
+ //   cpu.set_input_file (str);
+//}
 
 void Processor :: run_function(){
     int clk_cycle;
     cout << "running the processor\n";
     for(clk_cycle = 0; clk_cycle < 50; clk_cycle++){
+        cout << "clk_cycle: " << clk_cycle << "\n";
         tr_flow_bus_to_mem();
         mem.run_function();
         

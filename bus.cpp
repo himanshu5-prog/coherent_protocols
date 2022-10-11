@@ -98,6 +98,10 @@ void Bus :: printInfo(){
     cout << "bus_to_mem_q size: " << get_size_bus_to_mem_q() << "\n";
     cout << "mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
 }
+
+void Bus :: set_debug_mode ( bool b){
+    debugMode = b;
+}
 //Functions for bus info
 void Bus :: add_bus_info(ll addr, Bus_ds b){
     busInfo.insert( pair <ll,Bus_ds>(addr,b));
@@ -142,6 +146,8 @@ void Bus :: run_function(){
 
         } else if ( frontTr_mem.op == "MemData"){
             run_mem_data ( frontTr_mem);
+        } else {
+            cout << "Bus:: run_function - mem_to_bus_tr op not found\n";
         }
     }
 
@@ -153,6 +159,8 @@ void Bus :: run_function(){
 
         } else if ( frontTr_resp.op == "CoreDataResponse"){
             run_data_response ( frontTr_resp);
+        } else {
+            cout << "Bus :: run_function - core_to_bus resp_tr Op not found\n";
         }
     }
 
@@ -184,7 +192,9 @@ void Bus :: run_function(){
         } else if ( frontTr.op == "InvalidateReq"){
             run_inv_req (frontTr);
 
-        } 
+        } else {
+            cout << "Bus :: run_function - core_to_bus_tr Op not found\n";
+        }
     }
 }
 

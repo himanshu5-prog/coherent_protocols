@@ -10,10 +10,9 @@ void sys_test(){
    proc.set_debug_mode(true);
    //proc.load_cpu_inst_q("input/inputFile1.txt");
    proc.load_cpu_inst_q("input/simple_read.txt");
-   //proc.printInfo();
    proc.run_function();
-   cout << "\nProcessor information:\n";
-   proc.printInfo();
+   //cout << "\nProcessor information:\n";
+   //proc.printInfo();
 
 }
 #endif

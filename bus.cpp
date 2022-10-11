@@ -614,6 +614,9 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     address = reqTr.addr;
     sourceCore = reqTr.coreID;
 
+    if (debugMode){
+        cout <<" Received data from memory for address: " << address << " core id: " << sourceCore << "\n";
+    }
     bus_to_core_tr respTr;
 
     assert (busInfo.find(address) != busInfo.end());

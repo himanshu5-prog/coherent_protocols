@@ -65,6 +65,10 @@ void Memory :: writeMem ( bus_to_mem_tr in){
     ll address = in.addr;
     mem_to_bus_tr respTr;
 
+    if (debugMode) {
+        cout << " received memory write for address: " << address << " and core id: " << in.coreID << "\n";
+    }
+
     if ( mem.find(address) != mem.end()){
         mem[address] = in.data;
     } else {
@@ -87,6 +91,10 @@ void Memory :: readMem ( bus_to_mem_tr in){
 
     address = in.addr;
     mem_to_bus_tr respTr;
+
+    if (debugMode) {
+        cout << " received memory read for address: " << address << " and core id: " << in.coreID << "\n";
+    }
 
     if ( mem.find(address) != mem.end()){
         // address is present in the memory
@@ -137,9 +145,13 @@ void Memory :: print_out_tr(){
 void Memory :: run_function (){
 
     bus_to_mem_tr reqTr;
-    reqTr = bus2mem_q.front();
+    //reqTr = bus2mem_q.front();
 
+    if (debugMode) cout << " Memory run_function()\n";
     if ( get_size_bus_to_mem_q() > 0){
+        
+        reqTr = bus2mem_q.front();
+
         if ( reqTr.op == "MemRead"){
             readMem (reqTr);
 

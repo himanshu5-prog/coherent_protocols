@@ -135,6 +135,8 @@ void Bus :: run_function(){
         2) MemWriteBack
         3) Write
     */
+
+    if (debugMode) cout << "Bus :: run_function\n";
     core_to_bus_tr frontTr_resp;
     mem_to_bus_tr frontTr_mem;
 
@@ -239,9 +241,15 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
     address = reqTr.addr;
 
+    if (debugMode){
+        cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << "\n";
+    }
+
     if (busInfo.find(address) != busInfo.end()){
 
         if ( busInfo[address].valid){
+            
+            if (debugMode) cout << " Bus :: run_Read_req - the address already exist in busInfo and is in valid state\n";
 
             busInfo[address].core_bus_tr = reqTr;
             // the address is in busInfo. the address is already present in other core. Core in O state will respond.
@@ -307,6 +315,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
     } else {
         // the address is not in busInfo. Need to get from memory :(
+        if (debugMode) cout << " Bus :: run_Read_req - the address does not exist in busInfo and need to access memory\n";
+
         memResp.addr = address;
         memResp.coreID = reqTr.coreID;
         memResp.data = reqTr.data;
@@ -586,6 +596,8 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
     busInfo[address].valid = true;
 
     pop_mem_to_bus_q();
+    // since mem ack has been sent to core by bus, so core_to_bus_q can be popped
+    pop_core_to_bus_q();
 
 }
 
@@ -615,7 +627,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
         busInfo[address].cacheState[sourceCore] = "SHARED";
 
     } else if (busInfo[address].cacheState[sourceCore] == "TR_EXCLUSIVE") {
-        busInfo[address].cacheState[sourceCore] == "EXCLUSIVE";
+        busInfo[address].cacheState[sourceCore] = "EXCLUSIVE";
 
     }
 
@@ -630,5 +642,5 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     busInfo[address].valid = true;
 
     pop_mem_to_bus_q();
-
+    pop_core_to_bus_q();
 }

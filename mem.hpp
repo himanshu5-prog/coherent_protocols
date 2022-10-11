@@ -43,5 +43,7 @@ class Memory {
         void printInfo();
 };
 
+void print_mem_to_bus_tr ( mem_to_bus_tr tr);
+void print_bus_to_mem_tr ( bus_to_mem_tr tr);
 
 #endif

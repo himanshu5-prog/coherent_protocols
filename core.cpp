@@ -76,14 +76,18 @@ int Core :: getIndex (ll address){
 }
 
 void printCacheline ( cacheLine c){
+    cout << "----------------------------------------------------------------\n";
     cout << " address: " << c.addr << " valid: " << c.valid << " shared: " << c.shared << " dirty: " << c.dirty << " data: " << c.data << " state: " << c.cacheState
-    << " transactionCompleted: " << c.transactionCompleted << "\n";    
+    << " transactionCompleted: " << c.transactionCompleted << "\n";
+    cout << "-------------------------------------------------------------------------\n";
 }
 
 void Core :: printInfo (){
     cout << "\nInformation for Core id : " << id << "\n";
 
+    cout << "Cache content\n";
     for (int i=0; i<8; i++){
+        cout << "index: " << i << " ";
         printCacheline (cache[i]);
     }
     cout << " inst_q size: " << get_size_inst_q() << "\n";
@@ -102,10 +106,21 @@ void Core :: run_read (Instruction inst ){
 
     if ( cache[index].valid & cache[index].transactionCompleted){
         // cache slot is occupied 
+
+        if (debugMode){
+            cout << " run_read :: Core id: " << id << endl;
+            cout << " current instruction:\n";
+            print_instruction(inst);
+            cout << "cache address " << address << " | index: " << index << "\n"; 
+        }
+
         if ( cache[index].addr == address){
             //cache hit. Nothing to do
+            if (debugMode) cout << "run_read :: Cache hit!\n";
         } else {
             // cache miss. Need to evict the cacheline
+            if (debugMode) cout << "run_read :: Cache miss\n";
+            
             if ( cache[index].dirty){
                 //need to writeback to memory
                 respTr.addr = cache[index].addr;
@@ -118,9 +133,14 @@ void Core :: run_read (Instruction inst ){
                 // need to wait for ack from memory
                 cache[index].cacheState = "RD_MO_TR_INV";
                 push_core_to_bus_q (respTr);
+
+                if (debugMode) cout << "run_read:: cache line is valid & dirty and need to be evicted. Sent MemWriteBack\n";
+
             } else {
                 cache[index].cacheState = "RD_INV";
+                if (debugMode) cout << " run_read :: cache line is valid and clean and can be replaced silently\n";
             }
+
             // send read message
             respTr.addr = address;
             respTr.coreID = id;
@@ -132,10 +152,22 @@ void Core :: run_read (Instruction inst ){
             
             cache[index].transactionCompleted = false;
             push_core_to_bus_q ( respTr );
+
+            if (debugMode) cout << " run_read :: pushed coreRead to core_to_bus_q\n";
         }
 
     } else if ( !cache[index].valid){
         // cache miss and the slot is available. Just send read message
+
+        if (debugMode) cout << "run_read :: Cache miss and slot is empty.\n";
+        
+        if (debugMode){
+            cout << " run_read :: Core id: " << id << endl;
+            cout << " current instruction:\n";
+            print_instruction(inst);
+            cout << "cache address " << address << " | index: " << index << "\n"; 
+        }
+
         respTr.addr = address;
         respTr.coreID = id;
         respTr.data = 0;
@@ -152,6 +184,7 @@ void Core :: run_read (Instruction inst ){
         cache[index].shared = false;
 
         push_core_to_bus_q ( respTr );
+        if (debugMode) cout << " run_read :: pushed coreRead to core_to_bus_q\n";
 
     }
 
@@ -266,6 +299,11 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
     address = reqTr.addr;
 
     index = getIndex (address);
+
+    if (debugMode){
+        cout << "run_data_response :: Received data response from Bus in core id: " << id << "\n";
+        cout << "address: " << address << " | index: " << index << "\n";
+    }
 
     assert ( cache[index].transactionCompleted == false);
 
@@ -394,6 +432,9 @@ void Core :: run_function (){
     int index;
     ll address;
     Instruction inst;
+
+    if (debugMode) cout << " run_function of Core id: " << id << "\n";
+
     if (instr_q.size() > 0){
         inst = instr_q.front();
 
@@ -406,8 +447,11 @@ void Core :: run_function (){
         }
     }
     bus_to_core_tr reqTr;
-    reqTr = q_bus2core.front();
+    //reqTr = q_bus2core.front();
     if ( get_size_bus_to_core_q() > 0){
+
+        reqTr = q_bus2core.front();
+        
         if (reqTr.op == "MemWriteAck"){
             // someone must have sent memWriteBack
             run_mem_write_ack (reqTr);

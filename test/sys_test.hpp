@@ -12,7 +12,7 @@ void sys_test(){
    proc.load_cpu_inst_q("input/simple_read.txt");
    //proc.printInfo();
    proc.run_function();
-   cout << "Processor information:\n";
+   cout << "\nProcessor information:\n";
    proc.printInfo();
 
 }

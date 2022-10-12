@@ -3,7 +3,7 @@
 
 #include "../processor.hpp"
 
-void sys_test(string fileName){
+void sys_test(string fileName, bool verbose){
    Processor proc;
 
    //proc.set_cpu_input_file("input/inputFile1.txt");
@@ -13,8 +13,11 @@ void sys_test(string fileName){
    proc.load_cpu_inst_q(fileName);
    //proc.load_cpu_inst_q("input/simple_write.txt");
    proc.run_function();
-   cout << "\nProcessor information:\n";
-   proc.printInfo();
+   
+   if (verbose){
+      cout << "\nProcessor information:\n";
+      proc.printInfo();
+   }
 
 }
 #endif

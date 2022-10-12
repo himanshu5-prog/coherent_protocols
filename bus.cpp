@@ -241,14 +241,14 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
     address = reqTr.addr;
 
-    if (debugMode){
-        cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << "\n";
-    }
-
     if (busInfo.find(address) != busInfo.end()){
 
         if ( busInfo[address].valid){
             
+            if (debugMode){
+                cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << "\n";
+            }
+
             if (debugMode) cout << " Bus :: run_Read_req - the address already exist in busInfo and is in valid state\n";
 
             busInfo[address].core_bus_tr = reqTr;
@@ -315,6 +315,10 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
     } else {
         // the address is not in busInfo. Need to get from memory :(
+
+        if (debugMode){
+            cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << "\n";
+        }
         if (debugMode) cout << " Bus :: run_Read_req - the address does not exist in busInfo and need to access memory\n";
 
         memResp.addr = address;
@@ -346,6 +350,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
 
         // pushing req to bus_to_mem_q
+        
         push_bus_to_mem_q(memResp);
 
         // the request will stay in core_to_bus queue until the memory supply the data to bus
@@ -402,35 +407,51 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
     address = reqTr.addr;
     sourceCore = reqTr.coreID;
 
+    if (debugMode) cout << "Bus :: run_inv_req - received invalidation from core id: " << sourceCore << " for address: " << address << "\n"; 
     bus_to_core_tr respTr;
     // address entry must be present in busInfo
     assert ( busInfo.find(address) != busInfo.end());
     //busInfo[address].core_bus_tr = reqTr;
     //Need to send invalidate message to all cores other than sourceCore
+    int coreCount = 0;
 
     if ( busInfo[address].valid){
         busInfo[address].core_bus_tr = reqTr;
+
+        
         for (auto& id: busInfo[address].coreID){
-        
-            if (id == sourceCore)
+            if ( id == sourceCore)
                 continue;
-        
-            busInfo[address].invRequest[id] = true;
-
-            // need to send invalidation message 
-            respTr.addr = address;
-            respTr.coreID = id;
-            respTr.data = 0;
-            respTr.op = "CacheInvalidate";
-            respTr.source = to_string(sourceCore);
-            respTr.valid = true;
-            respTr.state = "INVALIDATE";
-
-            push_bus_to_core_q(respTr);
-
+            coreCount += 1;
         }
-        //No other transaction can be processes till all acks are received.
-        busInfo[address].valid = false;
+
+        if ( coreCount == 0){
+            // no need to send invalidate. Only source Core is present
+            if (debugMode) cout << " Bus :: run_inv_req - only sourceCore is present in busInfo. No need to send invalidation. Popping out core_to_bus_q\n";
+            
+            pop_core_to_bus_q();
+        } else { 
+            for (auto& id: busInfo[address].coreID){
+        
+                if (id == sourceCore)
+                    continue;
+        
+                busInfo[address].invRequest[id] = true;
+                coreCount += 1;
+                // need to send invalidation message 
+                respTr.addr = address;
+                respTr.coreID = id;
+                respTr.data = 0;
+                respTr.op = "CacheInvalidate";
+                respTr.source = to_string(sourceCore);
+                respTr.valid = true;
+                respTr.state = "INVALIDATE";
+
+                push_bus_to_core_q(respTr);
+            }
+            //No other transaction can be processes till all acks are received.
+            busInfo[address].valid = false;
+        }
     }
 
     // Need to wait for inv ack from all cores before the queue can be popped

@@ -136,7 +136,7 @@ void Bus :: run_function(){
         3) Write
     */
 
-    if (debugMode) cout << "Bus :: run_function\n";
+    //if (debugMode) cout << "Bus :: run_function\n";
     core_to_bus_tr frontTr_resp;
     mem_to_bus_tr frontTr_mem;
 
@@ -636,7 +636,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     sourceCore = reqTr.coreID;
 
     if (debugMode){
-        cout <<" Received data from memory for address: " << address << " core id: " << sourceCore << "\n";
+        cout <<" Bus :: Received data from memory for address: " << address << " core id: " << sourceCore << "\n";
     }
     bus_to_core_tr respTr;
 

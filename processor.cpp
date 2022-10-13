@@ -8,6 +8,7 @@ void Processor :: printInfo(){
 }
 
 void Processor :: set_debug_mode (bool b){
+    debugMode = b;
     cpu.set_debug_mode(b);
     bus.set_debug_mode(b);
     mem.set_debug_mode(b);
@@ -23,7 +24,9 @@ void Processor :: run_function(){
 
        // CLK_CYCLE = clk_cycle;
 
-        cout << "clk_cycle: " << clk_cycle << "\n";
+        if (debugMode)
+            cout << "clk_cycle: " << clk_cycle << "\n";
+        
         tr_flow_bus_to_mem();
         mem.run_function();
         

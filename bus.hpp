@@ -27,6 +27,8 @@ class Bus {
     //Bus data structure
     map <ll, Bus_ds> busInfo;
 
+    ll clk_cycle;
+
     ll trID;
     bool debugMode;
 
@@ -34,6 +36,7 @@ class Bus {
         Bus (){
             trID = (ll) 0;
             debugMode = false;
+            clk_cycle = (ll)0;
         }
         // Run function
         void run_function();
@@ -91,6 +94,7 @@ class Bus {
         int get_size_mem_to_bus_q ();
 
         void printInfo();
+        void incr_clk_cycle();
 };
 
 void print_bus_to_core_tr ( bus_to_core_tr tr);

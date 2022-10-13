@@ -13,7 +13,7 @@ class Memory {
     queue <mem_to_bus_tr> mem2bus_q;
 
     bool debugMode;
-
+    ll clk_cycle;
     public: 
         Memory ();
         void initMem();
@@ -41,6 +41,7 @@ class Memory {
         void run_function ();
 
         void printInfo();
+        void incr_clk_cycle() { clk_cycle += (ll) 1;}
 };
 
 void print_mem_to_bus_tr ( mem_to_bus_tr tr);

@@ -20,6 +20,9 @@ void Processor :: run_function(){
     int clk_cycle;
     cout << "running the processor\n";
     for(clk_cycle = 0; clk_cycle < 50; clk_cycle++){
+
+       // CLK_CYCLE = clk_cycle;
+
         cout << "clk_cycle: " << clk_cycle << "\n";
         tr_flow_bus_to_mem();
         mem.run_function();
@@ -35,6 +38,9 @@ void Processor :: run_function(){
             cout << "All queues are empty. stopping the simulation.\n";
             break;
         }
+        cpu.incr_clk_cycle();
+        bus.incr_clk_cycle();
+        mem.incr_clk_cycle();
     }
 }
 

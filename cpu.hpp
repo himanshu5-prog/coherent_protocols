@@ -8,12 +8,8 @@
 
 class CPU {
     Core core[8];
-    //queue <core_to_bus_tr> core2bus_q;
-    //queue <core_to_bus_tr> core2bus_resp_q;
-    //queue <bus_to_core_tr> bus2core_q;
-    //queue <Instruction> inst_q;
-
     bus_to_core_tr bus2core_tr;
+    //ll clk_cycle;
     //string inputFile;
     public:
         CPU (){
@@ -21,6 +17,7 @@ class CPU {
                 core[i].set_id(i);
                 core[i].reset_bus_to_core_tr();
             }
+            //clk_cycle = (ll) 0;
         }
 
         //void set_input_file (string str);
@@ -48,6 +45,7 @@ class CPU {
         //int get_size_inst_q();
 
         void run_function();
+        void incr_clk_cycle();
 
 };
 

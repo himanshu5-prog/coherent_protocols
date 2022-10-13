@@ -1,6 +1,7 @@
 #include<iostream>
 //#include "test/mem_test.hpp"
 #include "test/sys_test.hpp"
+#include <cstring>
 using namespace std;
 
 int main(int argc, char** argv){
@@ -14,19 +15,20 @@ int main(int argc, char** argv){
     fileName = argv[1];
 
     bool verbose = false;
-
-    if (argv[2] == "-v"){
+    cout << " argv[2]: " << argv[2] << "\n";
+    if (strcmp(argv[2], "-v" ) == 0){
         assert (argc == 4);
-        assert ( argv[3] == "1" || argv[3] == "0" );
-        
-        if (argv[3] == "0"){
+        cout << "argv[3]: " << argv[3] << "\n";
+        //assert ( argv[3] == "1" || argv[3] == "0" );
+        cout << "Found -v switch\n"; 
+        if ( !(strcmp(argv[3], "0")) ){
             verbose = false;
-        } else if ( argv[3] == "1"){
+        } else if ( !(strcmp(argv[3], "1")) ){
             verbose = true;
         }
     }
 
-    std :: cout << "Running test: " << fileName << "\n";
+    std :: cout << "Running test: " << fileName << ", verbosity: " << verbose<< "\n";
     sys_test(fileName, verbose);
     
     

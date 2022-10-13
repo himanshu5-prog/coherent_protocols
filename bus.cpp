@@ -99,6 +99,10 @@ void Bus :: printInfo(){
     cout << "mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
 }
 
+void Bus :: incr_clk_cycle (){
+    clk_cycle += (ll)1;
+}
+
 void Bus :: set_debug_mode ( bool b){
     debugMode = b;
 }
@@ -246,7 +250,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         if ( busInfo[address].valid){
             
             if (debugMode){
-                cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << "\n";
+                cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << ", clk_cycle: " << clk_cycle <<"\n";
             }
 
             if (debugMode) cout << " Bus :: run_Read_req - the address already exist in busInfo and is in valid state\n";
@@ -292,6 +296,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 busInfo[address].coreID.insert(sourceCore);
                 busInfo[address].cacheState.insert ( pair <int, string> (sourceCore, "TR_SHARED"));
                 busInfo[address].valid = false;
+                
+                if (debugMode) cout << " Bus :: run_read_req: Sent busBusRead to the core. clk_cycle: " << clk_cycle << "\n";
                 //pop_core_to_bus_q();
             } else {
                 // All cache line are in shared state
@@ -309,6 +315,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 busInfo[address].valid = false;
 
                 trID += 1;
+                if (debugMode) cout << " Bus :: run_read_req: All cores are in shared state. Sent mem read. clk_cycle: " << clk_cycle << "\n";
                 //pop_core_to_bus_q();
             }
         }
@@ -317,7 +324,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         // the address is not in busInfo. Need to get from memory :(
 
         if (debugMode){
-            cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID << "\n";
+            cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID <<  " clk_cycle: " << clk_cycle << "\n";
         }
         if (debugMode) cout << " Bus :: run_Read_req - the address does not exist in busInfo and need to access memory\n";
 
@@ -370,7 +377,9 @@ void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
     assert ( busInfo.find(address) != busInfo.end());
 
     if ( busInfo[address].valid) {
-
+        
+        if (debugMode) 
+            cout << "Bus :: run_mem_write_back: received memory write-back req for address: " << reqTr.addr << " from core: " << reqTr.coreID << " clk_cycle: " << clk_cycle << "\n";
         memResp.addr = reqTr.addr;
         memResp.coreID = reqTr.coreID;
         memResp.data = reqTr.data;
@@ -407,7 +416,7 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
     address = reqTr.addr;
     sourceCore = reqTr.coreID;
 
-    if (debugMode) cout << "Bus :: run_inv_req - received invalidation from core id: " << sourceCore << " for address: " << address << "\n"; 
+    if (debugMode) cout << "Bus :: run_inv_req - received invalidation from core id: " << sourceCore << " for address: " << address << " clk_cycle: " << clk_cycle << "\n"; 
     bus_to_core_tr respTr;
     // address entry must be present in busInfo
     assert ( busInfo.find(address) != busInfo.end());
@@ -484,6 +493,8 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     assert ( busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end());
     assert (busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
 
+    if (debugMode)
+        cout << " Received data response from core: " << sourceCore << " address: " << address << " clk_cycle: " << clk_cycle << "\n";
     //busInfo[address].cacheState.insert ( pair <int, string>(dest, "SHARED"));
     busInfo[address].cacheState[sourceCore] = "SHARED";
 
@@ -636,7 +647,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     sourceCore = reqTr.coreID;
 
     if (debugMode){
-        cout <<" Bus :: Received data from memory for address: " << address << " core id: " << sourceCore << "\n";
+        cout <<" Bus :: Received data from memory for address: " << address << " core id: " << sourceCore << " clk_cycle: " << clk_cycle << "\n";
     }
     bus_to_core_tr respTr;
 

@@ -7,6 +7,11 @@ void CPU :: printInfo (){
     }
 }
 
+void CPU :: incr_clk_cycle (){
+    for (int i=0; i<8; i++){
+        core[i].incr_clk_cycle();
+    }
+}
 /*
 void CPU :: set_input_file (string str){
     inputFile = str;

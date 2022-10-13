@@ -18,6 +18,7 @@ class Core {
     bus_to_core_tr bus_core_transaction;
     queue <bus_to_core_tr> q_bus2core;
 
+    ll clk_cycle;
     public:
         Core (){
             id = -1;
@@ -32,7 +33,8 @@ class Core {
             for (int i=0; i<8; i++) {
                 cache.insert ( pair <int, cacheLine> (i, c));
             }
-            debugMode = false;            
+            debugMode = false;
+            clk_cycle = (ll)0;       
         }
         void set_id (int x) { id = x;}
         void set_debug_mode( bool b);
@@ -40,6 +42,7 @@ class Core {
         void run_function ();
         void reset_bus_to_core_tr ();
         void set_bus_to_core_tr(  bus_to_core_tr tr);
+        void incr_clk_cycle (){ clk_cycle += (ll)1; }
 
         //from core to bus queue
         void run_read (Instruction instr);

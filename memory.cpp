@@ -12,6 +12,8 @@ Memory :: Memory (){
     for (int i=0; i < 64; i++){
         mem.insert ( pair <ll,ll> (i,i/2 + 1));
     }
+
+    clk_cycle = (ll)0;
 }
 
 void Memory :: push_bus_to_mem_q( bus_to_mem_tr tr){
@@ -66,7 +68,7 @@ void Memory :: writeMem ( bus_to_mem_tr in){
     mem_to_bus_tr respTr;
 
     if (debugMode) {
-        cout << " Memory :: received memory Write for address: " << address << " and core id: " << in.coreID << "\n";
+        cout << " Memory :: received memory Write for address: " << address << " and core id: " << in.coreID << ", clk_cycle: " << clk_cycle <<"\n";
     }
 
     if ( mem.find(address) != mem.end()){
@@ -93,7 +95,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
     mem_to_bus_tr respTr;
 
     if (debugMode) {
-        cout << " Memory :: received memory Read for address: " << address << " and core id: " << in.coreID << "\n";
+        cout << " Memory :: received memory Read for address: " << address << " and core id: " << in.coreID  << ", clk_cycle: " << clk_cycle << "\n";
     }
 
     if ( mem.find(address) != mem.end()){

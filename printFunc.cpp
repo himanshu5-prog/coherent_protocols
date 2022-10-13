@@ -6,7 +6,7 @@ using namespace std;
 
 void print_instruction (Instruction inst){
     cout <<"--Instruction-------------------------------------------------------------------------------------------------------------------------------------\n";
-    cout << "address: " << inst.address << " | coreID: " << inst.coreID << " | data: " << inst.data << " | op: " << inst.op << " | valid: " << inst.valid << "\n";
+    cout << "id: " << inst.id <<  " | address: " << inst.address << " | coreID: " << inst.coreID << " | data: " << inst.data << " | op: " << inst.op << " | valid: " << inst.valid << "\n";
     cout <<"--------------------------------------------------------------------------------------------------------------------------------------------------\n";
 }
 

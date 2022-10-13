@@ -114,10 +114,11 @@ void CPU :: load_inst_q (string fileName){
             getInst(line,v);
             //print_vector(v);
 
-            inst.op = v[0];
-            inst.address = stoi (v[1]);
-            inst.data = stoi(v[2]);
-            inst.coreID = stoi(v[3]);
+            inst.id = stoi(v[0]);
+            inst.op = v[1];
+            inst.address = stoi (v[2]);
+            inst.data = stoi(v[3]);
+            inst.coreID = stoi(v[4]);
             inst.valid = true;
 
             assert (inst.coreID < 8);

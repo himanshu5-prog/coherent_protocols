@@ -35,7 +35,7 @@ void Processor :: run_function(){
         tr_flow_core_to_bus();
         
         if (stop_simulation()){
-            cout << "All queues are empty. stopping the simulation.\n";
+            cout << "All queues are empty. stopping the simulation at clk_cycle: " << clk_cycle << "\n";
             break;
         }
         cpu.incr_clk_cycle();

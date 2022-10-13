@@ -99,6 +99,15 @@ void Bus :: printInfo(){
     cout << "mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
 }
 
+void Bus :: printBusInfoAddr ( map <int, string> cacheState){
+    map<int, string> :: iterator itr;
+    cout << " cache state record:\n";
+    for ( itr = cacheState.begin(); itr != cacheState.end(); itr++){
+        cout << " core: " << itr->first << " , state: " << itr->second << "\n";
+    }
+    cout << "---------------------\n";
+}
+
 void Bus :: incr_clk_cycle (){
     clk_cycle += (ll)1;
 }
@@ -268,6 +277,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                     sourceCore = id;
                     flag = true;
 
+                    if (debugMode) cout << "Bus :: run_read_req: found core: " << id << " in state: " << busInfo[address].cacheState[id]  << "\n";
+                    
                     if (busInfo[address].cacheState[id] == "EXCLUSIVE") {
                         state = "SHARED";
                     } else if (busInfo[address].cacheState[id] == "OWNED"){
@@ -275,6 +286,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                     } else if ( busInfo[address].cacheState[id] == "MODIFIED"){
                         state = "OWNED";
                     }
+
+                    //if (debugMode) cout << "Bus :: run_read_req: found core: " << id << " in state: " << state << "\n";
                     break;
                 }
             }
@@ -311,6 +324,10 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 memResp.trID = trID;
                 memResp.valid = true;
 
+                if (debugMode){
+                    cout << "cache state for address: " << address << "\n";
+                    printBusInfoAddr (busInfo[address].cacheState);
+                }
                 push_bus_to_mem_q(memResp);
                 busInfo[address].coreID.insert(reqTr.coreID);
                 busInfo[address].cacheState.insert ( pair <int, string> (reqTr.coreID, "TR_SHARED"));
@@ -418,8 +435,8 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
     address = reqTr.addr;
     sourceCore = reqTr.coreID;
 
-    if (debugMode) cout << "Bus :: run_inv_req - received invalidation from core id: " << sourceCore << " for address: " << address << " clk_cycle: " << clk_cycle << "\n"; 
-    bus_to_core_tr respTr;
+    //if (debugMode) cout << "Bus :: run_inv_req - received invalidation from core id: " << sourceCore << " for address: " << address << " clk_cycle: " << clk_cycle << "\n"; 
+    //bus_to_core_tr respTr;
     // address entry must be present in busInfo
     assert ( busInfo.find(address) != busInfo.end());
     //busInfo[address].core_bus_tr = reqTr;
@@ -427,6 +444,8 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
     int coreCount = 0;
 
     if ( busInfo[address].valid){
+        if (debugMode) cout << "Bus :: run_inv_req - received invalidation from core id: " << sourceCore << " for address: " << address << " clk_cycle: " << clk_cycle << "\n"; 
+        bus_to_core_tr respTr;
         busInfo[address].core_bus_tr = reqTr;
 
         
@@ -545,6 +564,9 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
     //The cache line must exist in busInfo
     assert ( busInfo.find(address) != busInfo.end());
 
+    if (debugMode){
+        cout << " Bus :: run_inv_ack: recieved inv_Ack from core id: " << sourceCore << ", clk_cycle: " << clk_cycle << "\n";
+    }
     // Need to send invalidate message to all cores except sourceCore
     // remove the cores from cacheState and coreID set
     assert ( sourceCore < 8);    
@@ -555,6 +577,13 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
 
     reqCount = 0;
     ackCount = 0;
+
+    // Changing the state of core which sent inv_ack
+    assert ( busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end() );
+    assert ( busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
+
+    busInfo[address].cacheState[sourceCore] = "INVALID";
+
 
     for (int i =0; i < 8; i++){
         // Need to check if all the ack are received.
@@ -575,6 +604,11 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
         // All cores have responded by sending ack
         //Send ack to sourceCore
 
+        if (debugMode){
+            cout << " Bus :: run_invalid_ack: received all inv_ack from all cores. Sending ack to core: " << busInfo[address].core_bus_tr.coreID <<
+             " clk_cycle: "<< clk_cycle << "\n";
+        }
+        
         respTr.addr = address;
         respTr.coreID = busInfo[address].core_bus_tr.coreID;
         respTr.data = 0;
@@ -660,7 +694,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     sourceCore = reqTr.coreID;
 
     if (debugMode){
-        cout <<" Bus :: Received data from memory for address: " << address << " core id: " << sourceCore << " clk_cycle: " << clk_cycle << "\n";
+        cout <<" Bus :: Received data from memory for address: " << address << " core id: " << sourceCore << " sending data to core. clk_cycle: " << clk_cycle << "\n";
     }
     bus_to_core_tr respTr;
 

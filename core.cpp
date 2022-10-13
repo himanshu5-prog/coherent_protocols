@@ -445,7 +445,7 @@ void Core :: run_inv_ack (bus_to_core_tr reqTr){
 
     if (debugMode){
         cout << " Core :: run_inv_ack: received invalidate ack from bus for core id: " << id << ", address: " << address <<
-        ", index: " << index << ", clk_cycle: " << clk_cycle << "\n";
+        ", index: " << index << " . data can be wriiten in cache"<< ", clk_cycle: " << clk_cycle << "\n";
     }
 
     cache[index].cacheState = reqTr.state;
@@ -455,6 +455,7 @@ void Core :: run_inv_ack (bus_to_core_tr reqTr){
     cache[index].valid = true;
 
     pop_bus_to_core_q();
+    instr_q.pop(); // instruction is completed now
 }
 
 void Core :: run_bus_read_req ( bus_to_core_tr reqTr){

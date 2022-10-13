@@ -95,6 +95,7 @@ class Bus {
 
         void printInfo();
         void incr_clk_cycle();
+        void printBusInfoAddr ( map <int, string> cacheState);
 };
 
 void print_bus_to_core_tr ( bus_to_core_tr tr);

@@ -477,6 +477,14 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     data = cache[index].data;
     cache[index].shared = true;
     
+    if (cache[index].cacheState == "EXCLUSIVE"){
+        cache[index].cacheState = "SHARED";
+
+    } else if ( cache[index].cacheState == "MODIFIED"){
+        cache[index].cacheState = "OWNED";
+    }
+
+    
     respTr.addr = address;
     respTr.coreID = id;
     respTr.data = data;
@@ -531,7 +539,7 @@ void Core :: run_function (){
             run_bus_read_req (reqTr);
 
         } else {
-            cout << "Core id: " << id << " unknown Op in bus_to_core tr\n";
+            cout << "Core id: " << id << " unknown Op in bus_to_core tr, op: " << reqTr.op << "\n";
         }
     }
 }

@@ -291,13 +291,15 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 respTr.source = source;
                 respTr.valid = true;
                 respTr.state = state;
+                respTr.op = respOp;
 
                 push_bus_to_core_q(respTr);
-                busInfo[address].coreID.insert(sourceCore);
-                busInfo[address].cacheState.insert ( pair <int, string> (sourceCore, "TR_SHARED"));
+                busInfo[address].coreID.insert(reqTr.coreID);
+                //busInfo[address].cacheState.insert ( pair <int, string> (sourceCore, "TR_SHARED"));
+                busInfo[address].cacheState.insert ( pair <int, string> (reqTr.coreID, "TR_SHARED"));
                 busInfo[address].valid = false;
                 
-                if (debugMode) cout << " Bus :: run_read_req: Sent busBusRead to the core. clk_cycle: " << clk_cycle << "\n";
+                if (debugMode) cout << " Bus :: run_read_req: Sent BusReadReq to the core: " << sourceCore << " clk_cycle: " << clk_cycle << "\n";
                 //pop_core_to_bus_q();
             } else {
                 // All cache line are in shared state
@@ -310,8 +312,8 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 memResp.valid = true;
 
                 push_bus_to_mem_q(memResp);
-                busInfo[address].coreID.insert(sourceCore);
-                busInfo[address].cacheState.insert ( pair <int, string> (sourceCore, "TR_SHARED"));
+                busInfo[address].coreID.insert(reqTr.coreID);
+                busInfo[address].cacheState.insert ( pair <int, string> (reqTr.coreID, "TR_SHARED"));
                 busInfo[address].valid = false;
 
                 trID += 1;
@@ -479,7 +481,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     int dest;
     address = reqTr.addr;
     sourceCore = reqTr.coreID;
-    dest = reqTr.dest;
+    //dest = reqTr.dest;
 
     bus_to_core_tr respTr;
 
@@ -493,10 +495,21 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     assert ( busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end());
     assert (busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
 
+    assert ( busInfo[address].coreID.find(dest) != busInfo[address].coreID.end());
+    assert (busInfo[address].cacheState.find(dest) != busInfo[address].cacheState.end());
+    
     if (debugMode)
-        cout << " Received data response from core: " << sourceCore << " address: " << address << " clk_cycle: " << clk_cycle << "\n";
+        cout << " Bus :: run_data_response: Received data response from core: " << sourceCore << " address: " << address << " clk_cycle: " << clk_cycle << "\n";
     //busInfo[address].cacheState.insert ( pair <int, string>(dest, "SHARED"));
-    busInfo[address].cacheState[sourceCore] = "SHARED";
+
+    if (busInfo[address].cacheState[sourceCore] == "EXCLUSIVE"){
+        busInfo[address].cacheState[sourceCore] = "SHARED";
+
+    } else if ( busInfo[address].cacheState[sourceCore] == "MODIFIED"){
+        busInfo[address].cacheState[sourceCore] = "OWNED";
+    }
+
+    busInfo[address].cacheState[dest] = "SHARED";
 
     respTr.addr = address;
     respTr.coreID = dest;

@@ -636,7 +636,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
 
         push_bus_to_core_q (respTr);
         pop_core_to_bus_q();
-        pop_core_to_bus_resp_q();
+        //pop_core_to_bus_resp_q();
     }
 
 }

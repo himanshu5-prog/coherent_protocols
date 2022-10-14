@@ -208,7 +208,7 @@ void Bus :: run_function(){
             run_inv_req (frontTr);
 
         } else {
-            cout << "Bus :: run_function - core_to_bus_tr Op not found\n";
+            cout << "Bus :: run_function - core_to_bus_tr Op not found. op: "<< frontTr.op<<"\n";
         }
     }
 }
@@ -583,12 +583,12 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
     assert ( busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
 
     busInfo[address].cacheState[sourceCore] = "INVALID";
-
+    pop_core_to_bus_resp_q();
 
     for (int i =0; i < 8; i++){
         // Need to check if all the ack are received.
         // If yes, need to send ack to sourceCore
-        
+                
         if ( busInfo[address].invRequest[i]){
             // the core should exist in coreID set
             assert ( busInfo[address].coreID.find(i) != busInfo[address].coreID.end());
@@ -600,10 +600,14 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
         }
     }
 
-    if ( ackCount == ackCount){
+    if (debugMode) {
+        cout << "Bus::run_inv_ack : number of inv req sent: " << reqCount << ", ack received: " << ackCount << "\n";
+    }
+
+    if ( ackCount == reqCount){
         // All cores have responded by sending ack
         //Send ack to sourceCore
-
+        //pop_core_to_bus_q();
         if (debugMode){
             cout << " Bus :: run_invalid_ack: received all inv_ack from all cores. Sending ack to core: " << busInfo[address].core_bus_tr.coreID <<
              " clk_cycle: "<< clk_cycle << "\n";

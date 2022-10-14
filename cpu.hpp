@@ -46,6 +46,7 @@ class CPU {
 
         void run_function();
         void incr_clk_cycle();
+        void printPerf();
 
 };
 

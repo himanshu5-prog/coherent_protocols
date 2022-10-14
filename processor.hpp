@@ -4,11 +4,14 @@
 #include "cpu.hpp"
 #include "bus.hpp"
 #include "mem.hpp"
+#include "perf_param.hpp"
 
 class Processor {
     CPU cpu;
     Bus bus;
     Memory mem;
+    Perf_params perf;    
+
     bool debugMode;
 
     public:
@@ -26,6 +29,7 @@ class Processor {
         void tr_flow_core_to_bus();
 
         bool stop_simulation();
+        void printPerf();
 };
 
 

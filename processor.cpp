@@ -1,5 +1,10 @@
 #include "processor.hpp"
 
+void Processor :: printPerf (){
+    cout << "Performance metrics for CPU\n";
+    cpu.printPerf();
+}
+
 void Processor :: printInfo(){
     cpu.printInfo();
     bus.printInfo();

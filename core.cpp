@@ -75,6 +75,16 @@ int Core :: getIndex (ll address){
     return (address & 7);
 }
 
+void Core :: printPerf(){
+    cout << "Perf metrics for core: " << id << "\n";
+    cout << "cache hit: " << perf.get_cache_hit() << "\n";
+    cout << "cache miss: " << perf.get_cache_miss() << "\n";
+    cout << "bus access: " << perf.get_bus_access() << "\n";
+    cout << "memory access for read: " << perf.get_mem_access() << "\n";
+    cout << "memory write-back: " << perf.get_mem_write_back() << "\n";
+    cout << "-------------------------------------------------------\n";
+}
+
 void printCacheline ( cacheLine c){
     cout << "----------------------------------------------------------------\n";
     cout << " address: " << c.addr << " valid: " << c.valid << " shared: " << c.shared << " dirty: " << c.dirty << " data: " << c.data << " state: " << c.cacheState
@@ -117,8 +127,12 @@ void Core :: run_read (Instruction inst ){
         if ( cache[index].addr == address){
             //cache hit. Nothing to do
             if (debugMode) cout << "run_read :: Cache hit!\n";
+            perf.incr_cache_hit();
+
         } else {
             // cache miss. Need to evict the cacheline
+            perf.incr_cache_miss();
+
             if (debugMode) cout << "run_read :: Cache miss\n";
             
             if ( cache[index].dirty){
@@ -135,6 +149,8 @@ void Core :: run_read (Instruction inst ){
                 push_core_to_bus_q (respTr);
 
                 if (debugMode) cout << "Core :: run_read:  cache line is valid & dirty and need to be evicted. Sent MemWriteBack\n";
+                perf.incr_bus_access();
+                //perf.incr_mem_write_back();
 
             } else {
                 cache[index].cacheState = "RD_INV";
@@ -149,7 +165,8 @@ void Core :: run_read (Instruction inst ){
             respTr.op = "CoreRead";
             respTr.valid = true;
 
-            
+            perf.incr_bus_access();
+
             cache[index].transactionCompleted = false;
             push_core_to_bus_q ( respTr );
 
@@ -158,6 +175,7 @@ void Core :: run_read (Instruction inst ){
 
     } else if ( !cache[index].valid){
         // cache miss and the slot is available. Just send read message
+        perf.incr_cache_miss();
 
         if (debugMode){
             cout << " Core :: run_read: Core id: " << id << ", clk_cycle: " << clk_cycle <<endl;
@@ -184,7 +202,7 @@ void Core :: run_read (Instruction inst ){
 
         push_core_to_bus_q ( respTr );
         if (debugMode) cout << " run_read :: pushed coreRead to core_to_bus_q\n";
-
+        perf.incr_bus_access();
     }
 
 }
@@ -208,6 +226,7 @@ void Core :: run_write ( Instruction inst){
 
         if ( cache[index].addr == address){
             //cache hit
+            perf.incr_cache_hit();
 
             if (cache[index].dirty == false){
                 cout << " read_write :: Cacheline is valid. Cache hit. Dirty bit is false. Need to send invalidate the invalidation request\n";
@@ -219,6 +238,9 @@ void Core :: run_write ( Instruction inst){
                 respTr.op = "InvalidateReq";
                 respTr.valid = true;
 
+                push_core_to_bus_q(respTr);
+                perf.incr_bus_access();
+
                 cache[index].cacheState = "WR_TR_MODIFIED";
                 cache[index].data = inst.data;
                 cache[index].transactionCompleted = false;
@@ -229,6 +251,8 @@ void Core :: run_write ( Instruction inst){
         } else if ( (cache[index].addr != address)){
             // Cache miss. cache line needs to be evicted
             //send memWriteBack message if cache line is dirty
+            perf.incr_cache_miss();
+
             if (cache[index].dirty){
                 
                 if (debugMode) cout << "read_write :: Cacheline is valid. Cache miss. Current line is dirty. Need to be evicted\n";
@@ -241,6 +265,8 @@ void Core :: run_write ( Instruction inst){
                 respTr.valid = true;
 
                 push_core_to_bus_q(respTr);
+                perf.incr_bus_access();
+
                 cache[index].cacheState = "WR_TR_INV";
             } else {
                 cache[index].cacheState = "WR_INV";
@@ -257,6 +283,8 @@ void Core :: run_write ( Instruction inst){
             cache[index].transactionCompleted = false;
             push_core_to_bus_q ( respTr);
 
+            perf.incr_bus_access();
+            
             if (debugMode) cout << "read_write :: Sent coreRead to core_to_bus_q\n";
             // send invalidate message
             respTr.addr = address;
@@ -275,6 +303,8 @@ void Core :: run_write ( Instruction inst){
     } else if ( !cache[index].valid & cache[index].transactionCompleted ) {
         //cache miss and slot is empty
         //send read message followed by invalidate
+        perf.incr_cache_miss();
+
         if (debugMode){
             cout << " Core :: run_write: Core id: " << id << ", clk_cycle: " << clk_cycle << endl;
             cout << " current instruction:\n";
@@ -297,6 +327,8 @@ void Core :: run_write ( Instruction inst){
         respTr.dest = 0;
         respTr.op = "CoreRead";
         respTr.valid = true;
+
+        perf.incr_bus_access();
 
         push_core_to_bus_q (respTr);
 
@@ -343,9 +375,11 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
             cout << "Completed instruction:\n";
             print_instruction(instr_q.front());
             instr_q.pop();
+            perf.incr_mem_access(); // memory is accessed because there was no core having the address
 
         } else {
             cache[index].transactionCompleted = false; // need to do invalidation
+            perf.incr_bus_access(); // bus access is added for invalidation which will be sent.
         }
 
     } else {
@@ -397,6 +431,7 @@ void Core :: run_mem_write_ack ( bus_to_core_tr reqTr){
     
     //transactionComplete will remain false since there is read/write pending for that cache line    
     pop_bus_to_core_q();
+    perf.incr_mem_write_back();
 }
 
 void Core :: run_cache_inv (bus_to_core_tr reqTr ) {

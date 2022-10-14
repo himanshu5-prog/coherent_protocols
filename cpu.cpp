@@ -76,6 +76,11 @@ int CPU :: get_size_core_inst_q (int id){
     return core[id].get_size_inst_q();
 }
 
+void CPU :: printPerf (){
+    for (int i=0; i<8; i++){
+        core[i].printPerf();
+    }
+}
 void print_vector (vector <string> v){
     cout << "Printing the vector\n";
     for (auto x: v){
@@ -100,6 +105,7 @@ void getInst ( string line, vector<string> &v){
     if (word.length() > 0)
         v.push_back(word);
 }
+
 void CPU :: load_inst_q (string fileName){
     ifstream input_file;
     Instruction inst;

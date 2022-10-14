@@ -13,11 +13,14 @@ void sys_test(string fileName, bool verbose){
    proc.load_cpu_inst_q(fileName);
    //proc.load_cpu_inst_q("input/simple_write.txt");
    proc.run_function();
-   
+
+   /* 
    if (verbose){
       cout << "\nProcessor information:\n";
       proc.printInfo();
+      proc.printPerf();
    }
+   */
 
 }
 #endif

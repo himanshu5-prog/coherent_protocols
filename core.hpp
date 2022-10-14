@@ -5,6 +5,7 @@
 #include <map>
 #include <queue>
 #include "data_type.hpp"
+#include "perf_param.hpp"
 #include <cassert>
 using namespace std;
 
@@ -19,6 +20,8 @@ class Core {
     queue <bus_to_core_tr> q_bus2core;
 
     ll clk_cycle;
+    Perf_params perf;
+
     public:
         Core (){
             id = -1;
@@ -77,6 +80,7 @@ class Core {
         int get_size_inst_q();
 
         void printInfo ();
+        void printPerf();
 };
 
 void printCacheline ( cacheLine c);

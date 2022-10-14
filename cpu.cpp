@@ -121,6 +121,9 @@ void CPU :: load_inst_q (string fileName){
             inst.coreID = stoi(v[4]);
             inst.valid = true;
 
+            cout << "Indtructions to be executed:\n";
+            print_instruction (inst);
+
             assert (inst.coreID < 8);
             core[inst.coreID].push_inst_q(inst);
             //inst_q.push (inst);

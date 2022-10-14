@@ -340,6 +340,8 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
             cache[index].shared = false;
             cache[index].valid = true;
             
+            cout << "Completed instruction:\n";
+            print_instruction(instr_q.front());
             instr_q.pop();
 
         } else {
@@ -348,7 +350,10 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
 
     } else {
         cache[index].transactionCompleted = true; // read transactions complete
-        cache[index].data = reqTr.data;   
+        cache[index].data = reqTr.data;
+        
+        cout << "Completed instruction:\n";
+        print_instruction(instr_q.front());
         instr_q.pop(); 
         cache[index].cacheState = reqTr.state;
         cache[index].dirty = false;
@@ -455,7 +460,10 @@ void Core :: run_inv_ack (bus_to_core_tr reqTr){
     cache[index].valid = true;
 
     pop_bus_to_core_q();
+    cout << "Completed instruction: \n";
+    print_instruction(instr_q.front());
     instr_q.pop(); // instruction is completed now
+
 }
 
 void Core :: run_bus_read_req ( bus_to_core_tr reqTr){

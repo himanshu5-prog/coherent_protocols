@@ -5,7 +5,7 @@
 #include<queue>
 #include<map>
 #include<cassert>
-#include "data_type.hpp"
+#include "../data_type.hpp"
 using namespace std;
 
 class Bus {

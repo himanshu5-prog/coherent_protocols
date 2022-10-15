@@ -1,7 +1,7 @@
 #ifndef MEM_TEST_H
 #define MEM_TEST_H
 
-#include "../mem.hpp"
+#include "../src/memory/mem.hpp"
 //#include "../data_type.hpp"
 
 void memTest (){

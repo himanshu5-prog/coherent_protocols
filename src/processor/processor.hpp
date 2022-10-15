@@ -1,10 +1,10 @@
 #ifndef SYS_H
 #define SYS_H
 
-#include "cpu.hpp"
-#include "bus.hpp"
-#include "mem.hpp"
-#include "perf_param.hpp"
+#include "../cpu/cpu.hpp"
+#include "../bus/bus.hpp"
+#include "../memory/mem.hpp"
+#include "../perf_param/perf_param.hpp"
 
 class Processor {
     CPU cpu;

@@ -1,6 +1,6 @@
 #include<iostream>
 //#include "test/mem_test.hpp"
-#include "test/sys_test.hpp"
+#include "../test/sys_test.hpp"
 #include <cstring>
 using namespace std;
 

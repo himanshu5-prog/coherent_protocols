@@ -4,7 +4,7 @@
 #include<iostream>
 #include<map>
 #include<queue>
-#include "data_type.hpp"
+#include "../data_type.hpp"
 
 class Memory {
     map <ll, ll> mem;

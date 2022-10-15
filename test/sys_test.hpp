@@ -1,7 +1,7 @@
 #ifndef PROCESSOR_TEST_H
 #define PROCESSOR_TEST_H
 
-#include "../processor.hpp"
+#include "../src/processor/processor.hpp"
 
 void sys_test(string fileName, bool verbose){
    Processor proc;

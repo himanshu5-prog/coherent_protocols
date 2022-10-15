@@ -4,8 +4,8 @@
 #include <iostream>
 #include <map>
 #include <queue>
-#include "data_type.hpp"
-#include "perf_param.hpp"
+#include "../data_type.hpp"
+#include "../perf_param/perf_param.hpp"
 #include <cassert>
 using namespace std;
 

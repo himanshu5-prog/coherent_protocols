@@ -1,7 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include "core.hpp"
+#include "../core/core.hpp"
 #include <fstream>
 #include <vector>
 #include <cassert>

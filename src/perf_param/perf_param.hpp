@@ -1,7 +1,7 @@
 #ifndef PERF_PARAM_H
 #define PERF_PARAM_H
 
-#include "data_type.hpp"
+#include "../data_type.hpp"
 
 class Perf_params {
     long long int busAccess;

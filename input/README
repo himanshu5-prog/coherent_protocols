@@ -1,0 +1,30 @@
+File description:
+
+1) inputFile1.txt
+
+Read to different address and unique cores. 
+
+2) multi_write_unique.txt
+
+Write to different address and unique cores.
+
+3) read_write_same_addr_diff_core.txt
+
+Series of Reads to same address and unique core. Followed by a write to same address by unique core.
+
+4) simple_read.txt
+
+Single read by one core.
+
+5) simple_write.txt
+
+Single write by one core.
+
+6) multi_core_same_addr_read.txt
+
+Different cores are reading same address.
+
+7) multi_core_same_addr_wr.txt
+
+Different cores are writing to same address.
+

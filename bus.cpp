@@ -439,6 +439,8 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
     //bus_to_core_tr respTr;
     // address entry must be present in busInfo
     assert ( busInfo.find(address) != busInfo.end());
+    assert ( busInfo[address].cacheState.find(sourceCore) != busInfo[address].cacheState.end());
+    assert (busInfo[address].coreID.find(sourceCore) != busInfo[address].coreID.end());
     //busInfo[address].core_bus_tr = reqTr;
     //Need to send invalidate message to all cores other than sourceCore
     int coreCount = 0;
@@ -460,6 +462,7 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
             if (debugMode) cout << " Bus :: run_inv_req - only sourceCore is present in busInfo. No need to send invalidation. Popping out core_to_bus_q\n";
             
             pop_core_to_bus_q();
+            busInfo[address].cacheState[sourceCore] = "MODIFIED";
         } else { 
             for (auto& id: busInfo[address].coreID){
         
@@ -628,8 +631,14 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
                 busInfo[address].invRequest[i] = false;
             }
         }
-        busInfo[address].coreID.insert ( busInfo[address].core_bus_tr.coreID);
-        busInfo[address].cacheState.insert ( pair <ll, string> (busInfo[address].core_bus_tr.coreID, "MODIFIED" ));
+
+        int reqCore =  busInfo[address].core_bus_tr.coreID;
+        assert ( busInfo[address].coreID.find ( reqCore ) != busInfo[address].coreID.end());
+        assert (busInfo[address].cacheState.find(reqCore) != busInfo[address].cacheState.end());
+
+        //busInfo[address].coreID.insert ( busInfo[address].core_bus_tr.coreID);
+        //busInfo[address].cacheState.insert ( pair <ll, string> (busInfo[address].core_bus_tr.coreID, "MODIFIED" ));
+        busInfo[address].cacheState[reqCore] = "MODIFIED";
         
         assert (busInfo[address].valid == false);
         busInfo[address].valid = true;

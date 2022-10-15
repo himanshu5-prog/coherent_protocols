@@ -133,7 +133,7 @@ void Core :: run_read (Instruction inst ){
             // cache miss. Need to evict the cacheline
             perf.incr_cache_miss();
 
-            if (debugMode) cout << "run_read :: Cache miss\n";
+            if (debugMode) cout << "Core :: run_read : Cache miss\n";
             
             if ( cache[index].dirty){
                 //need to writeback to memory
@@ -183,7 +183,7 @@ void Core :: run_read (Instruction inst ){
             print_instruction(inst);
             cout << "cache address " << address << " | index: " << index << "\n"; 
         }
-        if (debugMode) cout << "run_read :: Cache miss and slot is empty.\n";
+        if (debugMode) cout << "Core :: run_read : Cache miss and slot is empty.\n";
 
         respTr.addr = address;
         respTr.coreID = id;
@@ -201,7 +201,7 @@ void Core :: run_read (Instruction inst ){
         cache[index].shared = false;
 
         push_core_to_bus_q ( respTr );
-        if (debugMode) cout << " run_read :: pushed coreRead to core_to_bus_q\n";
+        if (debugMode) cout << " Core :: run_read : pushed coreRead to core_to_bus_q\n";
         perf.incr_bus_access();
     }
 
@@ -229,7 +229,7 @@ void Core :: run_write ( Instruction inst){
             perf.incr_cache_hit();
 
             if (cache[index].dirty == false){
-                cout << " read_write :: Cacheline is valid. Cache hit. Dirty bit is false. Need to send invalidate the invalidation request\n";
+                cout << " Core :: read_write : Cacheline is valid. Cache hit. Dirty bit is false. Need to send invalidate the invalidation request\n";
                 //need to send invalidate signal
                 respTr.addr = cache[index].addr;
                 respTr.coreID = id;
@@ -245,7 +245,7 @@ void Core :: run_write ( Instruction inst){
                 cache[index].data = inst.data;
                 cache[index].transactionCompleted = false;
             } else {
-                if (debugMode) cout << "read_write :: Cacheline is valid. Cache hit. Dirty bit is already set. Nothing to do\n";
+                if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache hit. Dirty bit is already set. Nothing to do\n";
                 //cache line is already dirty. Nothing to do
             }
         } else if ( (cache[index].addr != address)){
@@ -255,7 +255,7 @@ void Core :: run_write ( Instruction inst){
 
             if (cache[index].dirty){
                 
-                if (debugMode) cout << "read_write :: Cacheline is valid. Cache miss. Current line is dirty. Need to be evicted\n";
+                if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache miss. Current line is dirty. Need to be evicted\n";
                 
                 respTr.addr = cache[index].addr;
                 respTr.coreID = id;
@@ -285,7 +285,7 @@ void Core :: run_write ( Instruction inst){
 
             perf.incr_bus_access();
             
-            if (debugMode) cout << "read_write :: Sent coreRead to core_to_bus_q\n";
+            if (debugMode) cout << " Core :: read_write : Sent coreRead to core_to_bus_q\n";
             // send invalidate message
             respTr.addr = address;
             respTr.coreID = id;
@@ -297,7 +297,7 @@ void Core :: run_write ( Instruction inst){
             cache[index].data = inst.data;
             push_core_to_bus_q ( respTr);
             
-            if (debugMode) cout << " read_write :: Sent invalidate request to bus\n";
+            if (debugMode) cout << " Core :: read_write : Sent invalidate request to bus\n";
         }
 
     } else if ( !cache[index].valid & cache[index].transactionCompleted ) {
@@ -311,7 +311,7 @@ void Core :: run_write ( Instruction inst){
             print_instruction(inst);
             cout << "cache address " << address << " | index: " << index << "\n"; 
         }
-        if (debugMode) cout << "read_write :: cacheline is empty. cache miss\n";
+        if (debugMode) cout << " Core :: read_write : cacheline is empty. cache miss\n";
 
         cache[index].addr = address;
         cache[index].cacheState = "WR_INV";
@@ -332,7 +332,7 @@ void Core :: run_write ( Instruction inst){
 
         push_core_to_bus_q (respTr);
 
-        if (debugMode) cout <<"read_write :: sent read resp to bus\n";
+        if (debugMode) cout <<" Core :: read_write : sent read resp to bus\n";
         // send invalidate message
         respTr.addr = address;
         respTr.coreID = id;
@@ -363,19 +363,31 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
 
     assert ( cache[index].transactionCompleted == false);
 
+    string oldState;
+    string newState;
+
     if ( cache[index].cacheState == "WR_INV"){
-        
+        // Core need to perform write operation 
         if (reqTr.state == "EXCLUSIVE"){
+
+            oldState = cache[index].cacheState;
+            newState = reqTr.state;
+
             cache[index].transactionCompleted = true;
             cache[index].cacheState = "MODIFIED";
             cache[index].dirty = true;
             cache[index].shared = false;
             cache[index].valid = true;
-            
-            cout << "Completed instruction:\n";
+
+            if (debugMode){
+                cout << "Core :: run_data_response: core id: " << id << " changed state from " << oldState << " to " << newState << "\n";
+            }
+
+            cout << "Core :: run_data_response: Completed instruction:\n";
             print_instruction(instr_q.front());
             instr_q.pop();
             perf.incr_mem_access(); // memory is accessed because there was no core having the address
+            
 
         } else {
             cache[index].transactionCompleted = false; // need to do invalidation
@@ -383,9 +395,15 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
         }
 
     } else {
+
+        oldState = cache[index].cacheState;
+        newState = reqTr.state;
+        
         cache[index].transactionCompleted = true; // read transactions complete
         cache[index].data = reqTr.data;
         
+        if (debugMode) cout << " Core :: run_data_response: core id: " << id << " changed state from " << oldState << " => " << newState << "\n";
+
         cout << "Completed instruction:\n";
         print_instruction(instr_q.front());
         instr_q.pop(); 
@@ -415,13 +433,31 @@ void Core :: run_mem_write_ack ( bus_to_core_tr reqTr){
         cout << " Core :: run_mem_write_ack: received mem_Ack from bus for core: " << id << " address: " << address 
         << ", index: " << index << ", clk_cycle: " << clk_cycle << "\n";
     }
+
+    string oldState;
+    string newState;
+
     // The core has sent memWriteBack to bus
     if ( cache[index].cacheState == "WR_TR_INV"){
+        
+        oldState = "WR_TR_INV";
+        newState = "WR_INV";
+
+        if (debugMode){
+            cout << "Core :: run_mem_write_ack: core id: " << id << ", state changed from " << oldState << " => " << newState << "\n";
+        }
         cache[index].cacheState = "WR_INV";
 
     } else if ( cache[index].cacheState == "RD_MO_TR_INV"){
         cache[index].cacheState = "RD_INV";
         cache[index].data = 0;
+
+        oldState = "RD_MO_TR_INV";
+        newState = "RD_INV";
+
+        if (debugMode){
+            cout << "Core :: run_mem_write_ack: core id: " << id << ", state changed from " << oldState << " => " << newState << "\n";
+        }
     }
 
     //cache[index].data = 0;
@@ -449,6 +485,7 @@ void Core :: run_cache_inv (bus_to_core_tr reqTr ) {
     if (debugMode) {
         cout << "Core:: run_cache_inv: received cache invalidation from bus for core id: " << id << " address: " << address
         << " index: " << index << ", clk_cycle: " << clk_cycle << "\n";
+        cout << " Changing state from " << cache[index].cacheState << " => " << "INVALID" << "\n";
     }
     //cache[index].data = 0;
     cache[index].cacheState = "INVALID";
@@ -467,7 +504,7 @@ void Core :: run_cache_inv (bus_to_core_tr reqTr ) {
     push_core_to_bus_resp_q (respTr);
     
     if (debugMode){
-        cout << "Sent invalidate ack to bus\n";
+        cout << "Core:: run_cache_inv: Sent invalidate ack to bus\n";
     }
     pop_bus_to_core_q();
 }
@@ -486,6 +523,7 @@ void Core :: run_inv_ack (bus_to_core_tr reqTr){
     if (debugMode){
         cout << " Core :: run_inv_ack: received invalidate ack from bus for core id: " << id << ", address: " << address <<
         ", index: " << index << " . data can be wriiten in cache"<< ", clk_cycle: " << clk_cycle << "\n";
+        cout << "Changing state from " << cache[index].cacheState << " => " << reqTr.state << "\n";
     }
 
     cache[index].cacheState = reqTr.state;
@@ -520,12 +558,16 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
 
     data = cache[index].data;
     cache[index].shared = true;
-    
+ 
     if (cache[index].cacheState == "EXCLUSIVE"){
         cache[index].cacheState = "SHARED";
 
+        if (debugMode) cout << " State changed from EXCLUSIVE => SHARED\n";
+
     } else if ( cache[index].cacheState == "MODIFIED"){
         cache[index].cacheState = "OWNED";
+
+        if (debugMode) cout << " State changed from MODIFIED => OWNED\n";
     }
 
     

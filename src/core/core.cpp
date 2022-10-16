@@ -154,7 +154,11 @@ void Core :: run_read (Instruction inst ){
 
             } else {
                 cache[index].cacheState = "RD_INV";
-                if (debugMode) cout << " Core :: run_read: cache line is valid and clean and can be replaced silently\n";
+                if (debugMode){
+                    cout<< " Core :: run_read: cache miss. the slot was occupied by different address.\n"; 
+                    cout << " Core :: run_read: cache line is valid and clean and can be replaced silently\n";
+                }
+                
             }
 
             // send read message
@@ -245,7 +249,30 @@ void Core :: run_write ( Instruction inst){
                 cache[index].data = inst.data;
                 cache[index].transactionCompleted = false;
             } else {
-                if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache hit. Dirty bit is already set. Nothing to do\n";
+
+                if ( cache[index].cacheState == "MODIFIED" ){ 
+                    if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache hit. Dirty bit is already set. Got the new data\n";
+                    cache[index].data = inst.data;
+                    instr_q.pop();
+                } else {
+                    // the cache is in owned state. need to send invalidate to bus
+                    assert (  cache[index].cacheState == "OWNED");
+                    respTr.addr = cache[index].addr;
+                    respTr.coreID = id;
+                    respTr.data = cache[index].data;
+                    respTr.dest = 0;
+                    respTr.op = "InvalidateReq";
+                    respTr.valid = true;
+
+                    push_core_to_bus_q(respTr);
+                    perf.incr_bus_access();
+
+                    cache[index].cacheState = "WR_TR_MODIFIED";
+                    cache[index].data = inst.data;
+                    cache[index].transactionCompleted = false;
+
+                    if (debugMode) cout << "Core :: run_write : Cache line is in owned state. Sent invalidation to bus.\n";
+                }
                 //cache line is already dirty. Nothing to do
             }
         } else if ( (cache[index].addr != address)){
@@ -269,6 +296,8 @@ void Core :: run_write ( Instruction inst){
 
                 cache[index].cacheState = "WR_TR_INV";
             } else {
+
+                if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache miss. Current line is clean. Need to be evicted\n";
                 cache[index].cacheState = "WR_INV";
             }
 
@@ -371,13 +400,14 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
         if (reqTr.state == "EXCLUSIVE"){
 
             oldState = cache[index].cacheState;
-            newState = reqTr.state;
+            newState = "MODIFIED";
 
             cache[index].transactionCompleted = true;
             cache[index].cacheState = "MODIFIED";
             cache[index].dirty = true;
             cache[index].shared = false;
             cache[index].valid = true;
+            cache[index].addr = reqTr.addr;
 
             if (debugMode){
                 cout << "Core :: run_data_response: core id: " << id << " changed state from " << oldState << " to " << newState << "\n";
@@ -407,6 +437,7 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
         cout << "Completed instruction:\n";
         print_instruction(instr_q.front());
         instr_q.pop(); 
+        cache[index].addr = reqTr.addr;
         cache[index].cacheState = reqTr.state;
         cache[index].dirty = false;
         cache[index].shared = false;
@@ -590,7 +621,7 @@ void Core :: run_function (){
     Instruction inst;
 
     if (debugMode) cout << " run_function of Core id: " << id << "\n";
-
+    
     if (instr_q.size() > 0){
         inst = instr_q.front();
 

@@ -416,22 +416,23 @@ void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
         memResp.addr = reqTr.addr;
         memResp.coreID = reqTr.coreID;
         memResp.data = reqTr.data;
-        memResp.op = "MemWrite";
+        memResp.op = "MemWriteBack";
         memResp.trID = trID;
         memResp.valid = true;
 
         push_bus_to_mem_q(memResp);
+        busInfo[address].core_bus_tr = reqTr;
         // need to remove entry for source core from busInfo
         //remove_core_busInfo ( address, reqTr.coreID);
 
+        oldState = busInfo[address].cacheState[reqTr.coreID];
         assert (busInfo[address].cacheState.find(reqTr.coreID) != busInfo[address].cacheState.end());
         busInfo[address].cacheState[reqTr.coreID] = "TR_INVALID";
 
-        oldState = busInfo[address].cacheState[reqTr.coreID];
         newState = "TR_INVALID";
 
         if (debugMode)
-            cout << " Core :: run_mem_write_back : core id: " << reqTr.coreID << " state changed from " << oldState << " => " << newState << "\n";
+            cout << " Bus :: run_mem_write_back : core id: " << reqTr.coreID << " state changed from " << oldState << " => " << newState << "\n";
 
         //remove_core_busInfo( reqTr.addr, reqTr.coreID);
         //write back instruction is not removed from queue till data is received from memory (memAck).

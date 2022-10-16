@@ -386,9 +386,17 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
 
     index = getIndex (address);
 
+    string dataSource;
+
     if (debugMode){
+
+        if ( reqTr.source == "Memory"){
+            dataSource = "MEM";
+        } else {
+            dataSource = "CORE " + reqTr.source;
+        }
         cout << "Core :: run_data_response: Received data response from Bus in core id: " << id << ", clk_cycle: " << clk_cycle <<"\n";
-        cout << "address: " << address << " | index: " << index << "\n";
+        cout << "address: " << address << " | index: " << index << " | data source: "<< dataSource<<"\n";
     }
 
     assert ( cache[index].transactionCompleted == false);

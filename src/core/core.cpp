@@ -150,6 +150,7 @@ void Core :: run_read (Instruction inst ){
 
                 if (debugMode) cout << "Core :: run_read:  cache line is valid & dirty and need to be evicted. Sent MemWriteBack\n";
                 perf.incr_bus_access();
+                //instr_q.pop();
                 //perf.incr_mem_write_back();
 
             } else {
@@ -494,7 +495,7 @@ void Core :: run_mem_write_ack ( bus_to_core_tr reqTr){
     //cache[index].data = 0;
     cache[index].dirty = false;
     cache[index].shared = false;
-    cache[index].valid = false;
+    cache[index].valid = true;
     
     //transactionComplete will remain false since there is read/write pending for that cache line    
     pop_bus_to_core_q();

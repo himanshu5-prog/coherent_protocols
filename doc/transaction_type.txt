@@ -21,12 +21,12 @@ valid bus to core transactions:
 --------------------------------------------
 Valid mem to bus transactions:
 
-1) MemAck
+1) MemWriteAck
 2) MemData
 
 --------------------------------------------
 Valid bus to mem transactions:
 
 1) MemRead
-2) MemWrite
+2) MemWriteBack
 --------------------------------------------

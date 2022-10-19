@@ -87,5 +87,6 @@ void printCacheline ( cacheLine c);
 void print_instruction(Instruction inst);
 void print_core_to_bus_tr(core_to_bus_tr tr);
 void print_bus_to_core_tr(bus_to_core_tr tr);
+bool is_state_stable (string state);
 
 #endif

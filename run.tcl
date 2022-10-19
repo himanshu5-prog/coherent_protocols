@@ -6,5 +6,6 @@ src/memory/memory.cpp \
 src/perf_param/perf_param.cpp \
 src/processor/processor.cpp \
 src/printFunc.cpp \
-src/mainFunc.cpp
+mainFunc.cpp \
+-o a.out
 ##./a.out input/simple_read.txt -v 0

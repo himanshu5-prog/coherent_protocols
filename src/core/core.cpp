@@ -92,6 +92,20 @@ void printCacheline ( cacheLine c){
     cout << "-------------------------------------------------------------------------\n";
 }
 
+bool is_state_stable( string state){
+
+    if ( state == "EXCLUSIVE")
+        return true;
+
+    if ( state == "MODIFIED")
+        return true;
+    
+    if ( state == "OWNED")
+        return true;
+
+    return false;
+}
+
 void Core :: printInfo (){
     cout << "\nInformation for Core id : " << id << "\n";
 
@@ -157,7 +171,7 @@ void Core :: run_read (Instruction inst ){
                 cache[index].cacheState = "RD_INV";
                 if (debugMode){
                     cout<< " Core :: run_read: cache miss. the slot was occupied by different address.\n"; 
-                    cout << " Core :: run_read: cache line is valid and clean and can be replaced silently\n";
+                    cout << " Core :: run_read: cache line is valid and clean.\n";
                 }
                 
             }
@@ -173,6 +187,7 @@ void Core :: run_read (Instruction inst ){
             perf.incr_bus_access();
 
             cache[index].transactionCompleted = false;
+            cache[index].addr = inst.address;
             push_core_to_bus_q ( respTr );
 
             if (debugMode) cout << " Core :: run_read: pushed coreRead to core_to_bus_q\n";
@@ -298,7 +313,7 @@ void Core :: run_write ( Instruction inst){
                 cache[index].cacheState = "WR_TR_INV";
             } else {
 
-                if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache miss. Current line is clean. Need to be evicted\n";
+                if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache miss. Current line is clean. No need to evict\n";
                 cache[index].cacheState = "WR_INV";
             }
 
@@ -325,6 +340,7 @@ void Core :: run_write ( Instruction inst){
             respTr.valid = true;
 
             cache[index].data = inst.data;
+            cache[index].addr = inst.address;
             push_core_to_bus_q ( respTr);
             
             if (debugMode) cout << " Core :: read_write : Sent invalidate request to bus\n";
@@ -594,11 +610,63 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
         cout << " Core :: run_bus_read_req: received data request from bus in core id: " << id << ", address: " << address <<
          " index: " << index << ", clk_cycle: " << clk_cycle << "\n";
     }
-    assert(cache[index].valid);
+    //assert(cache[index].valid);
 
     data = cache[index].data;
     cache[index].shared = true;
- 
+
+    if ( (!cache[index].valid)){
+
+        if (debugMode){
+            cout << " Core :: run_bus_read_req: cache valid is false\n";
+        }
+
+        respTr.addr = address;
+        respTr.coreID = id;
+        respTr.data = data;
+        respTr.dest = 0;
+        respTr.op = "CoreDataResponse";
+        respTr.valid = false;
+
+        push_core_to_bus_resp_q (respTr);
+        pop_bus_to_core_q();
+        return;
+    }
+
+    if ( cache[index].addr != reqTr.addr){
+        if (debugMode)
+            cout << "request transaction and cache address are different. Core need to get data from memory now :(\n";
+
+        respTr.addr = address;
+        respTr.coreID = id;
+        respTr.data = data;
+        respTr.dest = 0;
+        respTr.op = "CoreDataResponse";
+        respTr.valid = false;
+
+        push_core_to_bus_resp_q (respTr);
+        pop_bus_to_core_q();
+        return;
+    }
+    
+    if ( !(is_state_stable(cache[index].cacheState)) ){
+
+        if (debugMode)
+            cout << " unstable cache state: " << cache[index].cacheState << ". Need to send memm request. sending invalid req to bus\n";
+        
+        respTr.addr = address;
+        respTr.coreID = id;
+        respTr.data = data;
+        respTr.dest = 0;
+        respTr.op = "CoreDataResponse";
+        respTr.valid = false;
+
+        push_core_to_bus_resp_q (respTr);
+        pop_bus_to_core_q();
+        return;
+        
+    }
+
     if (cache[index].cacheState == "EXCLUSIVE"){
         cache[index].cacheState = "SHARED";
 

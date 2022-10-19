@@ -540,6 +540,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     //dest = reqTr.dest;
 
     bus_to_core_tr respTr;
+    bus_to_mem_tr memRespTr;
 
     // the address must be in busInfo
     assert ( busInfo.find(address) != busInfo.end());
@@ -553,7 +554,26 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
 
     assert ( busInfo[address].coreID.find(dest) != busInfo[address].coreID.end());
     assert (busInfo[address].cacheState.find(dest) != busInfo[address].cacheState.end());
-    
+
+    if (!reqTr.valid){
+        if (debugMode){
+            cout << " Bus :: run_data_response: data response is invalid sent by core: " << reqTr.coreID << " need to send request to memory"<< "\n";
+        }
+
+        memRespTr.addr = reqTr.addr;
+        memRespTr.coreID = dest;
+        memRespTr.data = 0;
+        memRespTr.op = "MemRead";
+        memRespTr.trID = trID;
+        memRespTr.valid = true;
+
+        trID += 1;
+
+        push_bus_to_mem_q(memRespTr);
+        pop_core_to_bus_resp_q();
+        return;
+    }
+
     if (debugMode)
         cout << " Bus :: run_data_response: Received data response from core: " << sourceCore << " address: " << address << " clk_cycle: " << clk_cycle << "\n";
     //busInfo[address].cacheState.insert ( pair <int, string>(dest, "SHARED"));

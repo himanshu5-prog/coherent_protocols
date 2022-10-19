@@ -143,6 +143,8 @@ void CPU :: load_inst_q (string fileName){
         cout << " cpu :: load_inst_q : vector size: " << v.size() << "\n";
         print_vector (v);
         */
+    } else {
+        cout << "File couldn't be opened!!\n";
     }
 
     input_file.close();

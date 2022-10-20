@@ -47,3 +47,13 @@ Write in core 0 and reads by other cores to same address. Another read in core 0
 12) write_eviction.txt
 
 writes by cores to an address. Another write collide with earlier address in core 0.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+input file format
+
+<id> <op> <addr> <data> <core-id>
+
+id is unique number given to each instruction.
+op can be RD (read) or WR (write)
+addr can be a number in range [0,63]
+core id can be a number in range [0,7]

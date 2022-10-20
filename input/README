@@ -28,3 +28,22 @@ Different cores are reading same address.
 
 Different cores are writing to same address.
 
+8) multi_core_same_addr_wr_rd.txt
+
+read/write happening to same address in different core. write in core 0 followed by read of same address in different core, followed by write in core 0
+
+9) rd_wr_evict.txt
+
+Read of an address by three cores. Another write colliding same address by core 0.
+
+10) read_eviction.txt
+
+Read of an address by three cores. Another read colliding with previous address by core 0.
+
+11) wr_rd_evicton.txt
+
+Write in core 0 and reads by other cores to same address. Another read in core 0 collides with previous address.
+
+12) write_eviction.txt
+
+writes by cores to an address. Another write collide with earlier address in core 0.

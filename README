@@ -30,4 +30,4 @@ If input/simple_read with verbosity set to false, run the code by typing followi
 > source run.tcl
 > ./a.out input/simple_read.txt -v 0
 
-Setting verbosity to 1 enables debug print statement which can be used to unerstand what events are occuring in each clock cycle.
+Setting verbosity to 1 enables debug print statement which can be used to understand what events are occuring in each clock cycle.

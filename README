@@ -4,7 +4,7 @@ This code implements bus based coherency protocol (MOESI). It consist of eight-c
 
 Following are directory description:
 
-1) doc: COntains few documentation about detail of implementation.
+1) doc: COntains few documentation about detail of implementation. Also contains json files for debugging in VS Code.
 
 2) input: This file contains test file in txt format and have list of instructions to be implemented.
 

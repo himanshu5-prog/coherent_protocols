@@ -12,7 +12,7 @@ void sys_test(string fileName, bool verbose){
    //proc.load_cpu_inst_q("input/simple_read.txt");
    proc.load_cpu_inst_q(fileName);
    //proc.load_cpu_inst_q("input/simple_write.txt");
-   proc.run_function();
+   proc.run_function_2();
 
     
    if (verbose){

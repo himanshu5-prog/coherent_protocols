@@ -52,6 +52,39 @@ void Processor :: run_function(){
     }
 }
 
+void Processor :: run_function_2(){
+    int clk_cycle;
+    cout << "running the processor (2)\n";
+
+    for(clk_cycle = 0; clk_cycle < 50; clk_cycle++){
+        if (debugMode)
+            cout << "clk_cycle: " << clk_cycle << "\n";
+        
+        mem.run_function();
+
+        bus.run_function();
+        tr_flow_mem_to_bus();
+        tr_flow_bus_to_mem();
+
+        cpu.run_function();
+        tr_flow_core_to_bus();
+        tr_flow_bus_to_core();
+
+        if (stop_simulation()){
+        cout << "All queues are empty. stopping the simulation at clk_cycle: " << clk_cycle << "\n";
+        break;
+        }
+        
+        cpu.incr_clk_cycle();
+        bus.incr_clk_cycle();
+        mem.incr_clk_cycle();
+
+
+    }
+
+    
+}
+
 void Processor :: load_cpu_inst_q(string fileName){
     cpu.load_inst_q(fileName);
 }

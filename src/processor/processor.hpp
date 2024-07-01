@@ -20,6 +20,7 @@ class Processor {
         void set_debug_mode ( bool b);
         //int get_size_cpu_inst_q();
         void run_function();
+        void run_function_2();
         void printInfo();
 
         void tr_flow_mem_to_bus ();

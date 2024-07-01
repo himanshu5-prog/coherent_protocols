@@ -149,7 +149,10 @@ void Bus :: run_function(){
         3) Write
     */
 
-    //if (debugMode) cout << "Bus :: run_function\n";
+    if (debugMode) {
+        cout << "Bus :: run_function, core2bus size: "<< get_size_core_to_bus_q ()<< ", mem2bus size: " << get_size_mem_to_bus_q() 
+    << ", bus2core: " << get_size_bus_to_core_q() << ", bus2mem: " << get_size_bus_to_mem_q () << "\n";
+    }
     core_to_bus_tr frontTr_resp;
     mem_to_bus_tr frontTr_mem;
 

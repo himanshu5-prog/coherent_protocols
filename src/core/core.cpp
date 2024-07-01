@@ -697,7 +697,7 @@ void Core :: run_function (){
     ll address;
     Instruction inst;
 
-    if (debugMode) cout << " run_function of Core id: " << id << "\n";
+    if (debugMode) cout << " run_function of Core id: " << id <<  ", bus2core_q size: " << q_bus2core.size() <<  ", core2bus_q size: " << q_core2bus_resp.size() << "\n";
     
     if (instr_q.size() > 0){
         inst = instr_q.front();

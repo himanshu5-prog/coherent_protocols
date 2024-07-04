@@ -9,6 +9,64 @@ using namespace std;
 
 typedef long long int ll;
 
+enum Opcode {
+    //Core opcode
+    // Core sends read instruction to Bus
+    CoreReadData,
+    // Core sends write invalidate to other cores
+    // During write, line is brought to cache using CoreReadData and invalidate Req is sent to other cores
+    CoreCacheInvalidateReq,
+    // When dirty line needs to be evicted, core sends writeBack to Bus
+    CoreMemWriteBack,
+    // Other core sends cache invalidate to bus. Then bus sends cache invalidate to core.
+
+    //Bus opcode (Bus to Core)
+    //When memory completes write operation, it sends Ack to Core
+    BusWriteAck,
+    // Bus sends cache invalidate request to core to invalidate its copy.
+    BusCacheInvalidate,
+    // Bus sends invalidate ack to core when all cores having line have invalidated
+    // its copy
+    BusInvalidateAck,
+    // Core receives read data from other core through Bus
+    BusDataResponse,
+    // Bus is requesting data from a core
+    BusReadReq,
+
+    // Memory opcode
+    // Memory sends MemWriteAck to bus write operation is completed
+    MemWriteAck,
+    // Memory sends read data to bus
+    MemData    
+};
+
+enum CacheState {
+    MODIFIED,
+    OWNED,
+    EXCLUSIVE,
+    SHARED,
+    INVALID, // Initital cache state
+    // Line (valid) was in modified state in a core. READ request came up and it was cache miss.
+    // MemWriteBack needs to be sent to memory. Core will receive MemWriteAck as response
+    // When core receives MemWriteAck, RD_MO_TR_INV transition to RD_INV
+    RD_MO_TR_INV,
+    // Line (valid) was in Shared/Exclusive state and READ request came up and it was cache miss.
+    // No need to send MemWriteBack. Send CoreRead to Bus and meanwhile the line will be in RD_INV state
+    RD_INV,
+    // Line is not valid and READ request comes up from core. State is changed to RD_INV_TR_SH
+    RD_INV_TR_SH,
+    // Core wants to WRITE to a line and there is cache HIT and line is clean. Need to send invalidate so that
+    // other cores invalidate their copies. When the core receives invalidate Ack from other cores,
+    // line transition to MODIFIED state
+    WR_TR_MODIFIED,
+    // Core wants to WRITE to a line (valid and modified) and there is cache MISS. Cache line needs to evicted and state
+    // will be set to WR_TR_INV. MemWriteBack will be sent to Bus
+    WR_TR_INV,
+    // 1) Core wants to WRITE to a line (valid and clean) and there is cache miss. Just change the state to WR_INV.
+    // 2) Core wants to WRITE to a line (invalid). It will be cache miss. Just change the state to WR_INV
+    WR_INV
+};
+
 // Input to memory from bus
 struct bus_to_mem_tr {
     ll addr;

@@ -25,7 +25,7 @@ enum Opcode {
 
     //Bus opcode (Bus to Core)
     //When memory completes write operation, it sends Ack to Core
-    BusWriteAck,
+    BusMemWriteAck,
     // Bus sends cache invalidate request to core to invalidate its copy.
     BusCacheInvalidate,
     // Bus sends invalidate ack to core when all cores having line have invalidated

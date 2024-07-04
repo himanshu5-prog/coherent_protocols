@@ -12,13 +12,16 @@ typedef long long int ll;
 enum Opcode {
     //Core opcode
     // Core sends read instruction to Bus
-    CoreReadData,
+    CoreRead,
     // Core sends write invalidate to other cores
-    // During write, line is brought to cache using CoreReadData and invalidate Req is sent to other cores
+    // During write, line is brought to cache using CoreRead and invalidate Req is sent to other cores
     CoreCacheInvalidateReq,
     // When dirty line needs to be evicted, core sends writeBack to Bus
     CoreMemWriteBack,
-    // Other core sends cache invalidate to bus. Then bus sends cache invalidate to core.
+    //Core sends data to bus data request
+    CoreDataResponse,
+    //Core sends invalidate acknowledgement after receiving invalidateAck from bus
+    CoreCacheInvalidateAck,
 
     //Bus opcode (Bus to Core)
     //When memory completes write operation, it sends Ack to Core
@@ -37,7 +40,11 @@ enum Opcode {
     // Memory sends MemWriteAck to bus write operation is completed
     MemWriteAck,
     // Memory sends read data to bus
-    MemData    
+    MemData,
+    // Memory read request
+    MemRead,
+    // Memory write request
+    MemWriteBack
 };
 
 enum CacheState {

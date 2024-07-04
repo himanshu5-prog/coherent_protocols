@@ -1,10 +1,10 @@
 Description of bus to core transactions:
 
-1) MemWriteAck
+1) BusMemWriteAck
 
    Core has sent MemWriteBack to Bus.
 
-2) CacheInvalidate
+2) BusCacheInvalidate
 
    Bus is going to invalidate the cache.
 

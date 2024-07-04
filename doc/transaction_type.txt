@@ -6,15 +6,15 @@ List of instructions executed by Core:
 Valid core_to_bus transactions:
 
 1) CoreRead
-2) MemWriteBack
-3) InvalidateReq
+2) CoreMemWriteBack
+3) CoreCacheInvalidateReq
 4) CoreDataResponse
 5) CoreInvalidateAck
 --------------------------------------------
 valid bus to core transactions:
 
-1) MemWriteAck
-2) CacheInvalidate
+1) BusMemWriteAck
+2) BusCacheInvalidate
 3) BusInvalidateAck
 4) BusDataResponse
 5) BusReadReq

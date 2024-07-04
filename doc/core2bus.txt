@@ -6,13 +6,13 @@ Description of core to bus transactions
     
     Pending response from Bus : BusDataResponse
 
-2) MemWriteBack
+2) CoreMemWriteBack
 
     This transaction is used for evicting cache line.
 
     Pending response from bus : MemWriteAck
 
-3) InvalidateReq
+3) CoreCacheInvalidateReq
 
     This transaction is sent to bus when there is write request in a core.
 
@@ -22,7 +22,7 @@ Description of core to bus transactions
 
     This is sent in response to BusReadReq from Bus
 
-5) CoreInvalidateAck
+5) CoreCacheInvalidateAck
 
     This is sent in response to CacheInvalidate
 

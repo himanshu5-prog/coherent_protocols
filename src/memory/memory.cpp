@@ -145,7 +145,9 @@ void Memory :: print_out_tr(){
 }
 
 void Memory :: run_function (){
-
+    if (debugMode){
+        std :: cout << "Mem :: run_function() :: mem2bus size: " << get_size_mem_to_bus_q() << ", bus2mem size: " << get_size_bus_to_mem_q() << "\n";
+    }
     bus_to_mem_tr reqTr;
     //reqTr = bus2mem_q.front();
 

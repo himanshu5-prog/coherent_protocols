@@ -249,7 +249,7 @@ void Core :: run_write ( Instruction inst){
             perf.incr_cache_hit();
 
             if (cache[index].dirty == false){
-                cout << " Core :: read_write : Cacheline is valid. Cache hit. Dirty bit is false. Need to send invalidate the invalidation request\n";
+                cout << " Core :: run_write : Cacheline is valid. Cache hit. Dirty bit is false. Need to send invalidate the invalidation request\n";
                 //need to send invalidate signal
                 respTr.addr = cache[index].addr;
                 respTr.coreID = id;
@@ -267,7 +267,7 @@ void Core :: run_write ( Instruction inst){
             } else {
 
                 if ( cache[index].cacheState == "MODIFIED" ){ 
-                    if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache hit. Dirty bit is already set. Got the new data\n";
+                    if (debugMode) cout << "Core :: run_write : Cacheline is valid. Cache hit. Dirty bit is already set. Got the new data\n";
                     cache[index].data = inst.data;
                     instr_q.pop();
                 } else {

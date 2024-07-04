@@ -111,6 +111,12 @@ void Core :: printInfo (){
 
     cout << "Cache content\n";
     for (int i=0; i<8; i++){
+
+        //Printing only valid cache
+        if (!cache[i].valid){
+            continue;
+        }
+        
         cout << "index: " << i << " ";
         printCacheline (cache[i]);
     }

@@ -117,7 +117,7 @@ void Core :: printInfo (){
             continue;
         }
         
-        cout << "index: " << i << " ";
+        cout << "index: " << i << "\n";
         printCacheline (cache[i]);
     }
     cout << " inst_q size: " << get_size_inst_q() << "\n";
@@ -451,8 +451,16 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
             
 
         } else {
+            
             cache[index].transactionCompleted = false; // need to do invalidation
             perf.incr_bus_access(); // bus access is added for invalidation which will be sent.
+
+            if (debugMode){
+                cout << "Core :: run_data_response: core id: " << id << " changed state from " << cache[index].cacheState << " to " <<
+                reqTr.state << "\n";
+            }
+
+            cache[index].cacheState = reqTr.state;
         }
 
     } else {

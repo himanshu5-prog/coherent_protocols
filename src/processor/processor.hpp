@@ -5,17 +5,19 @@
 #include "../bus/bus.hpp"
 #include "../memory/mem.hpp"
 #include "../perf_param/perf_param.hpp"
+#include<vector>
+#include<memory>
 
 class Processor {
-    CPU cpu;
-    Bus bus;
-    Memory mem;
+    std :: unique_ptr <CPU> m_cpu_ptr;
+    std :: unique_ptr <Bus> m_bus_ptr;
+    std :: unique_ptr <Memory> m_mem_ptr;
     Perf_params perf;    
 
     bool debugMode;
 
     public:
-        //void set_cpu_input_file ( string str);
+        Processor();
         void load_cpu_inst_q(string str);
         void set_debug_mode ( bool b);
         //int get_size_cpu_inst_q();

@@ -4,20 +4,20 @@
 #include "../src/processor/processor.hpp"
 
 void sys_test(string fileName, bool verbose){
-   Processor proc;
+   std :: unique_ptr <Processor> proc_ptr = std :: make_unique<Processor>(); 
 
    //proc.set_cpu_input_file("input/inputFile1.txt");
-   proc.set_debug_mode(verbose);
+   proc_ptr->set_debug_mode(verbose);
    //proc.load_cpu_inst_q("input/inputFile1.txt");
    //proc.load_cpu_inst_q("input/simple_read.txt");
-   proc.load_cpu_inst_q(fileName);
+   proc_ptr->load_cpu_inst_q(fileName);
    //proc.load_cpu_inst_q("input/simple_write.txt");
-   proc.run_function_2();
+   proc_ptr->run_function_2();
 
     
    if (verbose){
       cout << "\nProcessor information:\n";
-      proc.printInfo();
+      proc_ptr->printInfo();
       //proc.printPerf();
    }
    

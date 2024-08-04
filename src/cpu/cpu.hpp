@@ -7,15 +7,17 @@
 #include <cassert>
 
 class CPU {
-    Core core[8];
+    std :: vector< std:: unique_ptr<Core> >m_core_ptr;
     bus_to_core_tr bus2core_tr;
     //ll clk_cycle;
     //string inputFile;
     public:
         CPU (){
+            m_core_ptr.resize(8);
             for (int i=0; i<8; i++){
-                core[i].set_id(i);
-                core[i].reset_bus_to_core_tr();
+                m_core_ptr[i] = std::make_unique<Core>();
+                m_core_ptr[i] ->set_id(i);
+                m_core_ptr[i] -> reset_bus_to_core_tr();
             }
             //clk_cycle = (ll) 0;
         }

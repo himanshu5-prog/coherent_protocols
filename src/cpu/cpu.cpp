@@ -3,13 +3,13 @@
 void CPU :: printInfo (){
     cout << "Information for CPU\n";
     for(int i=0; i<8; i++){
-        core[i].printInfo();
+        m_core_ptr[i]->printInfo();
     }
 }
 
 void CPU :: incr_clk_cycle (){
     for (int i=0; i<8; i++){
-        core[i].incr_clk_cycle();
+        m_core_ptr[i]->incr_clk_cycle();
     }
 }
 /*
@@ -20,65 +20,65 @@ void CPU :: set_input_file (string str){
 
 void CPU :: set_debug_mode (bool b){
     for (int i=0; i<8; i++){
-        core[i].set_debug_mode(b);
+        m_core_ptr[i]->set_debug_mode(b);
     }
 }
 
 void CPU :: push_core_to_bus_q ( core_to_bus_tr reqTr, int id){
-    core[id].push_core_to_bus_q(reqTr);
+    m_core_ptr[id]->push_core_to_bus_q(reqTr);
 }
 
 void CPU :: push_core_to_bus_resp_q ( core_to_bus_tr reqTr, int id){
-    core[id].push_core_to_bus_resp_q(reqTr);
+    m_core_ptr[id]->push_core_to_bus_resp_q(reqTr);
 }
 
 void CPU :: push_bus_to_core_q (bus_to_core_tr reqTr, int id){
-    core[id].push_bus_to_core_q(reqTr);
+    m_core_ptr[id]->push_bus_to_core_q(reqTr);
 }
 
 void CPU :: pop_core_to_bus_q (int id){
-    core[id].pop_core_to_bus_q();
+    m_core_ptr[id]->pop_core_to_bus_q();
 }
 
 void CPU :: pop_core_to_bus_resp_q (int id){
-    core[id].pop_core_to_bus_resp_q();
+    m_core_ptr[id]->pop_core_to_bus_resp_q();
 }
 
 void CPU :: pop_bus_to_core_q(int id){
-    core[id].pop_bus_to_core_q();
+    m_core_ptr[id]->pop_bus_to_core_q();
 }
 
 core_to_bus_tr CPU :: get_front_core_to_bus_q(int id){
-    return core[id].get_front_core_to_bus_q();
+    return m_core_ptr[id]->get_front_core_to_bus_q();
 }
 
 core_to_bus_tr CPU :: get_front_core_to_bus_resp_q(int id){
-    return core[id].get_front_core_to_bus_resp_q();
+    return m_core_ptr[id]->get_front_core_to_bus_resp_q();
 }
 
 bus_to_core_tr CPU :: get_front_bus_to_core_q(int id){
-    return core[id].get_front_bus_to_core_q();
+    return m_core_ptr[id]->get_front_bus_to_core_q();
 }
 
 int CPU :: get_size_bus_to_core_q(int id){
-    return core[id].get_size_bus_to_core_q();
+    return m_core_ptr[id]->get_size_bus_to_core_q();
 }
 
 int CPU :: get_size_core_to_bus_q(int id){
-    return core[id].get_size_core_to_bus_q();
+    return m_core_ptr[id]->get_size_core_to_bus_q();
 }
 
 int CPU :: get_size_core_to_bus_resp_q (int id){
-    return core[id].get_size_core_to_bus_resp_q();
+    return m_core_ptr[id]->get_size_core_to_bus_resp_q();
 }
 
 int CPU :: get_size_core_inst_q (int id){
-    return core[id].get_size_inst_q();
+    return m_core_ptr[id]->get_size_inst_q();
 }
 
 void CPU :: printPerf (){
     for (int i=0; i<8; i++){
-        core[i].printPerf();
+        m_core_ptr[i]->printPerf();
     }
 }
 void print_vector (vector <string> v){
@@ -131,7 +131,7 @@ void CPU :: load_inst_q (string fileName){
             print_instruction (inst);
 
             assert (inst.coreID < 8);
-            core[inst.coreID].push_inst_q(inst);
+            m_core_ptr[inst.coreID]->push_inst_q(inst);
             //inst_q.push (inst);
             
             v.clear();
@@ -154,8 +154,8 @@ void CPU :: run_function (){
     //load_inst_q (inputFile);
 
     for (int i=0; i<8; i++){
-        //cout << " CPU:: inst_q size of core id: " << i << " is " << core[i].get_size_inst_q() << "\n";
-        core[i].run_function();
+        //cout << " CPU:: inst_q size of core id: " << i << " is " << m_core_ptr[i]->get_size_inst_q() << "\n";
+        m_core_ptr[i]->run_function();
     }
 
 

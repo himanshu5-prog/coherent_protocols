@@ -7,6 +7,6 @@ src/perf_param/perf_param.cpp \
 src/processor/processor.cpp \
 src/printFunc.cpp \
 mainFunc.cpp \
--std=c++11 \
+-std=c++14 \
 -o a.out
 ##./a.out input/simple_read.txt -v 0

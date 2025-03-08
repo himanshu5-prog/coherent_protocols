@@ -6,7 +6,7 @@ src/memory/memory.cpp \
 src/perf_param/perf_param.cpp \
 src/processor/processor.cpp \
 src/printFunc.cpp \
-mainFunc.cpp \
+coherentProtocol.cpp \
 -std=c++14 \
--o a.out
+-o coherentProtocol.out
 ##./a.out input/simple_read.txt -v 0

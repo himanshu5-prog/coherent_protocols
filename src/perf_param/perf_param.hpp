@@ -4,12 +4,12 @@
 #include "../data_type.hpp"
 
 class Perf_params {
-    long long int busAccess;
-    long long int memAccess;
-    long long int memWriteBack;
+    Stats_t busAccess;
+    Stats_t memAccess;
+    Stats_t memWriteBack;
 
-    long long int cacheMiss;
-    long long int cacheHit;
+    Stats_t cacheMiss;
+    Stats_t cacheHit;
 
     public:
 
@@ -27,16 +27,16 @@ class Perf_params {
         void incr_cache_miss();
         void incr_cache_hit();
 
-        ll get_bus_access();
-        ll get_mem_access();
-        ll get_mem_write_back();
-        ll get_cache_miss();
-        ll get_cache_hit();
+        Stats_t get_bus_access();
+        Stats_t get_mem_access();
+        Stats_t get_mem_write_back();
+        Stats_t get_cache_miss();
+        Stats_t get_cache_hit();
 
-        void set_bus_access(ll x);
-        void set_mem_access(ll x);
-        void set_mem_write_back(ll x);
-        void set_cache_miss(ll x);
-        void set_cache_hit(ll x);
+        void set_bus_access(Stats_t x);
+        void set_mem_access(Stats_t x);
+        void set_mem_write_back(Stats_t x);
+        void set_cache_miss(Stats_t x);
+        void set_cache_hit(Stats_t x);
 };
 #endif

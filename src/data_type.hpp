@@ -8,7 +8,8 @@
 using namespace std;
 
 typedef long long int ll;
-
+typedef unsigned long long int ull;
+typedef unsigned long long int Stats_t;
 enum Opcode {
     //Core opcode
     // Core sends read instruction to Bus

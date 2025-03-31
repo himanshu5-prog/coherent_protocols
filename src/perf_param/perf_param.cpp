@@ -1,61 +1,61 @@
 #include "perf_param.hpp"
 
 void Perf_params :: incr_bus_access(){
-    busAccess += (ll)1;
+    busAccess += (ull)1;
 }
 
 void Perf_params :: incr_cache_hit (){
-    cacheHit += (ll)1;
+    cacheHit += (ull)1;
 }
 
 void Perf_params :: incr_cache_miss(){
-    cacheMiss += (ll)1;
+    cacheMiss += (ull)1;
 }
 
 void Perf_params :: incr_mem_access(){
-    memAccess += (ll)1;
+    memAccess += (ull)1;
 }
 
 void Perf_params :: incr_mem_write_back(){
-    memWriteBack += (ll)1;
+    memWriteBack += (ull)1;
 }
 
-ll Perf_params :: get_bus_access(){
+Stats_t Perf_params :: get_bus_access(){
     return busAccess;
 }
 
-ll Perf_params :: get_cache_hit(){
+Stats_t Perf_params :: get_cache_hit(){
     return cacheHit;
 }
 
-ll Perf_params :: get_cache_miss(){
+Stats_t Perf_params :: get_cache_miss(){
     return cacheMiss;
 }
 
-ll Perf_params :: get_mem_access(){
+Stats_t Perf_params :: get_mem_access(){
     return memAccess;
 }
 
-ll Perf_params :: get_mem_write_back(){
+Stats_t Perf_params :: get_mem_write_back(){
     return memWriteBack;
 }
 
-void Perf_params :: set_bus_access(ll x){
+void Perf_params :: set_bus_access(Stats_t x){
     busAccess = x;
 }
 
-void Perf_params :: set_cache_hit(ll x){
+void Perf_params :: set_cache_hit(Stats_t x){
     cacheHit = x;
 }
 
-void Perf_params :: set_cache_miss(ll x){
+void Perf_params :: set_cache_miss(Stats_t x){
     cacheHit = x;
 }
 
-void Perf_params :: set_mem_access ( ll x){
+void Perf_params :: set_mem_access ( Stats_t x){
     memAccess = x;
 }
 
-void Perf_params :: set_mem_write_back ( ll x){
+void Perf_params :: set_mem_write_back ( Stats_t x){
     memWriteBack = x;
 }

@@ -2,7 +2,7 @@ Description of bus to core transactions:
 
 1) BusMemWriteAck
 
-   Core has sent MemWriteBack to Bus.
+   Core has sent MemWriteBack to Bus earlier and now bus is sending acknowledgement that write-back has completed.
 
 2) BusCacheInvalidate
 
@@ -14,7 +14,7 @@ Description of bus to core transactions:
 
 4) BusDataResponse
 
-    Core has sent CoreRead and now bus has responded by sending data response.
+    Core has sent CoreRead and now bus has responded with data response.
 
 5) BusReadReq
 

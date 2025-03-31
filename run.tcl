@@ -8,5 +8,5 @@ src/processor/processor.cpp \
 src/printFunc.cpp \
 coherentProtocol.cpp \
 -std=c++14 \
--o coherentProtocol.out
-##./a.out input/simple_read.txt -v 0
+-o CoherentProtocol
+##./CoherentProtocol input/simple_read.txt -v 0

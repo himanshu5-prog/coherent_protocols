@@ -10,6 +10,8 @@ using namespace std;
 typedef long long int ll;
 typedef unsigned long long int ull;
 typedef unsigned long long int Stats_t;
+typedef unsigned int Params_t;
+
 enum Opcode {
     //Core opcode
     // Core sends read instruction to Bus
@@ -149,4 +151,11 @@ struct Instruction {
     ll id;
 };
 
+enum Parameters {
+    CORE_TO_BUS_BUF_SIZE,
+    CORE_TO_BUS_RESP_BUF_SIZE,
+    BUS_TO_CORE_BUF_SIZE,
+    BUS_TO_MEM_BUF_SIZE,
+    MEM_TO_BUS_BUF_SIZE
+};
 #endif

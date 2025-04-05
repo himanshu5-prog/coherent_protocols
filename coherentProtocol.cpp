@@ -2,6 +2,10 @@
 //#include "test/mem_test.hpp"
 #include "test/sys_test.hpp"
 #include <cstring>
+#include <fstream>
+#include <sstream>
+#include <cassert>
+#include <unordered_map>
 using namespace std;
 
 int main(int argc, char** argv){
@@ -28,9 +32,47 @@ int main(int argc, char** argv){
             verbose = true;
         }
     }
+//------------------------------------------------------------
+    std :: unordered_map <std :: string, Params_t> parameters;
+    //Setting default values
+    /*
+      CORE_TO_BUS_BUF_SIZE: 16
+      CORE_TO_BUS_RESP_BUF_SIZE: 16
+      BUS_TO_CORE_BUF_SIZE: 16
+      BUS_TO_MEM_BUF_SIZE: 16
+      MEM_TO_BUS_BUF_SIZE: 16  
+    */
+    parameters["CORE_TO_BUS_BUF_SIZE"] = 16; // Core parameter
+    parameters["CORE_TO_BUS_RESP_BUF_SIZE"] = 16; // Core parameter
+    parameters["BUS_TO_CORE_BUF_SIZE"] = 16; // Bus parameter
+    parameters["BUS_TO_MEM_BUF_SIZE"] = 16; // Bus parameter
+    parameters["MEM_TO_BUS_BUF_SIZE"] = 16; // Memory parameter
+
+    // Read parameters from a text file
+    ifstream file("param.txt"); // Open the text file
+    if (!file) {
+        cerr << "Error: Could not open file.\n";
+        return 1;
+    }
+
+    string line;
+    while (getline(file, line)) { // Read file line by line
+        istringstream iss(line);
+        string key;
+        int value;
+
+        if (getline(iss, key, ':') && iss >> value) { // Extract key and value
+            key.erase(key.find_last_not_of(" \t") + 1); // Trim trailing spaces
+            parameters[key] = value;
+        }
+    }
+
+    file.close(); // Close the file
+    //-------------------------------------------
     
+    // Now let's run the test
     std :: cout << "Running test: " << fileName << ", verbosity: " << verbose<< "\n";
-    sys_test(fileName, verbose);
+    sys_test(fileName, verbose, parameters);
     
     
     return 0;

@@ -1,4 +1,5 @@
 g++ \
+-std=c++17 \
 src/bus/bus.cpp \
 src/core/core.cpp \
 src/cpu/cpu.cpp \

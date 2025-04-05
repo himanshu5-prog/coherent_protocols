@@ -14,7 +14,7 @@ Description of core to bus transactions
 
 3) CoreCacheInvalidateReq
 
-    This transaction is sent to bus when there is write request in a core.
+    This transaction is sent to bus when there is write request in the core.
 
     Pending response from bus : BusInvalidateAck
 

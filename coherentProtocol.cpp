@@ -33,7 +33,7 @@ int main(int argc, char** argv){
         }
     }
 //------------------------------------------------------------
-    std :: unordered_map <std :: string, Params_t> parameters;
+    std :: unordered_map <Parameters, Params_t> parameters;
     //Setting default values
     /*
       CORE_TO_BUS_BUF_SIZE: 16
@@ -42,11 +42,11 @@ int main(int argc, char** argv){
       BUS_TO_MEM_BUF_SIZE: 16
       MEM_TO_BUS_BUF_SIZE: 16  
     */
-    parameters["CORE_TO_BUS_BUF_SIZE"] = 16; // Core parameter
-    parameters["CORE_TO_BUS_RESP_BUF_SIZE"] = 16; // Core parameter
-    parameters["BUS_TO_CORE_BUF_SIZE"] = 16; // Bus parameter
-    parameters["BUS_TO_MEM_BUF_SIZE"] = 16; // Bus parameter
-    parameters["MEM_TO_BUS_BUF_SIZE"] = 16; // Memory parameter
+    parameters[Parameters::CORE_TO_BUS_BUF_SIZE] = 16; // Core parameter
+    parameters[Parameters::CORE_TO_BUS_RESP_BUF_SIZE] = 16; // Core parameter
+    parameters[Parameters::BUS_TO_CORE_BUF_SIZE] = 16; // Bus parameter
+    parameters[Parameters::BUS_TO_MEM_BUF_SIZE] = 16; // Bus parameter
+    parameters[Parameters::MEM_TO_BUS_BUF_SIZE] = 16; // Memory parameter
 
     // Read parameters from a text file
     ifstream file("param.txt"); // Open the text file
@@ -63,7 +63,7 @@ int main(int argc, char** argv){
 
         if (getline(iss, key, ':') && iss >> value) { // Extract key and value
             key.erase(key.find_last_not_of(" \t") + 1); // Trim trailing spaces
-            parameters[key] = value;
+            parameters[convertStringToParameter(key)] = value;
         }
     }
 

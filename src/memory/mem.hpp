@@ -5,12 +5,13 @@
 #include<map>
 #include<queue>
 #include "../data_type.hpp"
-
+#include "../perf_param/perf_param.hpp"
 class Memory {
     map <ll, ll> mem;
     mem_to_bus_tr out;
     queue <bus_to_mem_tr> bus2mem_q;
     queue <mem_to_bus_tr> mem2bus_q;
+    PerfParam *perfParam;
 
     bool debugMode;
     ll clk_cycle;
@@ -24,6 +25,9 @@ class Memory {
             debugMode = b;
         }
 
+        void set_perf_param (PerfParam *param) { perfParam = param;}
+        void printParams();
+        Params_t getParameter(Parameters param);
         void push_bus_to_mem_q ( bus_to_mem_tr tr);
         void push_mem_to_bus_q (mem_to_bus_tr tr);
 

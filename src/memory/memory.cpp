@@ -55,6 +55,17 @@ void Memory:: printInfo(){
     cout << "bus_to_mem_q size: " << get_size_bus_to_mem_q() << "\n";
     cout << " mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
 }
+
+void Memory :: printParams(){
+    cout << "Memory parameters:\n";
+    perfParam->printParam();
+    cout << "-----------------------------------------\n";
+}
+
+Params_t Memory :: getParameter(Parameters param){
+    return perfParam->getParameter(param);
+}
+
 // Initialisation
 void Memory :: initMem(){
     for (int i=0; i < 64; i++){

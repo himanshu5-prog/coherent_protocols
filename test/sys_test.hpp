@@ -3,7 +3,7 @@
 
 #include "../src/processor/processor.hpp"
 
-void sys_test(string fileName, bool verbose, std :: unordered_map <std :: string, Params_t> parameters){
+void sys_test(string fileName, bool verbose, std :: unordered_map <Parameters, Params_t> parameters){
    std :: unique_ptr <Processor> proc_ptr = std :: make_unique<Processor>(); 
 
    //proc.set_cpu_input_file("input/inputFile1.txt");
@@ -19,7 +19,8 @@ void sys_test(string fileName, bool verbose, std :: unordered_map <std :: string
    if (verbose){
       cout << "\nProcessor information:\n";
       proc_ptr->printInfo();
-      proc_ptr->printParam();
+      //proc_ptr->printParams();
+      cout << "-------------------------------------------------------\n";
       //proc.printPerf();
    }
    

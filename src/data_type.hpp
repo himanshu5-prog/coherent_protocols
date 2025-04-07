@@ -158,4 +158,43 @@ enum Parameters {
     BUS_TO_MEM_BUF_SIZE,
     MEM_TO_BUS_BUF_SIZE
 };
+
+// Not using this enum for now. Might use later to filter out parameters
+enum Component {
+    CORE,
+    BUS,
+    MEMORY
+};
+
+inline Parameters convertStringToParameter( const std :: string &str) {
+    if (str == "CORE_TO_BUS_BUF_SIZE") {
+        return CORE_TO_BUS_BUF_SIZE;
+    } else if (str == "CORE_TO_BUS_RESP_BUF_SIZE") {
+        return CORE_TO_BUS_RESP_BUF_SIZE;
+    } else if (str == "BUS_TO_CORE_BUF_SIZE") {
+        return BUS_TO_CORE_BUF_SIZE;
+    } else if (str == "BUS_TO_MEM_BUF_SIZE") {
+        return BUS_TO_MEM_BUF_SIZE;
+    } else if (str == "MEM_TO_BUS_BUF_SIZE") {
+        return MEM_TO_BUS_BUF_SIZE;
+    }
+    throw invalid_argument("Invalid parameter string");
+}
+
+inline std :: string convertParameterToString(Parameters param) {
+    switch (param) {
+        case CORE_TO_BUS_BUF_SIZE:
+            return "CORE_TO_BUS_BUF_SIZE";
+        case CORE_TO_BUS_RESP_BUF_SIZE:
+            return "CORE_TO_BUS_RESP_BUF_SIZE";
+        case BUS_TO_CORE_BUF_SIZE:
+            return "BUS_TO_CORE_BUF_SIZE";
+        case BUS_TO_MEM_BUF_SIZE:
+            return "BUS_TO_MEM_BUF_SIZE";
+        case MEM_TO_BUS_BUF_SIZE:
+            return "MEM_TO_BUS_BUF_SIZE";
+        default:
+            throw invalid_argument("Invalid parameter enum");
+    }
+}
 #endif

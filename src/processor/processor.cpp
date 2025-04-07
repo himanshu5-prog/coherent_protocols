@@ -24,23 +24,19 @@ void Processor :: set_debug_mode (bool b){
     m_mem_ptr->set_debug_mode(b);
 }
 
-void Processor :: set_parameters (std :: unordered_map <std :: string, Params_t> param){
-    parameters = param;
+void Processor :: set_parameters (std :: unordered_map <Parameters, Params_t> param){
+    perfParam.setParameterHashMap(param);
+    m_cpu_ptr->set_perf_param(&perfParam);
+    m_bus_ptr->set_perf_param(&perfParam);
+    m_mem_ptr->set_perf_param(&perfParam);
 }
 
-void Processor :: printParam(){
+void Processor :: printParams(){
     cout << "Performance parameters for Processor\n";
-    for (auto it = parameters.begin(); it != parameters.end(); ++it){
-        cout << it->first << ": " << it->second << "\n";
-    }
-}
-
-bool Processor :: isValidParameter(std :: string param){
-    if (parameters.find(param) != parameters.end()){
-        return true;
-    } else {
-        return false;
-    }
+    cout << "-------------------------------------------------------\n";
+    m_cpu_ptr->printParams();
+    m_bus_ptr->printParams();
+    m_mem_ptr->printParams();
 }
 
 //void Processor :: set_cpu_input_file (string str){

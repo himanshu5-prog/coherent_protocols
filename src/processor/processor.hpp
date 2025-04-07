@@ -12,8 +12,8 @@ class Processor {
     std :: unique_ptr <CPU> m_cpu_ptr;
     std :: unique_ptr <Bus> m_bus_ptr;
     std :: unique_ptr <Memory> m_mem_ptr;
-    Perf_params perf;
-    std :: unordered_map <std :: string, Params_t> parameters;
+    PerfStats perf;
+    PerfParam perfParam;
 
     bool debugMode;
 
@@ -21,8 +21,7 @@ class Processor {
         Processor();
         void load_cpu_inst_q(string str);
         void set_debug_mode ( bool b);
-        void set_parameters ( std :: unordered_map <std :: string, Params_t> param);
-        bool isValidParameter (string str);
+        void set_parameters (std :: unordered_map <Parameters, Params_t> param);
         //int get_size_cpu_inst_q();
         void run_function();
         void run_function_2();
@@ -36,7 +35,7 @@ class Processor {
 
         bool stop_simulation();
         void printPerf();
-        void printParam();
+        void printParams();
 };
 
 

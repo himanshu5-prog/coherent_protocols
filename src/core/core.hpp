@@ -18,9 +18,9 @@ class Core {
     queue <Instruction> instr_q;
     bus_to_core_tr bus_core_transaction;
     queue <bus_to_core_tr> q_bus2core;
-
+    PerfParam *perfParam;
     ll clk_cycle;
-    Perf_params perf;
+    PerfStats perf;
 
     public:
         Core (){
@@ -46,6 +46,9 @@ class Core {
         void reset_bus_to_core_tr ();
         void set_bus_to_core_tr(  bus_to_core_tr tr);
         void incr_clk_cycle (){ clk_cycle += (ll)1; }
+        void set_perf_param (PerfParam *param) { perfParam = param;}
+        Params_t getParameter (Parameters param);
+        void printParams();
 
         //from core to bus queue
         void run_read (Instruction instr);

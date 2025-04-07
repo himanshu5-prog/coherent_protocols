@@ -35,6 +35,15 @@ void Core :: pop_inst_q (){
     instr_q.pop();
 }
 
+Params_t Core :: getParameter(Parameters param){
+   return perfParam->getParameter(param);
+}
+
+void Core :: printParams(){
+    cout << "Performance parameters for Core: " << id << "\n";
+    perfParam->printParam();
+}
+
 core_to_bus_tr Core :: get_front_core_to_bus_q(){
     return q_core_bus.front();
 }

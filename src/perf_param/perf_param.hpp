@@ -3,7 +3,7 @@
 
 #include "../data_type.hpp"
 
-class Perf_params {
+class PerfStats {
     Stats_t busAccess;
     Stats_t memAccess;
     Stats_t memWriteBack;
@@ -13,7 +13,7 @@ class Perf_params {
 
     public:
 
-        Perf_params(){
+        PerfStats(){
             busAccess = 0;
             memAccess = 0;
             memWriteBack = 0;
@@ -38,5 +38,17 @@ class Perf_params {
         void set_mem_write_back(Stats_t x);
         void set_cache_miss(Stats_t x);
         void set_cache_hit(Stats_t x);
+};
+
+class PerfParam {
+    std :: unordered_map <Parameters, Params_t> parameters;
+
+    public:
+        PerfParam();
+        Params_t getParameter(Parameters param);
+        void setParameter(Parameters param, Params_t value);
+        void printParam();
+        bool isValidParameter(Parameters param);
+        void setParameterHashMap(std :: unordered_map <Parameters, Params_t> param);
 };
 #endif

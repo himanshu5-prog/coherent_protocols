@@ -108,6 +108,11 @@ void Bus :: printBusInfoAddr ( map <int, string> cacheState){
     cout << "---------------------\n";
 }
 
+void Bus :: printParams(){
+    std :: cout << "Performance parameters for Bus\n";
+    perfParam->printParam();
+    std :: cout << "-------------------------------------------------------\n";
+}
 void Bus :: incr_clk_cycle (){
     clk_cycle += (ll)1;
 }

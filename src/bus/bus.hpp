@@ -6,6 +6,7 @@
 #include<map>
 #include<cassert>
 #include "../data_type.hpp"
+#include "../perf_param/perf_param.hpp"
 using namespace std;
 
 class Bus {
@@ -32,6 +33,8 @@ class Bus {
     ll trID;
     bool debugMode;
 
+    PerfParam *perfParam;
+
     public:
         Bus (){
             trID = (ll) 0;
@@ -42,6 +45,8 @@ class Bus {
         void run_function();
         void remove_core_busInfo(ll address, int targetCore);
         void set_debug_mode ( bool b);
+        void set_perf_param (PerfParam *param) { perfParam = param;}
+        void printParams();
 
         void run_read_req(core_to_bus_tr reqTr);
         void run_mem_write_back(core_to_bus_tr reqTr);

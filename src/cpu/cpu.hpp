@@ -10,6 +10,7 @@ class CPU {
     //std :: vector< std:: unique_ptr<Core> >m_core_ptr;
     std :: unique_ptr <Core[]> m_core_ptr;
     bus_to_core_tr bus2core_tr;
+    PerfParam *perfParam;
     //ll clk_cycle;
     //string inputFile;
     public:
@@ -28,6 +29,8 @@ class CPU {
         void printInfo();
         void load_inst_q(string fileName);
         void set_debug_mode (bool b);
+        void set_perf_param (PerfParam *param);
+        void printParams();
 
         void push_core_to_bus_q ( core_to_bus_tr reqTr, int coreID);
         void push_core_to_bus_resp_q ( core_to_bus_tr reqTr, int coreID);

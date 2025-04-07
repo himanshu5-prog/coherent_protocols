@@ -12,6 +12,19 @@ void CPU :: incr_clk_cycle (){
         m_core_ptr[i].incr_clk_cycle();
     }
 }
+
+void CPU:: set_perf_param (PerfParam *param){
+    perfParam = param;
+    for (int i=0; i<8; i++){
+        m_core_ptr[i].set_perf_param(param);
+    }
+}
+
+void CPU :: printParams (){
+    for (int i=0; i<8; i++){
+        m_core_ptr[i].printParams();
+    }
+}
 /*
 void CPU :: set_input_file (string str){
     inputFile = str;

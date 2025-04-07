@@ -47,6 +47,7 @@ class Bus {
         void set_debug_mode ( bool b);
         void set_perf_param (PerfParam *param) { perfParam = param;}
         void printParams();
+        Params_t getParameter(Parameters param);
 
         void run_read_req(core_to_bus_tr reqTr);
         void run_mem_write_back(core_to_bus_tr reqTr);

@@ -113,6 +113,11 @@ void Bus :: printParams(){
     perfParam->printParam();
     std :: cout << "-------------------------------------------------------\n";
 }
+
+Params_t Bus :: getParameter(Parameters param){
+    return perfParam->getParameter(param);
+}
+
 void Bus :: incr_clk_cycle (){
     clk_cycle += (ll)1;
 }

@@ -43,6 +43,7 @@ void Processor :: printParams(){
  //   m_cpu_ptr->set_input_file (str);
 //}
 
+
 void Processor :: run_function(){
     int clk_cycle;
     cout << "running the processor\n";
@@ -112,13 +113,21 @@ void Processor :: load_cpu_inst_q(string fileName){
 
 void Processor :: tr_flow_bus_to_core(){
     //need to transfer all transactions from bus2core_q in bus to bus2core_q in core
-
+    // Transaction source is bus and destination is core
+    // bus_to_core_q (Bus) => bus_to_core_q (Core)
     bus_to_core_tr bus_tr;
     int coreID;
     
     // bus_to_core_q (Bus) => bus_to_core_q (Core)
     while(m_bus_ptr->get_size_bus_to_core_q() > 0){
         bus_tr = m_bus_ptr->get_front_bus_to_core_q();
+        if (m_cpu_ptr->get_size_bus_to_core_q(bus_tr.coreID) >= perfParam.getParameter(Parameters::BUS_TO_CORE_BUF_SIZE)){
+            cout << "Back pressure in bus to core queue. ";
+            cout << "Bus to core queue size: " << m_cpu_ptr->get_size_bus_to_core_q(bus_tr.coreID);
+            cout << "  Bus to core queue parameter size: " << perfParam.getParameter(Parameters::BUS_TO_CORE_BUF_SIZE);
+            cout << "   Bus to core queue is full. Cannot send data response\n";
+            return;
+        }
 
         coreID = bus_tr.coreID;
         //assert(coreID < 8 && coreID >= 0);
@@ -129,7 +138,8 @@ void Processor :: tr_flow_bus_to_core(){
 }
 
 void Processor :: tr_flow_core_to_bus(){
-
+    // Transaction source is core and destination is bus
+    // core_to_bus_q (Core) => core_to_bus_q (Bus)
     core_to_bus_tr tr;
 
     for (int i=0; i < 8; i++){
@@ -137,6 +147,13 @@ void Processor :: tr_flow_core_to_bus(){
         // core_to_bus_q (Core) to core_to_bus (Bus)
         while(m_cpu_ptr->get_size_core_to_bus_q(i) > 0){
 
+            if (m_bus_ptr->get_size_core_to_bus_q() >= perfParam.getParameter(Parameters::CORE_TO_BUS_BUF_SIZE)){
+                cout << "Back pressure in core to bus queue. ";
+                cout << "Core to bus queue size: " << m_bus_ptr->get_size_core_to_bus_q();
+                cout << "  Core to bus queue parameter size: " << perfParam.getParameter(Parameters::CORE_TO_BUS_BUF_SIZE);
+                cout << "   Core to bus queue is full. Cannot send data response\n";
+                return;
+            }
             tr = m_cpu_ptr->get_front_core_to_bus_q(i);
             m_bus_ptr->push_core_to_bus_q(tr);
 
@@ -144,6 +161,14 @@ void Processor :: tr_flow_core_to_bus(){
         }
         //core_to_bus_resp (Core) to core_to_bus (Bus)
         while ( m_cpu_ptr->get_size_core_to_bus_resp_q(i) > 0){
+            
+            if (m_bus_ptr->get_size_core_to_bus_resp_q() >= perfParam.getParameter(Parameters::CORE_TO_BUS_RESP_BUF_SIZE)){
+                cout << "Back pressure in core to bus response queue. ";
+                cout << "Core to bus response queue size: " << m_bus_ptr->get_size_core_to_bus_resp_q();
+                cout << "  Core to bus response queue parameter size: " << perfParam.getParameter(Parameters::CORE_TO_BUS_RESP_BUF_SIZE);
+                cout << "   Core to bus response queue is full. Cannot send data response\n";
+                return;
+            }
 
             tr = m_cpu_ptr->get_front_core_to_bus_resp_q(i);
             m_bus_ptr->push_core_to_bus_resp_q(tr);
@@ -158,11 +183,19 @@ void Processor :: tr_flow_core_to_bus(){
 
 void Processor :: tr_flow_bus_to_mem(){
     bus_to_mem_tr tr;
-
-    // bus_to_mem_q (Bus) to bus_to_mem_q (memory)
-
+    // Transaction source is bus and destination is memory
+    // bus_to_mem_q (Bus) => bus_to_mem_q (Memory)
+   
     while( m_bus_ptr->get_size_bus_to_mem_q() > 0){
-        
+
+        // Bus to mem queue is full
+        if (m_mem_ptr->get_size_bus_to_mem_q() >= perfParam.getParameter(Parameters::BUS_TO_MEM_BUF_SIZE)){
+            cout << "Back pressure in bus to mem queue. ";
+            cout << "Bus to mem queue size: " << m_mem_ptr->get_size_bus_to_mem_q();
+            cout << "  Bus to mem queue parameter size: " << perfParam.getParameter(Parameters::BUS_TO_MEM_BUF_SIZE);
+            cout << "   Bus to mem queue is full. Cannot send data response\n";
+            return;
+        }
         tr = m_bus_ptr->get_front_bus_to_mem_q();
         m_mem_ptr->push_bus_to_mem_q(tr);
 
@@ -172,10 +205,18 @@ void Processor :: tr_flow_bus_to_mem(){
 
 void Processor :: tr_flow_mem_to_bus(){
     mem_to_bus_tr tr;
-
+    // Transaction source is memory and destination is bus
     // mem_to_bus_q (memory) to mem_to_bus_q (bus)
 
     while( m_mem_ptr->get_size_mem_to_bus_q() > 0){
+
+        if (m_bus_ptr->get_size_mem_to_bus_q() >= perfParam.getParameter(Parameters::MEM_TO_BUS_BUF_SIZE)){
+            cout << "Back pressure in mem to bus queue. ";
+            cout << "Mem to bus queue size: " << m_bus_ptr->get_size_mem_to_bus_q();
+            cout << "  Mem to bus queue parameter size: " << perfParam.getParameter(Parameters::MEM_TO_BUS_BUF_SIZE);
+            cout << "   Mem to bus queue is full. Cannot send data response\n";
+            return;
+        }
 
         tr = m_mem_ptr->get_front_mem_to_bus_q();
         m_bus_ptr->push_mem_to_bus_q(tr);

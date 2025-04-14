@@ -58,16 +58,36 @@ class PerfParam {
         void setParameterHashMap(std :: unordered_map <Parameters, Params_t> param);
 };
 
-class PerfBus{
+
+class PerfBase{
     Stats_t opcodeCount[Opcode::NUM_OPCODES];
     Stats_t backPressure;
     
     public:
-        PerfBus();
+        PerfBase();
         void incr_opcode_count(Opcode op);
         void incr_back_pressure();
         Stats_t get_opcode_count(Opcode op);
         Stats_t get_back_pressure();
+        virtual void printPerf() = 0;
+};
+
+class PerfBus : public PerfBase {
+    Stats_t maxBusToCoreQueueSize;
+    Stats_t maxBusToMemQueueSize;
+    Stats_t maxCoreToBusQueueSize;
+    Stats_t maxCoreToBusRespQueueSize;
+    public:
+        PerfBus();
+        Stats_t getMaxBusToCoreQueueSize();
+        Stats_t getMaxBusToMemQueueSize();
+        Stats_t getMaxCoreToBusQueueSize();
+        Stats_t getMaxCoreToBusRespQueueSize();
+        void setMaxBusToCoreQueueSize(Stats_t x);
+        void setMaxBusToMemQueueSize(Stats_t x);
+        void setMaxCoreToBusQueueSize(Stats_t x);
+        void setMaxCoreToBusRespQueueSize(Stats_t x);
         void printPerf();
+
 };
 #endif

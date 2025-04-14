@@ -120,31 +120,50 @@ void PerfParam :: setParameterHashMap(std :: unordered_map <Parameters, Params_t
     parameters = param;
 }
 
-//PerfBus class
+//PerfBase class
 
-PerfBus :: PerfBus(){
+PerfBase :: PerfBase(): backPressure(0){
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
         opcodeCount[i] = 0;
     }
-    backPressure = 0;
 }
 
-void PerfBus :: incr_back_pressure(){
+void PerfBase :: incr_back_pressure(){
     backPressure += (ull)1;
 }
-void PerfBus :: incr_opcode_count(Opcode opcode){
+void PerfBase :: incr_opcode_count(Opcode opcode){
     opcodeCount[opcode] += (ull)1;
 }
 
-Stats_t PerfBus :: get_opcode_count(Opcode opcode){
+Stats_t PerfBase :: get_opcode_count(Opcode opcode){
     return opcodeCount[opcode];
 }
 
+Stats_t PerfBase :: get_back_pressure(){
+    return backPressure;
+}
+// PerfBase class
+
+PerfBus :: PerfBus(): PerfBase(){
+    maxBusToCoreQueueSize = 0;
+    maxBusToMemQueueSize = 0;
+    maxCoreToBusQueueSize = 0;
+    maxCoreToBusRespQueueSize = 0;
+}
+
+
 void PerfBus :: printPerf(){
     cout << "Performance metrics for Bus\n";
-    cout << "back pressure: " << backPressure << "\n";
+    cout << "back pressure: " << get_back_pressure() << "\n";
     cout << "opcode count:\n";
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
-        cout << convertOpcodeToString((Opcode)i) << ": " << opcodeCount[i] << "\n";
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
     }
+
+    cout << "-------------------------------------------------------\n";
+    cout << "max bus to core queue size: " << maxBusToCoreQueueSize << "\n";
+    cout << "max bus to mem queue size: " << maxBusToMemQueueSize << "\n";
+    cout << "max core to bus queue size: " << maxCoreToBusQueueSize << "\n";
+    cout << "max core to bus resp queue size: " << maxCoreToBusRespQueueSize << "\n";
+    cout << "-------------------------------------------------------\n";
 }

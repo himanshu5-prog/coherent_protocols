@@ -150,6 +150,26 @@ void Bus :: remove_address ( ll addr){
     busInfo.erase(addr);
 }
 
+bool Bus::checkBusToCoreQ(){
+    if (get_size_bus_to_core_q() >= getParameter(Parameters::BUS_TO_CORE_BUF_SIZE)){
+        if (debugMode) cout << "Bus: run_function - bus2core queue is full, size: " << get_size_bus_to_core_q() << 
+        ", bus_to_core_buf_size: " << getParameter(Parameters::BUS_TO_CORE_BUF_SIZE) << "\n";
+        perf.incr_back_pressure();
+        return false;
+    }
+    return true;
+}
+
+bool Bus::checkBusToMemQ(){
+    if (get_size_bus_to_mem_q() >= getParameter(Parameters::BUS_TO_MEM_BUF_SIZE)){
+        if (debugMode) cout << "Bus: run_function - bus2mem queue is full, size: " << get_size_bus_to_mem_q() <<
+        ", bus_to_mem_buf_size: " << getParameter(Parameters::BUS_TO_MEM_BUF_SIZE)<< "\n";
+        perf.incr_back_pressure();
+        return false;
+    }
+    return true;
+}
+
 void Bus :: run_function(){
     // Search through core_to_bus queue
     /*
@@ -307,6 +327,11 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
             //assert(flag);
             if (flag){
+
+                if (checkBusToCoreQ() == false){
+                    return;
+                }
+
                 // cache line with exclusive or owned state is found in one of the core
                 respOp = "BusReadReq";
                 source = "Bus";
@@ -332,6 +357,11 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 //pop_core_to_bus_q();
             } else {
                 // All cache line are in shared state
+
+                if (checkBusToMemQ() == false){
+                    return;
+                }
+
                 respOp = "MemRead";
                 memResp.addr = address;
                 memResp.coreID = reqTr.coreID;
@@ -360,6 +390,10 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
     } else {
         // the address is not in busInfo. Need to get from memory :(
+
+        if (checkBusToMemQ() == false){
+            return;
+        }
 
         if (debugMode){
             cout << " Bus :: run_read_req - received CoreRead for address: " << address << " and for core " << reqTr.coreID <<  " clk_cycle: " << clk_cycle << "\n";
@@ -423,6 +457,11 @@ void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
     string newState;
 
     if ( busInfo[address].valid) {
+
+        if (checkBusToMemQ() == false){
+            return;
+        }
+
         
         if (debugMode) 
             cout << "Bus :: run_mem_write_back: received memory write-back req for address: " << reqTr.addr << " from core: " << reqTr.coreID << " clk_cycle: " << clk_cycle << "\n";
@@ -508,7 +547,12 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
             if (debugMode){
                 cout << " Bus :: run_inv_req - core id: " << sourceCore << " changed from " << oldState << " => " << newState << "\n"; 
             }
-        } else { 
+        } else {
+
+            if (checkBusToCoreQ() == false){
+                return;
+            }
+            
             for (auto& id: busInfo[address].coreID){
         
                 if (id == sourceCore)
@@ -569,6 +613,11 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     assert (busInfo[address].cacheState.find(dest) != busInfo[address].cacheState.end());
 
     if (!reqTr.valid){
+
+        if (checkBusToMemQ() == false){
+            return;
+        }
+        // The data response is invalid. Need to send request to memory
         if (debugMode){
             cout << " Bus :: run_data_response: data response is invalid sent by core: " << reqTr.coreID << " need to send request to memory"<< "\n";
         }
@@ -586,7 +635,12 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
         pop_core_to_bus_resp_q();
         return;
     }
+    // Valid data response
 
+    if (checkBusToCoreQ() == false){
+        return;
+    }
+    // The data response is valid. Need to send data response to core
     if (debugMode)
         cout << " Bus :: run_data_response: Received data response from core: " << sourceCore << " address: " << address << " clk_cycle: " << clk_cycle << "\n";
     //busInfo[address].cacheState.insert ( pair <int, string>(dest, "SHARED"));
@@ -628,6 +682,10 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
 }
 
 void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
+    if (checkBusToCoreQ() == false){
+        return;
+    }
+
     // The core sent inv ack. The bus info should collect these ack and when all cores have sent
     //acks, then sourceCore should get ack so that it can make its cache line modified.
     ll address;
@@ -745,6 +803,11 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
 }
 
 void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
+
+    if (checkBusToCoreQ() == false){
+        return;
+    }
+
     ll address;
 
     int coreID;
@@ -788,6 +851,11 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
 }
 
 void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
+    
+    if (checkBusToCoreQ() == false){
+        return;
+    }
+
      ll address;
 
     int coreID;

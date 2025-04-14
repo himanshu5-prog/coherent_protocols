@@ -84,6 +84,26 @@ int Core :: getIndex (ll address){
     return (address & 7);
 }
 
+bool Core :: performCheckCoreToBusQ(){
+    if (q_core_bus.size() >= getParameter(Parameters::CORE_TO_BUS_BUF_SIZE)){
+        if (debugMode) cout << "Core id: " << id << " core_to_bus_q is full. Cannot send read request, core_to_bus_q size: " 
+        << get_size_core_to_bus_q() << ", parameter value: "<< getParameter(Parameters::CORE_TO_BUS_BUF_SIZE) <<"\n";
+        perf.incr_back_pressure();
+        return false;
+    }
+    return true;
+}
+
+bool Core :: performCheckCoreToBusRespQ(){
+    if (q_core2bus_resp.size() >= getParameter(Parameters::CORE_TO_BUS_RESP_BUF_SIZE)){
+        if (debugMode) cout << "Core id: " << id << " core_to_bus_resp_q is full. Cannot send read request, core_to_bus_resp_q size: " 
+        << get_size_core_to_bus_resp_q() << getParameter (Parameters::CORE_TO_BUS_RESP_BUF_SIZE)<< "\n";
+        perf.incr_back_pressure();
+        return false;
+    }
+    return true;
+}
+
 void Core :: printPerf(){
     cout << "Perf metrics for core: " << id << "\n";
     cout << "cache hit: " << perf.get_cache_hit() << "\n";
@@ -91,6 +111,7 @@ void Core :: printPerf(){
     cout << "bus access: " << perf.get_bus_access() << "\n";
     cout << "memory access for read: " << perf.get_mem_access() << "\n";
     cout << "memory write-back: " << perf.get_mem_write_back() << "\n";
+    cout << "back pressure: " << perf.get_back_pressure() << "\n";
     cout << "-------------------------------------------------------\n";
 }
 
@@ -160,6 +181,10 @@ void Core :: run_read (Instruction inst ){
 
         } else {
             // cache miss. Need to evict the cacheline
+            // Check if Core to bus queue is full
+            if (performCheckCoreToBusQ() == false){
+                return;
+            }
             perf.incr_cache_miss();
 
             if (debugMode) cout << "Core :: run_read : Cache miss\n";
@@ -210,6 +235,9 @@ void Core :: run_read (Instruction inst ){
 
     } else if ( !cache[index].valid){
         // cache miss and the slot is available. Just send read message
+        if (performCheckCoreToBusQ() == false){
+            return;
+        }
         perf.incr_cache_miss();
 
         if (debugMode){
@@ -261,6 +289,9 @@ void Core :: run_write ( Instruction inst){
 
         if ( cache[index].addr == address){
             //cache hit
+            if (performCheckCoreToBusQ() == false){
+                return;
+            }
             perf.incr_cache_hit();
 
             if (cache[index].dirty == false){
@@ -287,6 +318,9 @@ void Core :: run_write ( Instruction inst){
                     instr_q.pop();
                 } else {
                     // the cache is in owned state. need to send invalidate to bus
+                    if (performCheckCoreToBusQ() == false){
+                        return;
+                    }
                     assert (  cache[index].cacheState == "OWNED");
                     respTr.addr = cache[index].addr;
                     respTr.coreID = id;
@@ -309,10 +343,14 @@ void Core :: run_write ( Instruction inst){
         } else if ( (cache[index].addr != address)){
             // Cache miss. cache line needs to be evicted
             //send memWriteBack message if cache line is dirty
-            perf.incr_cache_miss();
+            //perf.incr_cache_miss();
 
             if (cache[index].dirty){
                 
+                if (performCheckCoreToBusQ() == false){
+                    return;
+                }
+                perf.incr_cache_miss();
                 if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache miss. Current line is dirty. Need to be evicted\n";
                 
                 respTr.addr = cache[index].addr;
@@ -327,7 +365,7 @@ void Core :: run_write ( Instruction inst){
 
                 cache[index].cacheState = "WR_TR_INV";
             } else {
-
+                perf.incr_cache_miss();
                 if (debugMode) cout << "Core :: read_write : Cacheline is valid. Cache miss. Current line is clean. No need to evict\n";
                 cache[index].cacheState = "WR_INV";
             }
@@ -364,6 +402,10 @@ void Core :: run_write ( Instruction inst){
     } else if ( !cache[index].valid & cache[index].transactionCompleted ) {
         //cache miss and slot is empty
         //send read message followed by invalidate
+
+        if(performCheckCoreToBusQ() == false){
+            return;
+        }
         perf.incr_cache_miss();
 
         if (debugMode){
@@ -553,6 +595,11 @@ void Core :: run_cache_inv (bus_to_core_tr reqTr ) {
     //Bus has sent cacheInvalidate
     // need to send invAck back to bus
 
+    // check if core to bus response queue is full
+    if (performCheckCoreToBusRespQ() == false){
+        return;
+    }
+
     ll address;
     int index;
     
@@ -640,6 +687,11 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
 
     if ( (!cache[index].valid)){
 
+        // Core to Bus response queue is full
+        if (performCheckCoreToBusRespQ() == false){
+            return;
+        }
+
         if (debugMode){
             cout << " Core :: run_bus_read_req: cache valid is false\n";
         }
@@ -657,6 +709,12 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     }
 
     if ( cache[index].addr != reqTr.addr){
+
+        // Core to bus resp queue is full
+        if (performCheckCoreToBusRespQ() == false){
+            return;
+        }
+
         if (debugMode)
             cout << "request transaction and cache address are different. Core need to get data from memory now :(\n";
 
@@ -674,6 +732,10 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     
     if ( !(is_state_stable(cache[index].cacheState)) ){
 
+        if (performCheckCoreToBusRespQ() == false){
+            return;
+        }
+
         if (debugMode)
             cout << " unstable cache state: " << cache[index].cacheState << ". Need to send memm request. sending invalid req to bus\n";
         
@@ -688,6 +750,10 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
         pop_bus_to_core_q();
         return;
         
+    }
+
+    if (performCheckCoreToBusRespQ() == false){
+        return;
     }
 
     if (cache[index].cacheState == "EXCLUSIVE"){

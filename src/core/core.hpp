@@ -82,6 +82,9 @@ class Core {
         int get_size_bus_to_core_q();
         int get_size_inst_q();
 
+        bool performCheckCoreToBusQ();
+        bool performCheckCoreToBusRespQ();
+
         void printInfo ();
         void printPerf();
 };

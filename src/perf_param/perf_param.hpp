@@ -10,6 +10,7 @@ class PerfStats {
 
     Stats_t cacheMiss;
     Stats_t cacheHit;
+    Stats_t backPressure;
 
     public:
 
@@ -19,6 +20,7 @@ class PerfStats {
             memWriteBack = 0;
             cacheMiss = 0;
             cacheHit = 0;
+            backPressure = 0;
         }
 
         void incr_bus_access();
@@ -26,18 +28,22 @@ class PerfStats {
         void incr_mem_write_back();
         void incr_cache_miss();
         void incr_cache_hit();
+        void incr_back_pressure();
 
         Stats_t get_bus_access();
         Stats_t get_mem_access();
         Stats_t get_mem_write_back();
         Stats_t get_cache_miss();
         Stats_t get_cache_hit();
+        Stats_t get_back_pressure();
 
         void set_bus_access(Stats_t x);
         void set_mem_access(Stats_t x);
         void set_mem_write_back(Stats_t x);
         void set_cache_miss(Stats_t x);
         void set_cache_hit(Stats_t x);
+        void set_back_pressure(Stats_t x);
+        void printPerf();
 };
 
 class PerfParam {
@@ -50,5 +56,18 @@ class PerfParam {
         void printParam();
         bool isValidParameter(Parameters param);
         void setParameterHashMap(std :: unordered_map <Parameters, Params_t> param);
+};
+
+class PerfBus{
+    Stats_t opcodeCount[Opcode::NUM_OPCODES];
+    Stats_t backPressure;
+    
+    public:
+        PerfBus();
+        void incr_opcode_count(Opcode op);
+        void incr_back_pressure();
+        Stats_t get_opcode_count(Opcode op);
+        Stats_t get_back_pressure();
+        void printPerf();
 };
 #endif

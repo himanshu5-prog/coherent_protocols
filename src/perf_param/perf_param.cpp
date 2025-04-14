@@ -1,5 +1,10 @@
 #include "perf_param.hpp"
 
+// Incrementing the performance statistics
+void PerfStats :: incr_back_pressure(){
+    backPressure += (ull)1;
+}
+
 void PerfStats :: incr_bus_access(){
     busAccess += (ull)1;
 }
@@ -19,7 +24,8 @@ void PerfStats :: incr_mem_access(){
 void PerfStats :: incr_mem_write_back(){
     memWriteBack += (ull)1;
 }
-
+//---------------------------------------
+// Getters and Setters
 Stats_t PerfStats :: get_bus_access(){
     return busAccess;
 }
@@ -40,6 +46,23 @@ Stats_t PerfStats :: get_mem_write_back(){
     return memWriteBack;
 }
 
+Stats_t PerfStats :: get_back_pressure(){
+    return backPressure;
+}
+
+void PerfStats :: printPerf(){
+    cout << "Performance metrics\n";
+    cout << "bus access: " << busAccess << "\n";
+    cout << "cache hit: " << cacheHit << "\n";
+    cout << "cache miss: " << cacheMiss << "\n";
+    cout << "memory access for read: " << memAccess << "\n";
+    cout << "memory write-back: " << memWriteBack << "\n";
+    cout << "back pressure: " << backPressure << "\n";
+}
+
+void PerfStats :: set_back_pressure(Stats_t x){
+    backPressure = x;
+}
 void PerfStats :: set_bus_access(Stats_t x){
     busAccess = x;
 }
@@ -95,4 +118,33 @@ void PerfParam :: printParam(){
 
 void PerfParam :: setParameterHashMap(std :: unordered_map <Parameters, Params_t> param){
     parameters = param;
+}
+
+//PerfBus class
+
+PerfBus :: PerfBus(){
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        opcodeCount[i] = 0;
+    }
+    backPressure = 0;
+}
+
+void PerfBus :: incr_back_pressure(){
+    backPressure += (ull)1;
+}
+void PerfBus :: incr_opcode_count(Opcode opcode){
+    opcodeCount[opcode] += (ull)1;
+}
+
+Stats_t PerfBus :: get_opcode_count(Opcode opcode){
+    return opcodeCount[opcode];
+}
+
+void PerfBus :: printPerf(){
+    cout << "Performance metrics for Bus\n";
+    cout << "back pressure: " << backPressure << "\n";
+    cout << "opcode count:\n";
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        cout << convertOpcodeToString((Opcode)i) << ": " << opcodeCount[i] << "\n";
+    }
 }

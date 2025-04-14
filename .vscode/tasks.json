@@ -6,6 +6,7 @@
             "command": "/usr/bin/g++",
             "args": [
                 "-g",
+                "-o0",
                 "${workspaceFolder}/src/bus/bus.cpp",
                 "${workspaceFolder}/src/core/core.cpp",
                 "${workspaceFolder}/src/cpu/cpu.cpp",
@@ -13,7 +14,7 @@
                 "${workspaceFolder}/src/perf_param/perf_param.cpp",
                 "${workspaceFolder}/src/processor/processor.cpp",
                 "${workspaceFolder}/src/printFunc.cpp",
-                "${workspaceFolder}/mainFunc.cpp",
+                "${workspaceFolder}/coherentProtocol.cpp",
                 "-std=c++14",
                 "-o",
                 "${workspaceFolder}/a.out"

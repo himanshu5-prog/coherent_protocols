@@ -50,26 +50,31 @@ int main(int argc, char** argv){
 
     // Read parameters from a text file
     ifstream file("param.txt"); // Open the text file
+    bool fileFound;
     if (!file) {
         cerr << "Error: Could not open file.\n";
-        return 1;
+        fileFound = false;
+    } else {
+        fileFound = true;
     }
 
-    string line;
-    while (getline(file, line)) { // Read file line by line
-        istringstream iss(line);
-        string key;
-        int value;
+    if (fileFound == true){
+        string line;
+        while (getline(file, line)) { // Read file line by line
+            istringstream iss(line);
+            string key;
+            int value;
 
-        if (getline(iss, key, ':') && iss >> value) { // Extract key and value
-            key.erase(key.find_last_not_of(" \t") + 1); // Trim trailing spaces
-            parameters[convertStringToParameter(key)] = value;
+            if (getline(iss, key, ':') && iss >> value) { // Extract key and value
+                key.erase(key.find_last_not_of(" \t") + 1); // Trim trailing spaces
+                parameters[convertStringToParameter(key)] = value;
+            }
         }
+        file.close(); // Close the file
     }
-
-    file.close(); // Close the file
     //-------------------------------------------
     
+    // Now we can use the parameters in the test
     // Now let's run the test
     std :: cout << "Running test: " << fileName << ", verbosity: " << verbose<< "\n";
     sys_test(fileName, verbose, parameters);

@@ -47,7 +47,8 @@ enum Opcode {
     // Memory read request
     MemRead,
     // Memory write request
-    MemWriteBack
+    MemWriteBack,
+    NUM_OPCODES
 };
 
 enum CacheState {
@@ -196,5 +197,41 @@ inline std :: string convertParameterToString(Parameters param) {
         default:
             throw invalid_argument("Invalid parameter enum");
     }
+}
+
+inline std :: string convertOpcodeToString (Opcode op){
+    switch (op){
+        case CoreRead:
+            return "CoreRead";
+        case CoreCacheInvalidateReq:
+            return "CoreCacheInvalidateReq";
+        case CoreMemWriteBack:
+            return "CoreMemWriteBack";
+        case CoreDataResponse:
+            return "CoreDataResponse";
+        case CoreCacheInvalidateAck:
+            return "CoreCacheInvalidateAck";
+        case BusMemWriteAck:
+            return "BusMemWriteAck";
+        case BusCacheInvalidate:
+            return "BusCacheInvalidate";
+        case BusInvalidateAck:
+            return "BusInvalidateAck";
+        case BusDataResponse:
+            return "BusDataResponse";
+        case BusReadReq:
+            return "BusReadReq";
+        case MemWriteAck:
+            return "MemWriteAck";
+        case MemData:
+            return "MemData";
+        case MemRead:
+            return "MemRead";
+        case MemWriteBack:
+            return "MemWriteBack";
+        case NUM_OPCODES:
+            return "NUM_OPCODES";
+    }
+    throw invalid_argument("Invalid opcode");
 }
 #endif

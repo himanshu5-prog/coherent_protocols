@@ -50,6 +50,13 @@ Stats_t PerfStats :: get_back_pressure(){
     return backPressure;
 }
 
+Stats_t PerfStats :: get_opcode_count(Opcode opcode){
+    return opcodeCount[opcode];
+}
+
+void PerfStats :: incr_opcode_count(Opcode opcode){
+    opcodeCount[opcode] += (ull)1;
+}
 void PerfStats :: printPerf(){
     cout << "Performance metrics\n";
     cout << "bus access: " << busAccess << "\n";
@@ -58,6 +65,13 @@ void PerfStats :: printPerf(){
     cout << "memory access for read: " << memAccess << "\n";
     cout << "memory write-back: " << memWriteBack << "\n";
     cout << "back pressure: " << backPressure << "\n";
+    cout << "opcode count:\n";
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        if (get_opcode_count((Opcode)i) == 0){
+            continue;
+        }
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
+    }
 }
 
 void PerfStats :: set_back_pressure(Stats_t x){
@@ -142,28 +156,38 @@ Stats_t PerfBase :: get_opcode_count(Opcode opcode){
 Stats_t PerfBase :: get_back_pressure(){
     return backPressure;
 }
-// PerfBase class
+//---------------------------------------
+// PerfBus class
 
 PerfBus :: PerfBus(): PerfBase(){
-    maxBusToCoreQueueSize = 0;
-    maxBusToMemQueueSize = 0;
-    maxCoreToBusQueueSize = 0;
-    maxCoreToBusRespQueueSize = 0;
 }
-
 
 void PerfBus :: printPerf(){
     cout << "Performance metrics for Bus\n";
     cout << "back pressure: " << get_back_pressure() << "\n";
     cout << "opcode count:\n";
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        if (get_opcode_count((Opcode)i) == 0){
+            continue;
+        }
         cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
     }
-
-    cout << "-------------------------------------------------------\n";
-    cout << "max bus to core queue size: " << maxBusToCoreQueueSize << "\n";
-    cout << "max bus to mem queue size: " << maxBusToMemQueueSize << "\n";
-    cout << "max core to bus queue size: " << maxCoreToBusQueueSize << "\n";
-    cout << "max core to bus resp queue size: " << maxCoreToBusRespQueueSize << "\n";
-    cout << "-------------------------------------------------------\n";
 }
+
+//---------------------------------------
+//PerfMem
+PerfMem :: PerfMem(): PerfBase(){
+}
+
+void PerfMem :: printPerf(){
+    cout << "Performance metrics for Memory\n";
+    cout << "back pressure: " << get_back_pressure() << "\n";
+    cout << "opcode count:\n";
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        if (get_opcode_count((Opcode)i) == 0){
+            continue;
+        }
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
+    }
+}
+//---------------------------------------

@@ -6,8 +6,10 @@ Processor :: Processor(){
     m_mem_ptr = std :: make_unique<Memory>();
 }
 void Processor :: printPerf (){
-    cout << "Performance metrics for CPU\n";
     m_cpu_ptr->printPerf();
+    m_bus_ptr->printPerf();
+    m_mem_ptr->printPerf();
+    cout << "-------------------------------------------------------\n";
 }
 
 void Processor :: printInfo(){

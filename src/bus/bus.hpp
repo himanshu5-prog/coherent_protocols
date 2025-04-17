@@ -48,6 +48,7 @@ class Bus {
         void set_debug_mode ( bool b);
         void set_perf_param (PerfParam *param) { perfParam = param;}
         void printParams();
+        void printPerf();
         Params_t getParameter(Parameters param);
         
         bool checkBusToCoreQ();

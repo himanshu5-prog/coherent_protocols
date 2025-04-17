@@ -99,6 +99,11 @@ void Bus :: printInfo(){
     cout << "mem_to_bus_q size: " << get_size_mem_to_bus_q() << "\n";
 }
 
+void Bus :: printPerf(){
+    perf.printPerf();
+    cout << "-------------------------------------------------------\n";
+}
+
 void Bus :: printBusInfoAddr ( map <int, string> cacheState){
     map<int, string> :: iterator itr;
     cout << " cache state record:\n";
@@ -329,13 +334,14 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
             if (flag){
 
                 if (checkBusToCoreQ() == false){
+                    perf.incr_back_pressure();
                     return;
                 }
 
                 // cache line with exclusive or owned state is found in one of the core
                 respOp = "BusReadReq";
                 source = "Bus";
-
+                perf.incr_opcode_count(Opcode::BusReadReq);
                 respTr.addr = address;
                 respTr.coreID = sourceCore;
                 respTr.data = 0;
@@ -359,10 +365,12 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
                 // All cache line are in shared state
 
                 if (checkBusToMemQ() == false){
+                    perf.incr_back_pressure();
                     return;
                 }
 
                 respOp = "MemRead";
+                perf.incr_opcode_count(Opcode::MemRead);
                 memResp.addr = address;
                 memResp.coreID = reqTr.coreID;
                 memResp.data = 0;
@@ -392,6 +400,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         // the address is not in busInfo. Need to get from memory :(
 
         if (checkBusToMemQ() == false){
+            perf.incr_back_pressure();
             return;
         }
 
@@ -408,7 +417,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         memResp.op = "MemRead";
         memResp.trID = trID;
         memResp.valid = true;
-
+        perf.incr_opcode_count(Opcode::MemRead);
         // Need to add entry to busInfo with valid set to false   
         Bus_ds b;
         b.valid = false;
@@ -459,6 +468,7 @@ void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
     if ( busInfo[address].valid) {
 
         if (checkBusToMemQ() == false){
+            perf.incr_back_pressure();
             return;
         }
 
@@ -473,6 +483,7 @@ void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
         memResp.valid = true;
 
         push_bus_to_mem_q(memResp);
+        perf.incr_opcode_count(Opcode::MemWriteBack);
         busInfo[address].core_bus_tr = reqTr;
         // need to remove entry for source core from busInfo
         //remove_core_busInfo ( address, reqTr.coreID);
@@ -550,9 +561,10 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
         } else {
 
             if (checkBusToCoreQ() == false){
+                perf.incr_back_pressure();
                 return;
             }
-            
+
             for (auto& id: busInfo[address].coreID){
         
                 if (id == sourceCore)
@@ -568,7 +580,7 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
                 respTr.source = to_string(sourceCore);
                 respTr.valid = true;
                 respTr.state = "INVALIDATE";
-
+                perf.incr_opcode_count(Opcode::CoreCacheInvalidateReq);
                 push_bus_to_core_q(respTr);
 
                 if (debugMode) cout << " Bus :: run_inv_req - " << " sent invalidate request to core id: " << id << "\n";
@@ -615,6 +627,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     if (!reqTr.valid){
 
         if (checkBusToMemQ() == false){
+            perf.incr_back_pressure();
             return;
         }
         // The data response is invalid. Need to send request to memory
@@ -628,7 +641,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
         memRespTr.op = "MemRead";
         memRespTr.trID = trID;
         memRespTr.valid = true;
-
+        perf.incr_opcode_count(Opcode::MemRead);
         trID += 1;
 
         push_bus_to_mem_q(memRespTr);
@@ -638,6 +651,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     // Valid data response
 
     if (checkBusToCoreQ() == false){
+        perf.incr_back_pressure();
         return;
     }
     // The data response is valid. Need to send data response to core
@@ -675,6 +689,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     respTr.valid = true;
     respTr.state = "SHARED";
 
+    perf.incr_opcode_count(Opcode::BusDataResponse);
     busInfo[address].valid = true;
     push_bus_to_core_q(respTr);
     pop_core_to_bus_q();
@@ -683,6 +698,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
 
 void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
     if (checkBusToCoreQ() == false){
+        perf.incr_back_pressure();
         return;
     }
 
@@ -762,7 +778,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
             cout << " Bus :: run_invalid_ack: received all inv_ack from all cores. Sending ack to core: " << busInfo[address].core_bus_tr.coreID <<
              " clk_cycle: "<< clk_cycle << "\n";
         }
-        
+        perf.incr_opcode_count(Opcode::BusInvalidateAck);
         respTr.addr = address;
         respTr.coreID = busInfo[address].core_bus_tr.coreID;
         respTr.data = 0;
@@ -805,6 +821,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
 void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
 
     if (checkBusToCoreQ() == false){
+        perf.incr_back_pressure();
         return;
     }
 
@@ -821,6 +838,7 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
     sourceCore = reqTr.coreID;
     bus_to_core_tr respTr;
 
+    perf.incr_opcode_count(Opcode::MemWriteAck);
     // there must be an entry for address in busInfo
     assert (busInfo.find(address) != busInfo.end());
     assert ( busInfo[address].core_bus_tr.op == "MemWriteBack");
@@ -853,10 +871,11 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
 void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     
     if (checkBusToCoreQ() == false){
+        perf.incr_back_pressure();
         return;
     }
 
-     ll address;
+    ll address;
 
     int coreID;
     string respOp;
@@ -897,7 +916,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     respTr.op = "BusDataResponse";
     respTr.source = "Memory";
     respTr.state = busInfo[address].cacheState[sourceCore];
-
+    perf.incr_opcode_count(Opcode::BusDataResponse);
     push_bus_to_core_q(respTr);
     busInfo[address].valid = true;
 

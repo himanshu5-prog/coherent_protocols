@@ -19,7 +19,7 @@ void sys_test(string fileName, bool verbose, std :: unordered_map <Parameters, P
     
    //if (verbose){
       cout << "\nProcessor information:\n";
-      proc_ptr->printInfo();
+      //proc_ptr->printInfo();
       proc_ptr->printPerf();
       cout << "-------------------------------------------------------\n";
       //proc.printPerf();

@@ -183,6 +183,7 @@ void Core :: run_read (Instruction inst ){
             // cache miss. Need to evict the cacheline
             // Check if Core to bus queue is full
             if (performCheckCoreToBusQ() == false){
+                perf.incr_back_pressure();
                 return;
             }
             perf.incr_cache_miss();
@@ -196,6 +197,7 @@ void Core :: run_read (Instruction inst ){
                 respTr.data = cache[index].data;
                 respTr.dest = 0;
                 respTr.op = "MemWriteBack";
+                perf.incr_opcode_count(Opcode::MemWriteBack);
                 respTr.valid = true;
 
                 // need to wait for ack from memory
@@ -225,7 +227,7 @@ void Core :: run_read (Instruction inst ){
             respTr.valid = true;
 
             perf.incr_bus_access();
-
+            perf.incr_opcode_count(Opcode::CoreRead);
             cache[index].transactionCompleted = false;
             cache[index].addr = inst.address;
             push_core_to_bus_q ( respTr );
@@ -236,6 +238,7 @@ void Core :: run_read (Instruction inst ){
     } else if ( !cache[index].valid){
         // cache miss and the slot is available. Just send read message
         if (performCheckCoreToBusQ() == false){
+            perf.incr_back_pressure();
             return;
         }
         perf.incr_cache_miss();
@@ -254,6 +257,7 @@ void Core :: run_read (Instruction inst ){
         respTr.dest = 0;
         respTr.op = "CoreRead";
         respTr.valid = true;
+        perf.incr_opcode_count(Opcode::CoreRead);
 
         cache[index].valid = true;
         cache[index].transactionCompleted = false;
@@ -290,6 +294,7 @@ void Core :: run_write ( Instruction inst){
         if ( cache[index].addr == address){
             //cache hit
             if (performCheckCoreToBusQ() == false){
+                perf.incr_back_pressure();
                 return;
             }
             perf.incr_cache_hit();
@@ -306,6 +311,7 @@ void Core :: run_write ( Instruction inst){
 
                 push_core_to_bus_q(respTr);
                 perf.incr_bus_access();
+                perf.incr_opcode_count(Opcode::CoreCacheInvalidateReq);
 
                 cache[index].cacheState = "WR_TR_MODIFIED";
                 cache[index].data = inst.data;
@@ -319,6 +325,7 @@ void Core :: run_write ( Instruction inst){
                 } else {
                     // the cache is in owned state. need to send invalidate to bus
                     if (performCheckCoreToBusQ() == false){
+                        perf.incr_back_pressure();
                         return;
                     }
                     assert (  cache[index].cacheState == "OWNED");
@@ -331,6 +338,7 @@ void Core :: run_write ( Instruction inst){
 
                     push_core_to_bus_q(respTr);
                     perf.incr_bus_access();
+                    perf.incr_opcode_count(Opcode::CoreCacheInvalidateReq);
 
                     cache[index].cacheState = "WR_TR_MODIFIED";
                     cache[index].data = inst.data;
@@ -348,6 +356,7 @@ void Core :: run_write ( Instruction inst){
             if (cache[index].dirty){
                 
                 if (performCheckCoreToBusQ() == false){
+                    perf.incr_back_pressure();
                     return;
                 }
                 perf.incr_cache_miss();
@@ -362,6 +371,7 @@ void Core :: run_write ( Instruction inst){
 
                 push_core_to_bus_q(respTr);
                 perf.incr_bus_access();
+                perf.incr_opcode_count(Opcode::MemWriteBack);
 
                 cache[index].cacheState = "WR_TR_INV";
             } else {
@@ -382,6 +392,7 @@ void Core :: run_write ( Instruction inst){
             push_core_to_bus_q ( respTr);
 
             perf.incr_bus_access();
+            perf.incr_opcode_count(Opcode::CoreRead);
             
             if (debugMode) cout << " Core :: read_write : Sent coreRead to core_to_bus_q\n";
             // send invalidate message
@@ -395,7 +406,7 @@ void Core :: run_write ( Instruction inst){
             cache[index].data = inst.data;
             cache[index].addr = inst.address;
             push_core_to_bus_q ( respTr);
-            
+            perf.incr_opcode_count(Opcode::CoreCacheInvalidateReq);
             if (debugMode) cout << " Core :: read_write : Sent invalidate request to bus\n";
         }
 
@@ -404,6 +415,7 @@ void Core :: run_write ( Instruction inst){
         //send read message followed by invalidate
 
         if(performCheckCoreToBusQ() == false){
+            perf.incr_back_pressure();
             return;
         }
         perf.incr_cache_miss();
@@ -432,7 +444,7 @@ void Core :: run_write ( Instruction inst){
         respTr.valid = true;
 
         perf.incr_bus_access();
-
+        perf.incr_opcode_count(Opcode::CoreRead);
         push_core_to_bus_q (respTr);
 
         if (debugMode) cout <<" Core :: read_write : sent read resp to bus\n";
@@ -446,6 +458,7 @@ void Core :: run_write ( Instruction inst){
 
         cache[index].data = inst.data;
         push_core_to_bus_q ( respTr);
+        perf.incr_opcode_count(Opcode::CoreCacheInvalidateReq);
 
     }
 }
@@ -557,7 +570,7 @@ void Core :: run_mem_write_ack ( bus_to_core_tr reqTr){
 
     string oldState;
     string newState;
-
+    perf.incr_opcode_count(Opcode::BusMemWriteAck);
     // The core has sent memWriteBack to bus
     if ( cache[index].cacheState == "WR_TR_INV"){
         
@@ -597,6 +610,7 @@ void Core :: run_cache_inv (bus_to_core_tr reqTr ) {
 
     // check if core to bus response queue is full
     if (performCheckCoreToBusRespQ() == false){
+        perf.incr_back_pressure();
         return;
     }
 

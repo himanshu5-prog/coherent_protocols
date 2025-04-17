@@ -75,6 +75,10 @@ void Memory :: initMem(){
 
 //Write operation
 void Memory :: writeMem ( bus_to_mem_tr in){
+    if (checkMemToBusQ() == false){
+        perf.incr_back_pressure();
+        return;
+    }
     ll address = in.addr;
     mem_to_bus_tr respTr;
 
@@ -93,13 +97,18 @@ void Memory :: writeMem ( bus_to_mem_tr in){
     respTr.trID = in.trID;
     respTr.op = "MemWriteAck";
     respTr.valid = true;
-
+    perf.incr_opcode_count(Opcode::MemWriteAck);
     push_mem_to_bus_q(respTr);
     pop_bus_to_mem_q();
 }
 
 //Read operation
 void Memory :: readMem ( bus_to_mem_tr in){
+
+    if (checkMemToBusQ() == false){
+        perf.incr_back_pressure();
+        return;
+    }
     ll address;
 
     address = in.addr;
@@ -125,6 +134,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         respTr.op = "MemData";
         respTr.trID = in.trID;
     }
+    perf.incr_opcode_count(Opcode::MemData);
     respTr.valid = true;
     push_mem_to_bus_q (respTr);
     pop_bus_to_mem_q();
@@ -155,15 +165,26 @@ void Memory :: print_out_tr(){
     cout << "-----------------------------------------\n";
 }
 
+bool Memory :: checkMemToBusQ(){
+    if (get_size_mem_to_bus_q() >= getParameter(Parameters::MEM_TO_BUS_BUF_SIZE)){
+        cout << "Memory: checkMemToBusQ - mem2bus queue is full, size: " << get_size_mem_to_bus_q() << "\n";
+        cout << "mem_to_bus_buf_size: " << getParameter(Parameters::MEM_TO_BUS_BUF_SIZE) << "\n";
+        return false;
+    }
+    return true;
+}
+
+void Memory :: printPerf(){
+    cout << "Perf metrics for memory\n";
+    perf.printPerf();
+    cout << "-------------------------------------------------------\n";
+}
 void Memory :: run_function (){
     if (debugMode){
         std :: cout << "Mem :: run_function() :: mem2bus size: " << get_size_mem_to_bus_q() << ", bus2mem size: " << get_size_bus_to_mem_q() << "\n";
     }
 
-    if (get_size_mem_to_bus_q() >= getParameter(Parameters::MEM_TO_BUS_BUF_SIZE)){
-        cout << "Memory: run_function - mem2bus queue is full, size: " << get_size_mem_to_bus_q() << "\n";
-        return;
-    }
+    
     bus_to_mem_tr reqTr;
     //reqTr = bus2mem_q.front();
 

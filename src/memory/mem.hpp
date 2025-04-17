@@ -12,6 +12,7 @@ class Memory {
     queue <bus_to_mem_tr> bus2mem_q;
     queue <mem_to_bus_tr> mem2bus_q;
     PerfParam *perfParam;
+    PerfMem perf;
 
     bool debugMode;
     ll clk_cycle;
@@ -46,6 +47,8 @@ class Memory {
 
         void printInfo();
         void incr_clk_cycle() { clk_cycle += (ll) 1;}
+        bool checkMemToBusQ();
+        void printPerf();
 };
 
 void print_mem_to_bus_tr ( mem_to_bus_tr tr);

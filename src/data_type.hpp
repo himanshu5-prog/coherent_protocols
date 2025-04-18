@@ -12,6 +12,7 @@ typedef unsigned long long int ull;
 typedef unsigned long long int Stats_t;
 typedef unsigned int Params_t;
 
+// Opcode name starts with its source name.
 enum Opcode {
     //Core opcode
     // Core sends read instruction to Bus
@@ -66,6 +67,7 @@ enum CacheState {
     RD_INV,
     // Line is not valid and READ request comes up from core. State is changed to RD_INV_TR_SH
     RD_INV_TR_SH,
+    RD_INV_TR_EXCLUSIVE,
     // Core wants to WRITE to a line and there is cache HIT and line is clean. Need to send invalidate so that
     // other cores invalidate their copies. When the core receives invalidate Ack from other cores,
     // line transition to MODIFIED state
@@ -92,7 +94,7 @@ struct bus_to_mem_tr {
 struct mem_to_bus_tr {
     ll addr;
     ll data;
-    string op;
+    Opcode op;
     int coreID;
     ll trID;
     bool valid;
@@ -101,7 +103,7 @@ struct mem_to_bus_tr {
 // Input from cores to bus
 struct core_to_bus_tr {
     ll addr;
-    string op;
+    Opcode op;
     ll data;
     int coreID;
     bool valid;
@@ -111,20 +113,20 @@ struct core_to_bus_tr {
 // Output from bus to core
 struct bus_to_core_tr {
     ll addr;
-    string op;
+    Opcode op;
     ll data;
     int coreID;
     bool valid;
     string source;
-    string state;
+    CacheState state;
 };
 
 // Bus DS
 struct Bus_ds {
     bool valid;
     set<int> coreID;
-    string state;
-    map<int, string> cacheState;
+    CacheState state;
+    map<int, CacheState> cacheState;
     ll data;
     bool invRequest[8];
     bool invAck[8];
@@ -139,7 +141,7 @@ struct cacheLine {
     bool dirty;
     ll addr;
     ll data;
-    string cacheState;
+    CacheState cacheState;
     bool transactionCompleted;
 };
 
@@ -233,5 +235,35 @@ inline std :: string convertOpcodeToString (Opcode op){
             return "NUM_OPCODES";
     }
     throw invalid_argument("Invalid opcode");
+}
+
+inline std :: string convertCacheStateToString (CacheState state){
+    switch (state){
+        case MODIFIED:
+            return "MODIFIED";
+        case OWNED:
+            return "OWNED";
+        case EXCLUSIVE:
+            return "EXCLUSIVE";
+        case SHARED:
+            return "SHARED";
+        case INVALID:
+            return "INVALID";
+        case RD_MO_TR_INV:
+            return "RD_MO_TR_INV";
+        case RD_INV:
+            return "RD_INV";
+        case RD_INV_TR_SH:
+            return "RD_INV_TR_SH";
+        case WR_TR_MODIFIED:
+            return "WR_TR_MODIFIED";
+        case WR_TR_INV:
+            return "WR_TR_INV";
+        case WR_INV:
+            return "WR_INV";
+        case RD_INV_TR_EXCLUSIVE:
+            return "RD_INV_TR_EXCLUSIVE";
+    }
+    throw invalid_argument("Invalid cache state");
 }
 #endif

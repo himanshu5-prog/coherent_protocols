@@ -27,7 +27,7 @@ class Core {
             id = -1;
             cacheLine c;
             c.addr = 0;
-            c.cacheState = "INVALID";
+            c.cacheState = CacheState::INVALID;
             c.shared = false;
             c.dirty = false;
             c.valid = false;

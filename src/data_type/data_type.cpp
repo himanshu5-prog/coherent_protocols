@@ -62,6 +62,10 @@ std :: string convertOpcodeToString (Opcode op){
             return "MemRead";
         case MemWriteBack:
             return "MemWriteBack";
+        case ReadInstruction:
+            return "ReadInstruction";
+        case WriteInstruction:
+            return "WriteInstruction";
         case NUM_OPCODES:
             return "NUM_OPCODES";
     }

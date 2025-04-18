@@ -69,6 +69,9 @@ enum Opcode {
     MemRead,
     // Memory write request
     MemWriteBack,
+    ReadInstruction,
+    WriteInstruction,
+    // Number of opcodes
     NUM_OPCODES
 };
 

@@ -104,7 +104,7 @@ enum CacheState {
 struct bus_to_mem_tr {
     ll addr;
     ll data;
-    string op;
+    Opcode op;
     int coreID;
     ll trID;
     bool valid;

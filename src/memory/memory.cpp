@@ -193,10 +193,11 @@ void Memory :: run_function (){
         
         reqTr = bus2mem_q.front();
 
-        if ( reqTr.op == "MemRead"){
+        if ( reqTr.op == Opcode::MemRead){
             readMem (reqTr);
 
-        } else if ( reqTr.op == "MemWriteBack"){
+        } else if ( reqTr.op == Opcode::MemWriteBack){
+            // Memory write operation
             writeMem (reqTr);
         } else {
             cout << "Memory: run_function - unknown bus_to_mem_tr found, op: " << reqTr.op <<"\n";

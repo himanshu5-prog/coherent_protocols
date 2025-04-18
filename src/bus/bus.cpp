@@ -415,7 +415,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
         memResp.addr = address;
         memResp.coreID = reqTr.coreID;
         memResp.data = reqTr.data;
-        memResp.op = "MemRead";
+        memResp.op = Opcode::MemRead;
         memResp.trID = trID;
         memResp.valid = true;
         perf.incr_opcode_count(Opcode::MemRead);
@@ -479,7 +479,7 @@ void Bus :: run_mem_write_back ( core_to_bus_tr reqTr){
         memResp.addr = reqTr.addr;
         memResp.coreID = reqTr.coreID;
         memResp.data = reqTr.data;
-        memResp.op = "MemWriteBack";
+        memResp.op = Opcode::MemWriteBack;
         memResp.trID = trID;
         memResp.valid = true;
 
@@ -639,7 +639,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
         memRespTr.addr = reqTr.addr;
         memRespTr.coreID = dest;
         memRespTr.data = 0;
-        memRespTr.op = "MemRead";
+        memRespTr.op = Opcode::MemRead;
         memRespTr.trID = trID;
         memRespTr.valid = true;
         perf.incr_opcode_count(Opcode::MemRead);

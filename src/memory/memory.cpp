@@ -5,7 +5,7 @@ Memory :: Memory (){
     out.addr = 0;
     out.coreID = 0;
     out.data = 0;
-    out.op = "NONE";
+    out.op = Opcode::NUM_OPCODES;
     out.trID = 0;
     out.valid = false;
 
@@ -95,7 +95,7 @@ void Memory :: writeMem ( bus_to_mem_tr in){
     respTr.coreID = in.coreID;
     respTr.data = in.data;
     respTr.trID = in.trID;
-    respTr.op = "MemWriteAck";
+    respTr.op = Opcode::MemWriteAck;
     respTr.valid = true;
     perf.incr_opcode_count(Opcode::MemWriteAck);
     push_mem_to_bus_q(respTr);
@@ -123,7 +123,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         respTr.addr = address;
         respTr.data = mem[address];
         respTr.coreID = in.coreID;
-        respTr.op = "MemData";
+        respTr.op = Opcode::MemData;
         respTr.trID = in.trID;
     } else {
         // address is not present in memory
@@ -131,7 +131,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         respTr.addr = address;
         respTr.data = mem[address];
         respTr.coreID = in.coreID;
-        respTr.op = "MemData";
+        respTr.op = Opcode::MemData;
         respTr.trID = in.trID;
     }
     perf.incr_opcode_count(Opcode::MemData);

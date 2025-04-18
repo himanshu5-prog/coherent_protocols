@@ -1,0 +1,418 @@
+argument count: 4
+ argv[2]: -v
+argv[3]: 1
+Found -v switch
+Running test: input/multi_core_same_addr_wr.txt, verbosity: 1
+Indtructions to be executed:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 0 | address: 10 | coreID: 0 | data: 2 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Indtructions to be executed:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 1 | address: 10 | coreID: 1 | data: 4 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Indtructions to be executed:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 2 | address: 10 | coreID: 2 | data: 5 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+running the processor (2)
+clk_cycle: 0
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 0, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ Core :: run_write: Core id: 0, clk_cycle: 0
+ current instruction:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 0 | address: 10 | coreID: 0 | data: 2 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+cache address 10 | index: 2
+ Core :: read_write : cacheline is empty. cache miss
+ Core :: read_write : sent read resp to bus
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ Core :: run_write: Core id: 1, clk_cycle: 0
+ current instruction:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 1 | address: 10 | coreID: 1 | data: 4 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+cache address 10 | index: 2
+ Core :: read_write : cacheline is empty. cache miss
+ Core :: read_write : sent read resp to bus
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ Core :: run_write: Core id: 2, clk_cycle: 0
+ current instruction:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 2 | address: 10 | coreID: 2 | data: 5 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+cache address 10 | index: 2
+ Core :: read_write : cacheline is empty. cache miss
+ Core :: read_write : sent read resp to bus
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 1
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 6, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ Bus :: run_read_req - received CoreRead for address: 10 and for core 0 clk_cycle: 1
+ Bus :: run_Read_req - the address does not exist in busInfo and need to access memory
+ busInfo core id: 0 cache state is RD_TR_EXCLUSIVE
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 2
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 1
+ Memory :: received memory Read for address: 10 and core id: 0, clk_cycle: 2
+Bus :: run_function, core2bus size: 6, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 3
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 6, mem2bus size: 1, bus2core: 0, bus2mem: 0
+ Bus :: Received data from memory for address: 10 core id: 0 sending data to core. clk_cycle: 3
+ Bus :: run_mem_data: core id: 0 cache state changed from TR_EXCLUSIVE to EXCLUSIVE
+Bus :: run_inv_req - received invalidation from core id: 0 for address: 10 clk_cycle: 3
+ Bus :: run_inv_req - only sourceCore is present in busInfo. No need to send invalidation. Popping out core_to_bus_q
+ Bus :: run_inv_req - core id: 0 changed from EXCLUSIVE => MODIFIED
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 4
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 4, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ Bus :: run_read_req - received CoreRead for address: 10 and for core 1, clk_cycle: 4
+ Bus :: run_Read_req - the address already exist in busInfo and is in valid state
+Bus :: run_read_req: found core: 0 in state: MODIFIED
+ Bus :: run_read_req: Sent BusReadReq to the core: 0 clk_cycle: 4
+ busInfo core id: 1 cache state is TR_SHARED
+ run_function of Core id: 0, bus2core_q size: 1, core2bus_q size: 0
+Core :: run_data_response: Received data response from Bus in core id: 0, clk_cycle: 4
+address: 10 | index: 2 | data source: MEM
+Core :: run_data_response: core id: 0 changed state from WR_INV to MODIFIED
+Core :: run_data_response: Completed instruction:
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 0 | address: 10 | coreID: 0 | data: 2 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 5
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 4, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 1, core2bus_q size: 0
+ Core :: run_bus_read_req: received data request from bus in core id: 0, address: 10 index: 2, clk_cycle: 5
+ State changed from MODIFIED => OWNED
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 6
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 4, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ Bus :: run_data_response: Received data response from core: 0 address: 10 clk_cycle: 6
+ Bus :: run_data_response: source core id: 0 changed from MODIFIED to OWNED
+ Bus :: run_data_response: destination core id: 1 cache state changed from RD_INV_TR_SH to SHARED
+Bus :: run_inv_req - received invalidation from core id: 1 for address: 10 clk_cycle: 6
+ Bus :: run_inv_req -  sent invalidate request to core id: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 7
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 3, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 1, core2bus_q size: 0
+Core:: run_cache_inv: received cache invalidation from bus for core id: 0 address: 10 index: 2, clk_cycle: 7
+ Changing state from OWNED => INVALID
+Core:: run_cache_inv: Sent invalidate ack to bus
+ run_function of Core id: 1, bus2core_q size: 1, core2bus_q size: 0
+Core :: run_data_response: Received data response from Bus in core id: 1, clk_cycle: 7
+address: 10 | index: 2 | data source: CORE_0
+Core :: run_data_response: core id: 1 changed state from WR_INV to SHARED
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 8
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 3, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ Bus :: run_inv_ack: recieved inv_Ack from core id: 0, clk_cycle: 8
+ Bus :: run_inv_ack: core id: 0 cache state changed from OWNED => INVALID
+Bus::run_inv_ack : number of inv req sent: 1, ack received: 1
+ Bus :: run_invalid_ack: received all inv_ack from all cores. Sending ack to core: 1 clk_cycle: 8
+Bus :: run_inv_ack : cache state of core: 1 changed from SHARED => MODIFIED
+ Bus :: run_read_req - received CoreRead for address: 10 and for core 2, clk_cycle: 8
+ Bus :: run_Read_req - the address already exist in busInfo and is in valid state
+Bus :: run_read_req: found core: 1 in state: MODIFIED
+ Bus :: run_read_req: Sent BusReadReq to the core: 1 clk_cycle: 8
+ busInfo core id: 2 cache state is TR_SHARED
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 9
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 2, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 2, core2bus_q size: 0
+ Core :: run_inv_ack: received invalidate ack from bus for core id: 1, address: 10, index: 2 . data can be wriiten in cache, clk_cycle: 9
+Changing state from SHARED => MODIFIED
+Completed instruction: 
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 1 | address: 10 | coreID: 1 | data: 4 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 10
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 2, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 1, core2bus_q size: 0
+ Core :: run_bus_read_req: received data request from bus in core id: 1, address: 10 index: 2, clk_cycle: 10
+ State changed from MODIFIED => OWNED
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 11
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 2, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ Bus :: run_data_response: Received data response from core: 1 address: 10 clk_cycle: 11
+ Bus :: run_data_response: source core id: 1 changed from MODIFIED to OWNED
+ Bus :: run_data_response: destination core id: 2 cache state changed from RD_INV_TR_SH to SHARED
+Bus :: run_inv_req - received invalidation from core id: 2 for address: 10 clk_cycle: 11
+ Bus :: run_inv_req -  sent invalidate request to core id: 1
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 12
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 1, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 1, core2bus_q size: 0
+Core:: run_cache_inv: received cache invalidation from bus for core id: 1 address: 10 index: 2, clk_cycle: 12
+ Changing state from OWNED => INVALID
+Core:: run_cache_inv: Sent invalidate ack to bus
+ run_function of Core id: 2, bus2core_q size: 1, core2bus_q size: 0
+Core :: run_data_response: Received data response from Bus in core id: 2, clk_cycle: 12
+address: 10 | index: 2 | data source: CORE_1
+Core :: run_data_response: core id: 2 changed state from WR_INV to SHARED
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 13
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 1, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ Bus :: run_inv_ack: recieved inv_Ack from core id: 1, clk_cycle: 13
+ Bus :: run_inv_ack: core id: 1 cache state changed from OWNED => INVALID
+Bus::run_inv_ack : number of inv req sent: 1, ack received: 1
+ Bus :: run_invalid_ack: received all inv_ack from all cores. Sending ack to core: 2 clk_cycle: 13
+Bus :: run_inv_ack : cache state of core: 2 changed from SHARED => MODIFIED
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+clk_cycle: 14
+Mem :: run_function() :: mem2bus size: 0, bus2mem size: 0
+Bus :: run_function, core2bus size: 0, mem2bus size: 0, bus2core: 0, bus2mem: 0
+ run_function of Core id: 0, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 1, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 2, bus2core_q size: 1, core2bus_q size: 0
+ Core :: run_inv_ack: received invalidate ack from bus for core id: 2, address: 10, index: 2 . data can be wriiten in cache, clk_cycle: 14
+Changing state from SHARED => MODIFIED
+Completed instruction: 
+--Instruction-------------------------------------------------------------------------------------------------------------------------------------
+id: 2 | address: 10 | coreID: 2 | data: 5 | op: WR | valid: 1
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ run_function of Core id: 3, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 4, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 5, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 6, bus2core_q size: 0, core2bus_q size: 0
+ run_function of Core id: 7, bus2core_q size: 0, core2bus_q size: 0
+All queues are empty. stopping the simulation at clk_cycle: 14
+
+Processor information:
+Perf metrics for core: 0
+Performance metrics
+bus access: 1
+cache hit: 0
+cache miss: 1
+memory access for read: 1
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+BusCacheInvalidate: 1
+BusDataResponse: 1
+BusReadReq: 1
+WriteInstruction: 1
+TX opcode count:
+CoreRead: 1
+CoreCacheInvalidateReq: 1
+CoreDataResponse: 1
+-------------------------------------------------------
+Perf metrics for core: 1
+Performance metrics
+bus access: 2
+cache hit: 0
+cache miss: 1
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+CoreCacheInvalidateAck: 1
+BusCacheInvalidate: 1
+BusDataResponse: 1
+BusReadReq: 1
+WriteInstruction: 1
+TX opcode count:
+CoreRead: 1
+CoreCacheInvalidateReq: 1
+CoreDataResponse: 1
+-------------------------------------------------------
+Perf metrics for core: 2
+Performance metrics
+bus access: 2
+cache hit: 0
+cache miss: 1
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+CoreCacheInvalidateAck: 1
+BusDataResponse: 1
+WriteInstruction: 1
+TX opcode count:
+CoreRead: 1
+CoreCacheInvalidateReq: 1
+-------------------------------------------------------
+Perf metrics for core: 3
+Performance metrics
+bus access: 0
+cache hit: 0
+cache miss: 0
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+TX opcode count:
+-------------------------------------------------------
+Perf metrics for core: 4
+Performance metrics
+bus access: 0
+cache hit: 0
+cache miss: 0
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+TX opcode count:
+-------------------------------------------------------
+Perf metrics for core: 5
+Performance metrics
+bus access: 0
+cache hit: 0
+cache miss: 0
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+TX opcode count:
+-------------------------------------------------------
+Perf metrics for core: 6
+Performance metrics
+bus access: 0
+cache hit: 0
+cache miss: 0
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+TX opcode count:
+-------------------------------------------------------
+Perf metrics for core: 7
+Performance metrics
+bus access: 0
+cache hit: 0
+cache miss: 0
+memory access for read: 0
+memory write-back: 0
+back pressure: 0
+RX opcode count:
+TX opcode count:
+-------------------------------------------------------
+Performance metrics for Bus
+back pressure: 0
+Rx opcode count:
+CoreRead: 3
+CoreCacheInvalidateReq: 3
+CoreCacheInvalidateAck: 2
+MemData: 1
+Tx opcode count:
+BusCacheInvalidate: 2
+BusInvalidateAck: 2
+BusDataResponse: 3
+BusReadReq: 2
+MemRead: 1
+-------------------------------------------------------
+-------------------------------------------------------
+Perf metrics for memory
+Performance metrics for Memory
+back pressure: 0
+Rx opcode count:
+MemRead: 1
+Tx opcode count:
+MemData: 1
+-------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------

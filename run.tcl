@@ -9,6 +9,5 @@ src/processor/processor.cpp \
 src/data_type/data_type.cpp \
 src/printFunc.cpp \
 coherentProtocol.cpp \
--std=c++14 \
 -o CoherentProtocol
 ##./CoherentProtocol input/simple_read.txt -v 0

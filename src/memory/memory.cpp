@@ -79,6 +79,7 @@ void Memory :: writeMem ( bus_to_mem_tr in){
         perf.incr_back_pressure();
         return;
     }
+    perf.incr_opcode_count_rx(Opcode::MemWriteBack);
     ll address = in.addr;
     mem_to_bus_tr respTr;
 
@@ -97,7 +98,7 @@ void Memory :: writeMem ( bus_to_mem_tr in){
     respTr.trID = in.trID;
     respTr.op = Opcode::MemWriteAck;
     respTr.valid = true;
-    perf.incr_opcode_count(Opcode::MemWriteAck);
+    perf.incr_opcode_count_tx(Opcode::MemWriteAck);
     push_mem_to_bus_q(respTr);
     pop_bus_to_mem_q();
 }
@@ -109,6 +110,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         perf.incr_back_pressure();
         return;
     }
+    perf.incr_opcode_count_rx(Opcode::MemRead);
     ll address;
 
     address = in.addr;
@@ -134,7 +136,7 @@ void Memory :: readMem ( bus_to_mem_tr in){
         respTr.op = Opcode::MemData;
         respTr.trID = in.trID;
     }
-    perf.incr_opcode_count(Opcode::MemData);
+    perf.incr_opcode_count_tx(Opcode::MemData);
     respTr.valid = true;
     push_mem_to_bus_q (respTr);
     pop_bus_to_mem_q();

@@ -50,13 +50,21 @@ Stats_t PerfStats :: get_back_pressure(){
     return backPressure;
 }
 
-Stats_t PerfStats :: get_opcode_count(Opcode opcode){
-    return opcodeCount[opcode];
+Stats_t PerfStats :: get_opcode_count_rx(Opcode opcode){
+    return opcodeCount_rx[opcode];
 }
 
-void PerfStats :: incr_opcode_count(Opcode opcode){
-    opcodeCount[opcode] += (ull)1;
+Stats_t PerfStats :: get_opcode_count_tx(Opcode opcode){
+    return opcodeCount_tx[opcode];
 }
+
+void PerfStats :: incr_opcode_count_rx(Opcode opcode){
+    opcodeCount_rx[opcode] += (ull)1;
+}
+void PerfStats :: incr_opcode_count_tx(Opcode opcode){
+    opcodeCount_tx[opcode] += (ull)1;
+}
+
 void PerfStats :: printPerf(){
     cout << "Performance metrics\n";
     cout << "bus access: " << busAccess << "\n";
@@ -65,13 +73,23 @@ void PerfStats :: printPerf(){
     cout << "memory access for read: " << memAccess << "\n";
     cout << "memory write-back: " << memWriteBack << "\n";
     cout << "back pressure: " << backPressure << "\n";
-    cout << "opcode count:\n";
+    cout << "RX opcode count:\n";
+
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
-        if (get_opcode_count((Opcode)i) == 0){
+        if (get_opcode_count_rx((Opcode)i) == 0){
             continue;
         }
-        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count_rx((Opcode)i) << "\n";
     }
+
+    cout << "TX opcode count:\n";
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        if (get_opcode_count_tx((Opcode)i) == 0){
+            continue;
+        }
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count_tx((Opcode)i) << "\n";
+    }
+    cout << "-------------------------------------------------------\n";
 }
 
 void PerfStats :: set_back_pressure(Stats_t x){

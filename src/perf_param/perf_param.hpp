@@ -11,7 +11,8 @@ class PerfStats {
     Stats_t cacheMiss;
     Stats_t cacheHit;
     Stats_t backPressure;
-    Stats_t opcodeCount[Opcode::NUM_OPCODES];
+    Stats_t opcodeCount_rx[Opcode::NUM_OPCODES];
+    Stats_t opcodeCount_tx[Opcode::NUM_OPCODES];
 
     public:
 
@@ -30,7 +31,8 @@ class PerfStats {
         void incr_cache_miss();
         void incr_cache_hit();
         void incr_back_pressure();
-        void incr_opcode_count(Opcode op);
+        void incr_opcode_count_rx(Opcode op);
+        void incr_opcode_count_tx(Opcode op);
 
         Stats_t get_bus_access();
         Stats_t get_mem_access();
@@ -38,7 +40,8 @@ class PerfStats {
         Stats_t get_cache_miss();
         Stats_t get_cache_hit();
         Stats_t get_back_pressure();
-        Stats_t get_opcode_count(Opcode op);
+        Stats_t get_opcode_count_tx(Opcode op);
+        Stats_t get_opcode_count_rx(Opcode op);
 
         void set_bus_access(Stats_t x);
         void set_mem_access(Stats_t x);

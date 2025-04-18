@@ -1,6 +1,6 @@
 #include <iostream>
 #include <map>
-#include "data_type.hpp"
+#include "data_type/data_type.hpp"
 
 using namespace std;
 

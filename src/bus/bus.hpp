@@ -5,7 +5,7 @@
 #include<queue>
 #include<map>
 #include<cassert>
-#include "../data_type.hpp"
+#include "../data_type/data_type.hpp"
 #include "../perf_param/perf_param.hpp"
 using namespace std;
 

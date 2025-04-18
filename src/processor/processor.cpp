@@ -14,8 +14,8 @@ void Processor :: printPerf (){
 
 void Processor :: printInfo(){
     m_cpu_ptr->printInfo();
-    m_bus_ptr->printInfo();
-    m_mem_ptr->printInfo();
+    //m_bus_ptr->printInfo();
+    //m_mem_ptr->printInfo();
     //m_mem_ptr->printMem();
 }
 

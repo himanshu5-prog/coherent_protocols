@@ -1,7 +1,6 @@
 #include "cpu.hpp"
 
 void CPU :: printInfo (){
-    cout << "Information for CPU\n";
     for(int i=0; i<8; i++){
         m_core_ptr[i].printInfo();
     }

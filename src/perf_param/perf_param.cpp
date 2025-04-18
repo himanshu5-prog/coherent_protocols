@@ -138,20 +138,30 @@ void PerfParam :: setParameterHashMap(std :: unordered_map <Parameters, Params_t
 
 PerfBase :: PerfBase(): backPressure(0){
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
-        opcodeCount[i] = 0;
+        opcodeCountRx[i] = 0;
+        opcodeCountTx[i] = 0;
     }
 }
 
 void PerfBase :: incr_back_pressure(){
     backPressure += (ull)1;
 }
-void PerfBase :: incr_opcode_count(Opcode opcode){
-    opcodeCount[opcode] += (ull)1;
+void PerfBase :: incr_opcode_count_rx(Opcode opcode){
+    opcodeCountRx[opcode] += (ull)1;
 }
 
-Stats_t PerfBase :: get_opcode_count(Opcode opcode){
-    return opcodeCount[opcode];
+void PerfBase :: incr_opcode_count_tx(Opcode opcode){
+    opcodeCountTx[opcode] += (ull)1;
 }
+
+Stats_t PerfBase :: get_opcode_count_rx(Opcode opcode){
+    return opcodeCountRx[opcode];
+}
+
+Stats_t PerfBase :: get_opcode_count_tx(Opcode opcode){
+    return opcodeCountTx[opcode];
+}
+
 
 Stats_t PerfBase :: get_back_pressure(){
     return backPressure;
@@ -165,13 +175,21 @@ PerfBus :: PerfBus(): PerfBase(){
 void PerfBus :: printPerf(){
     cout << "Performance metrics for Bus\n";
     cout << "back pressure: " << get_back_pressure() << "\n";
-    cout << "opcode count:\n";
+    cout << "Rx opcode count:\n";
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
-        if (get_opcode_count((Opcode)i) == 0){
+        if (get_opcode_count_rx((Opcode)i) == 0){
             continue;
         }
-        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count_rx((Opcode)i) << "\n";
     }
+    cout << "Tx opcode count:\n";
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        if (get_opcode_count_tx((Opcode)i) == 0){
+            continue;
+        }
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count_tx((Opcode)i) << "\n";
+    }
+    cout << "-------------------------------------------------------\n";
 }
 
 //---------------------------------------
@@ -182,12 +200,21 @@ PerfMem :: PerfMem(): PerfBase(){
 void PerfMem :: printPerf(){
     cout << "Performance metrics for Memory\n";
     cout << "back pressure: " << get_back_pressure() << "\n";
-    cout << "opcode count:\n";
+    cout << "Rx opcode count:\n";
     for (int i=0; i<Opcode::NUM_OPCODES; i++){
-        if (get_opcode_count((Opcode)i) == 0){
+        if (get_opcode_count_rx((Opcode)i) == 0){
             continue;
         }
-        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count((Opcode)i) << "\n";
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count_rx((Opcode)i) << "\n";
     }
+
+    cout << "Tx opcode count:\n";
+    for (int i=0; i<Opcode::NUM_OPCODES; i++){
+        if (get_opcode_count_tx((Opcode)i) == 0){
+            continue;
+        }
+        cout << convertOpcodeToString((Opcode)i) << ": " << get_opcode_count_tx((Opcode)i) << "\n";
+    }
+    cout << "-------------------------------------------------------\n";
 }
 //---------------------------------------

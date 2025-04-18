@@ -63,14 +63,17 @@ class PerfParam {
 
 
 class PerfBase{
-    Stats_t opcodeCount[Opcode::NUM_OPCODES];
+    Stats_t opcodeCountRx[Opcode::NUM_OPCODES];
+    Stats_t opcodeCountTx[Opcode::NUM_OPCODES];
     Stats_t backPressure;
     
     public:
         PerfBase();
-        void incr_opcode_count(Opcode op);
+        void incr_opcode_count_rx(Opcode op);
+        void incr_opcode_count_tx(Opcode op);
         void incr_back_pressure();
-        Stats_t get_opcode_count(Opcode op);
+        Stats_t get_opcode_count_rx(Opcode op);
+        Stats_t get_opcode_count_tx(Opcode op);
         Stats_t get_back_pressure();
         virtual void printPerf() = 0;
 };

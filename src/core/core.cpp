@@ -705,6 +705,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
 
         // Core to Bus response queue is full
         if (performCheckCoreToBusRespQ() == false){
+            perf.incr_back_pressure();
             return;
         }
 
@@ -718,7 +719,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
         respTr.dest = 0;
         respTr.op = Opcode::CoreDataResponse;
         respTr.valid = false;
-
+        perf.incr_opcode_count(Opcode::CoreDataResponse);
         push_core_to_bus_resp_q (respTr);
         pop_bus_to_core_q();
         return;
@@ -728,6 +729,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
 
         // Core to bus resp queue is full
         if (performCheckCoreToBusRespQ() == false){
+            perf.incr_back_pressure();
             return;
         }
 
@@ -740,7 +742,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
         respTr.dest = 0;
         respTr.op = Opcode::CoreDataResponse;
         respTr.valid = false;
-
+        perf.incr_opcode_count(Opcode::CoreDataResponse);
         push_core_to_bus_resp_q (respTr);
         pop_bus_to_core_q();
         return;
@@ -749,6 +751,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     if ( !(is_state_stable(cache[index].cacheState)) ){
 
         if (performCheckCoreToBusRespQ() == false){
+            perf.incr_back_pressure();
             return;
         }
 
@@ -761,7 +764,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
         respTr.dest = 0;
         respTr.op = Opcode::CoreDataResponse;
         respTr.valid = false;
-
+        perf.incr_opcode_count(Opcode::CoreDataResponse);
         push_core_to_bus_resp_q (respTr);
         pop_bus_to_core_q();
         return;
@@ -769,6 +772,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     }
 
     if (performCheckCoreToBusRespQ() == false){
+        perf.incr_back_pressure();
         return;
     }
 
@@ -790,6 +794,7 @@ void Core :: run_bus_read_req ( bus_to_core_tr reqTr){
     respTr.dest = 0;
     respTr.op = Opcode::CoreDataResponse;
     respTr.valid = true;
+    perf.incr_opcode_count(Opcode::CoreDataResponse);
 
     push_core_to_bus_resp_q (respTr);
     pop_bus_to_core_q();

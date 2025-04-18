@@ -13,7 +13,7 @@ Following are directory description:
 
 4) test: This directory contains test file in cpp format. Currently sys_test.hpp is used.
 
-5) mainFunc.cpp: This is the top level file which calls sys_test() function and take filename/verbosity from user and pass it to sys_test.
+5) coherentProtocol.cpp: This is the top level file which calls sys_test() function and take filename/verbosity from user and pass it to sys_test.
 
 6) run.tcl: This is the compile command. Run 'source run.tcl' to compile the code. The executable 'a.out' is created.
 

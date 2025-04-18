@@ -17,6 +17,7 @@ Following are directory description:
 
 6) run.tcl: This is the compile command. Run 'source run.tcl' to compile the code.
 
+7) Params.txt: This file contains parameter deteriming size of buffers. Using this file is optional since there is default buffer size setting in the code.
 
 ## Running the code
 

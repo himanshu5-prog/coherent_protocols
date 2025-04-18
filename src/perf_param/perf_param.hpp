@@ -23,6 +23,11 @@ class PerfStats {
             cacheMiss = 0;
             cacheHit = 0;
             backPressure = 0;
+
+            for (int i=0; i<Opcode::NUM_OPCODES; i++){
+                opcodeCount_rx[i] = 0;
+                opcodeCount_tx[i] = 0;
+            }
         }
 
         void incr_bus_access();

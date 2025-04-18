@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "stdexcept": "cpp"
     }
 }

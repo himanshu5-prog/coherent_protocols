@@ -29,6 +29,7 @@ There are two argumets that need to be provided:
 If input/simple_read with verbosity set to false, run the code by typing following commands (first command is for compilation):
 
 > source run.tcl
-> ./a.out input/simple_read.txt -v 0
+
+> ./CoherentProtocol input/simple_read.txt -v 0
 
 Setting verbosity to 1 enables debug print statement which can be used to understand what events are occuring in each clock cycle.

@@ -275,7 +275,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
     int coreID;
     Opcode respOp;
     ll data;
-    string source;
+    Component source;
     int sourceCore;
     CacheState state;
     //Response transaction
@@ -341,7 +341,7 @@ void Bus :: run_read_req ( core_to_bus_tr reqTr){
 
                 // cache line with exclusive or owned state is found in one of the core
                 respOp = Opcode::BusReadReq;
-                source = "Bus";
+                source = Component::BUS;
                 perf.incr_opcode_count(Opcode::BusReadReq);
                 respTr.addr = address;
                 respTr.coreID = sourceCore;
@@ -578,7 +578,7 @@ void Bus :: run_inv_req ( core_to_bus_tr reqTr){
                 respTr.coreID = id;
                 respTr.data = 0;
                 respTr.op = Opcode::BusCacheInvalidate;
-                respTr.source = to_string(sourceCore);
+                respTr.source = convertCoreIDToComponent(sourceCore);
                 respTr.valid = true;
                 respTr.state = CacheState::INVALID;
                 perf.incr_opcode_count(Opcode::BusCacheInvalidate);
@@ -686,7 +686,7 @@ void Bus :: run_data_response ( core_to_bus_tr reqTr){
     respTr.coreID = dest;
     respTr.data = reqTr.data;
     respTr.op = Opcode::BusDataResponse;
-    respTr.source = to_string(sourceCore);
+    respTr.source = convertCoreIDToComponent(sourceCore);
     respTr.valid = true;
     respTr.state = CacheState::SHARED;
 
@@ -784,7 +784,7 @@ void Bus :: run_invalid_ack (core_to_bus_tr reqTr){
         respTr.coreID = busInfo[address].core_bus_tr.coreID;
         respTr.data = 0;
         respTr.op = Opcode::BusInvalidateAck;
-        respTr.source = "Bus";
+        respTr.source = Component::BUS;
         respTr.valid = true;
         respTr.state = CacheState::MODIFIED;
 
@@ -856,7 +856,7 @@ void Bus :: run_mem_ack ( mem_to_bus_tr reqTr) {
     respTr.coreID = reqTr.coreID;
     respTr.op = Opcode::BusMemWriteAck;
     respTr.data = 0;
-    respTr.source = "Memory";
+    respTr.source = Component::MEMORY;
     respTr.valid = true;
     respTr.state = CacheState::INVALID;
 
@@ -915,7 +915,7 @@ void Bus :: run_mem_data ( mem_to_bus_tr reqTr) {
     respTr.coreID = reqTr.coreID;
     respTr.data = reqTr.data;
     respTr.op = Opcode::BusDataResponse;
-    respTr.source = "Memory";
+    respTr.source = Component::MEMORY;
     respTr.state = busInfo[address].cacheState[sourceCore];
     perf.incr_opcode_count(Opcode::BusDataResponse);
     push_bus_to_core_q(respTr);

@@ -479,10 +479,10 @@ void Core :: run_data_response (bus_to_core_tr reqTr){
 
     if (debugMode){
 
-        if ( reqTr.source == "Memory"){
+        if ( reqTr.source == Component::MEMORY){
             dataSource = "MEM";
         } else {
-            dataSource = "CORE " + reqTr.source;
+            dataSource =  convertComponentToString(reqTr.source);
         }
        std :: cout << "Core :: run_data_response: Received data response from Bus in core id: " << id << ", clk_cycle: " << clk_cycle <<"\n";
        std :: cout << "address: " << address << " | index: " << index << " | data source: "<< dataSource<<"\n";

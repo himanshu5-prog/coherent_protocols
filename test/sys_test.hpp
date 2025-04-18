@@ -9,7 +9,7 @@ void sys_test(string fileName, bool verbose, std :: unordered_map <Parameters, P
    //proc.set_cpu_input_file("input/inputFile1.txt");
    proc_ptr->set_debug_mode(verbose);
    proc_ptr->set_parameters(parameters);
-   proc_ptr->printParams();
+   //proc_ptr->printParams();
    //proc.load_cpu_inst_q("input/inputFile1.txt");
    //proc.load_cpu_inst_q("input/simple_read.txt");
    proc_ptr->load_cpu_inst_q(fileName);

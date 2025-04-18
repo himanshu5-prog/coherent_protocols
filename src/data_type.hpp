@@ -12,6 +12,26 @@ typedef unsigned long long int ull;
 typedef unsigned long long int Stats_t;
 typedef unsigned int Params_t;
 
+enum Parameters {
+    CORE_TO_BUS_BUF_SIZE,
+    CORE_TO_BUS_RESP_BUF_SIZE,
+    BUS_TO_CORE_BUF_SIZE,
+    BUS_TO_MEM_BUF_SIZE,
+    MEM_TO_BUS_BUF_SIZE
+};
+
+enum Component {
+    CORE_0,
+    CORE_1,
+    CORE_2,
+    CORE_3,
+    CORE_4,
+    CORE_5,
+    CORE_6,
+    CORE_7,
+    BUS,
+    MEMORY
+};
 // Opcode name starts with its source name.
 enum Opcode {
     //Core opcode
@@ -117,7 +137,7 @@ struct bus_to_core_tr {
     ll data;
     int coreID;
     bool valid;
-    string source;
+    Component source;
     CacheState state;
 };
 
@@ -154,20 +174,7 @@ struct Instruction {
     ll id;
 };
 
-enum Parameters {
-    CORE_TO_BUS_BUF_SIZE,
-    CORE_TO_BUS_RESP_BUF_SIZE,
-    BUS_TO_CORE_BUF_SIZE,
-    BUS_TO_MEM_BUF_SIZE,
-    MEM_TO_BUS_BUF_SIZE
-};
 
-// Not using this enum for now. Might use later to filter out parameters
-enum Component {
-    CORE,
-    BUS,
-    MEMORY
-};
 
 inline Parameters convertStringToParameter( const std :: string &str) {
     if (str == "CORE_TO_BUS_BUF_SIZE") {
@@ -265,5 +272,77 @@ inline std :: string convertCacheStateToString (CacheState state){
             return "RD_INV_TR_EXCLUSIVE";
     }
     throw invalid_argument("Invalid cache state");
+}
+
+inline std :: string convertComponentToString (Component comp){
+    switch (comp){
+        case CORE_0:
+            return "CORE_0";
+        case CORE_1:
+            return "CORE_1";
+        case CORE_2:
+            return "CORE_2";
+        case CORE_3:
+            return "CORE_3";
+        case CORE_4:
+            return "CORE_4";
+        case CORE_5:
+            return "CORE_5";
+        case CORE_6:
+            return "CORE_6";
+        case CORE_7:
+            return "CORE_7";
+        case BUS:
+            return "BUS";
+        case MEMORY:
+            return "MEMORY";
+    }
+    throw invalid_argument("Invalid component");
+}
+
+inline Component convertCoreIDToComponent (int coreID){
+    switch (coreID){
+        case 0:
+            return CORE_0;
+        case 1:
+            return CORE_1;
+        case 2:
+            return CORE_2;
+        case 3:
+            return CORE_3;
+        case 4:
+            return CORE_4;
+        case 5:
+            return CORE_5;
+        case 6:
+            return CORE_6;
+        case 7:
+            return CORE_7;
+    }
+    throw invalid_argument("Invalid core ID");
+}
+inline int convertComponentToCoreID (Component comp){
+    switch (comp){
+        case CORE_0:
+            return 0;
+        case CORE_1:
+            return 1;
+        case CORE_2:
+            return 2;
+        case CORE_3:
+            return 3;
+        case CORE_4:
+            return 4;
+        case CORE_5:
+            return 5;
+        case CORE_6:
+            return 6;
+        case CORE_7:
+            return 7;
+        case BUS:
+        case MEMORY:
+            throw invalid_argument("Invalid component");
+    }
+    throw invalid_argument("Invalid component");
 }
 #endif

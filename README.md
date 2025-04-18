@@ -1,4 +1,4 @@
-------------------Bus based MOESI coherency protocol--------------------------------------------------------------------------------
+# Bus based MOESI Coherency Protocol Implementation
 
 This code implements bus based coherency protocol (MOESI). It consist of eight-core CPU, bus and memory implemented using C++ classes.
 
@@ -15,10 +15,10 @@ Following are directory description:
 
 5) coherentProtocol.cpp: This is the top level file which calls sys_test() function and take filename/verbosity from user and pass it to sys_test.
 
-6) run.tcl: This is the compile command. Run 'source run.tcl' to compile the code. The executable 'a.out' is created.
+6) run.tcl: This is the compile command. Run 'source run.tcl' to compile the code.
 
 
------------------------Running the code------------------------------------------------------------------------------------------------
+## Running the code
 
 There are two argumets that need to be provided:
 
@@ -33,3 +33,24 @@ If input/simple_read with verbosity set to false, run the code by typing followi
 > ./CoherentProtocol input/simple_read.txt -v 0
 
 Setting verbosity to 1 enables debug print statement which can be used to understand what events are occuring in each clock cycle.
+
+## Block Diagram
+
+1) Processor
+
+![Processor](doc/images/processor.png)
+
+
+2) Core
+
+![Core](doc/images/Core.png)
+
+3) Bus
+
+![Bus](doc/images/Bus.png)
+
+4) Memory
+
+![Memory](doc/images/Memory.png)
+
+Details about how above modules interact is there in the doc directory.

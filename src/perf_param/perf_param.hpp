@@ -3,6 +3,7 @@
 
 #include "../data_type/data_type.hpp"
 
+//Stats for Core class
 class PerfStats {
     Stats_t busAccess;
     Stats_t memAccess;
@@ -10,7 +11,12 @@ class PerfStats {
 
     Stats_t cacheMiss;
     Stats_t cacheHit;
+    
+    //Number of times back pressure is generated
     Stats_t backPressure;
+
+    // Opcode count for RX and TX
+    // RX: Bus to Core, TX: Core to Bus
     Stats_t opcodeCount_rx[Opcode::NUM_OPCODES];
     Stats_t opcodeCount_tx[Opcode::NUM_OPCODES];
 
